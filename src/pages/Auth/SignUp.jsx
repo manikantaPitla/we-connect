@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import {
   AuthButton,
@@ -12,15 +12,15 @@ import {
 } from "../../components/AuthLayout/styles";
 
 import { signUpWithEmail } from "../../services/authServices";
-import useFormValidation from "../../hooks/useFormValidation";
-import useLoading from "../../hooks/useLoading";
-import DotLoader from "../../components/AuthLayout/Loader";
+import DotLoader from "../../components/Loader";
+import { useLoading, useFormValidation } from "../../hooks";
 
 function SignUp() {
   const [passwordType, setPasswordType] = useState("password");
   const [errorMessage, setErrorMessage] = useState("");
 
   const [loading, startLoading, stopLoading] = useLoading();
+  const navigate = useNavigate();
 
   const initialValues = {
     name: "",
@@ -44,6 +44,7 @@ function SignUp() {
       try {
         const user = await signUpWithEmail(name, email, password);
         console.log(user);
+        navigate("/");
       } catch (error) {
         console.error(error.code);
         console.error(error.status);

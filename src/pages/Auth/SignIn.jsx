@@ -10,9 +10,8 @@ import {
   PasswordTypeButton,
   ErrorDisplay,
 } from "../../components/AuthLayout/styles";
-import useFormValidation from "../../hooks/useFormValidation";
-import useLoading from "../../hooks/useLoading";
-import DotLoader from "../../components/AuthLayout/Loader";
+import { useLoading, useFormValidation } from "../../hooks";
+import { DotLoader } from "../../components/Loader";
 
 function SignIn() {
   const [passwordType, setPasswordType] = useState("password");

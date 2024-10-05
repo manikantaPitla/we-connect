@@ -1,16 +1,19 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home/Home";
-import SignIn from "./pages/Auth/SignIn";
-import SignUp from "./pages/Auth/SignUp";
-import ForgotPassword from "./pages/Auth/ForgotPassword";
-import PageNotFound from "./pages/PageNotFound";
-import AuthLayout from "./components/AuthLayout";
+import { ProtectedRoute, AuthLayout } from "./components";
+import { Home, SignIn, SignUp, ForgotPassword, PageNotFound } from "./pages";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<SignIn />} />
           <Route index path="signin" element={<SignIn />} />

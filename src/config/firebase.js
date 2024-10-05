@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -18,3 +18,4 @@ export const auth = getAuth(app);
 export const storage = getStorage();
 export const db = getFirestore(app);
 export const signOutUser = () => signOut(auth);
+export { onAuthStateChanged };

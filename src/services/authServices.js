@@ -61,5 +61,3 @@ const handleUserIdentification = async (user) => {
     throw new Error(error.message);
   }
 };
-
-// Add more functions as needed (e.g., sign out, password reset, etc.)
