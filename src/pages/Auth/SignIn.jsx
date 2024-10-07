@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import { IoEyeOutline, IoEyeOffOutline } from "../../assets/icons";
 import {
   AuthButton,
   AuthInput,
@@ -12,6 +12,7 @@ import {
 } from "../../components/AuthLayout/styles";
 import { useLoading, useFormValidation } from "../../hooks";
 import DotLoader from "../../components/Loader";
+import { signInWithEmail } from "../../services/authServices";
 
 function SignIn() {
   const [passwordType, setPasswordType] = useState("password");
@@ -23,17 +24,24 @@ function SignIn() {
     password: "",
   };
 
-  const [onChangeCredentials, credentials, validate, validationError] =
-    useFormValidation(initialValues);
+  const [
+    onChangeCredentials,
+    credentials,
+    setCredentials,
+    validate,
+    validationError,
+  ] = useFormValidation(initialValues);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validate()) {
-      console.log(credentials);
-      startLoading();
       try {
+        startLoading();
+        await signInWithEmail(credentials.email, credentials.password);
+        setCredentials(initialValues);
       } catch (error) {
+        console.log(error);
       } finally {
         stopLoading();
       }

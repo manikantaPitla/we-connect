@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import { IoEyeOutline, IoEyeOffOutline } from "../../assets/icons";
 import {
   AuthButton,
   AuthInput,
@@ -28,8 +28,13 @@ function SignUp() {
     password: "",
   };
 
-  const [onChangeCredentials, credentials, validate, validationError] =
-    useFormValidation(initialValues);
+  const [
+    onChangeCredentials,
+    credentials,
+    setCredentials,
+    validate,
+    validationError,
+  ] = useFormValidation(initialValues);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,13 +47,11 @@ function SignUp() {
       console.log(credentials);
 
       try {
-        const user = await signUpWithEmail(name, email, password);
-        console.log(user);
+        await signUpWithEmail(name, email, password);
+        setCredentials(initialValues);
         navigate("/");
       } catch (error) {
-        console.error(error.code);
-        console.error(error.status);
-        console.error(error.message);
+        console.log(error);
         if (error.message == "Firebase: Error (auth/email-already-in-use).") {
           setErrorMessage("Email already in use");
         }

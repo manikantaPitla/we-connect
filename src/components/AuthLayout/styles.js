@@ -63,6 +63,7 @@ export const FormWrapper = styled.form`
 
 export const LogoWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-self: center;
   gap: 10px;
   align-items: center;

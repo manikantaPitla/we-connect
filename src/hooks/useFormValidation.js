@@ -39,7 +39,13 @@ function useFormValidation(initialValues) {
     return true;
   };
 
-  return [onChangeCredentials, credentials, validate, validationError];
+  return [
+    onChangeCredentials,
+    credentials,
+    setCredentials,
+    validate,
+    validationError,
+  ];
 }
 
 export default useFormValidation;

@@ -1,12 +1,14 @@
 import { useEffect } from "react";
-import { auth, onAuthStateChanged } from "../../config/firebase";
 import { useNavigate } from "react-router-dom";
-import useLoading from "../../hooks/useLoading";
+import { useLoading, useAuthActions } from "../../hooks";
 import { PageLoader } from "../Loader";
+import { extractUserInfo, onAuthStateChanged, auth } from "../../services";
 
 function ProtectedRoute({ children }) {
-  const [loading, startLoading, stopLoading] = useLoading();
+  const [loading, startLoading, stopLoading] = useLoading(true);
   const navigate = useNavigate();
+
+  const { setUser, removeUser } = useAuthActions();
 
   useEffect(() => {
     startLoading();
@@ -14,8 +16,10 @@ function ProtectedRoute({ children }) {
       setTimeout(() => {
         stopLoading();
         if (user) {
-          console.log(user);
+          const userInfo = extractUserInfo(user);
+          setUser(userInfo);
         } else {
+          removeUser();
           navigate("/auth/signin");
         }
       }, 3000);
