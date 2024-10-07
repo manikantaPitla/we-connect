@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoEyeOutline, IoEyeOffOutline } from "../../assets/icons";
 import {
   AuthButton,
@@ -32,6 +32,8 @@ function SignIn() {
     validationError,
   ] = useFormValidation(initialValues);
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -40,6 +42,7 @@ function SignIn() {
         startLoading();
         await signInWithEmail(credentials.email, credentials.password);
         setCredentials(initialValues);
+        navigate("/");
       } catch (error) {
         console.log(error);
       } finally {

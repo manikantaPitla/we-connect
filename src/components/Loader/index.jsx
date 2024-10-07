@@ -18,12 +18,13 @@ export const PageLoader = () => (
       justifyContent: "center",
       alignItems: "center",
       flexDirection: "column",
+      backgroundColor: "var(--background-color)",
     }}
   >
-    <img src={logo} alt="Logo" style={{ marginBottom: "20px", width: 80 }} />
+    <img src={logo} alt="Logo" style={{ marginBottom: "20px", width: 60 }} />
     <l-line-wobble
       size="80"
-      stroke="5"
+      stroke="4"
       bg-opacity="0.1"
       speed="1.75"
       color="var(--primary)"

@@ -27,12 +27,13 @@ export const ImageWrapper = styled.div`
 `;
 
 export const FormContainer = styled.div`
-  padding: 120px 25px;
+  background-color: var(--background-color);
+  color: var(--text-primary);
   width: 100%;
-  background-color: #fff;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  padding: 120px 25px;
   gap: 60px;
 
   @media screen and (min-width: 600px) {
@@ -88,7 +89,7 @@ export const AuthInput = styled.div`
   display: flex;
   gap: 5px;
 
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: var(--border);
   height: 45px;
   border-radius: 16px;
   overflow: hidden;
@@ -103,11 +104,13 @@ export const AuthInput = styled.div`
     font-size: 12px;
     font-weight: 500;
     background-color: transparent;
+    color: var(--text-primary);
   }
 `;
 
 export const PasswordTypeButton = styled.button`
   padding: 0px 15px;
+  color: var(--line);
 
   svg {
     font-size: 16px;

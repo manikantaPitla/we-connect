@@ -12,18 +12,21 @@ const GlobalStyles = createGlobalStyle`
 
 
 :root {
-  --primary: #2655b1;
-  --secondary: #1f2128;
+    --primary: #2655b1;
+
+    --background-color: #1f2128;
+    --text-primary: #fff;
+
   --secondary-light: #242731;
-  --text-primary: #fff;
   --text-secondary: #808191;
   --primary-light: rgba(38, 85, 177, 0.4);
+
+  --border: 1px solid rgba(255, 255, 255, 0.2);
 
   --height: 45px;
   --height35: 35px;
   --width80: 80px;
   --radius: 16px;
-  --border: 1px solid rgba(255, 255, 255, 0.2);
   --line: rgba(255, 255, 255, 0.2);
 
   --shadow: 0px 1px 1px -1px rgba(255, 255, 255, 0.1),
@@ -31,13 +34,14 @@ const GlobalStyles = createGlobalStyle`
     0px 1px 2px 0px rgba(255, 255, 255, 0.1);
 }
 
-.light-theme {
-  --secondary: #ffffff;
-  --secondary-light: #f0f8ff;
+.light {
+  --background-color: #ffffff;
   --text-primary: #212121;
 
-  --line: rgba(0, 0, 0, 0.2);
   --border: 1px solid rgba(0, 0, 0, 0.2);
+  
+  --secondary-light: #f0f8ff;
+  --line: rgba(0, 0, 0, 0.2);
 
   --shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
     0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
