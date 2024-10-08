@@ -2,10 +2,30 @@ import React from "react";
 import { LogoImage, MenuItem, MenuItemsWrapper, SideBarWrapper } from "./style";
 import Logo from "../../assets/images/favicon.png";
 import { Logout, Messages1, Moon, Sun1 } from "../../assets/icons";
-import { useTheme } from "../../hooks";
+import { useAuthActions, useTheme } from "../../hooks";
+import { PopUpModal } from "../PopUp";
+import { signOutUser } from "../../services";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function SideMenu() {
   const { pageTheme, changeTheme } = useTheme();
+
+  const navigate = useNavigate();
+  const { removeUser } = useAuthActions();
+  const user = useSelector((state) => state.auth.user);
+
+  const logout = async () => {
+    try {
+      if (!user) return;
+
+      await signOutUser();
+      removeUser();
+      navigate("/auth/signin");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <SideBarWrapper>
@@ -17,9 +37,18 @@ function SideMenu() {
         <MenuItem onClick={changeTheme}>
           {pageTheme?.isDarkModeOn ? <Sun1 /> : <Moon />}
         </MenuItem>
-        <MenuItem>
-          <Logout />
-        </MenuItem>
+        <PopUpModal
+          triggerElement={
+            <MenuItem>
+              <Logout />
+            </MenuItem>
+          }
+          content={{
+            title: "Are you sure you want to log out?",
+            buttonText: "Logout",
+          }}
+          action={logout}
+        />
       </MenuItemsWrapper>
     </SideBarWrapper>
   );

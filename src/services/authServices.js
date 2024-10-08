@@ -1,5 +1,3 @@
-// src/services/authService.js
-
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import {

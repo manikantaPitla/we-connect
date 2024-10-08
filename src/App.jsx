@@ -8,12 +8,9 @@ function App() {
   const pageTheme = useSelector((state) => state.theme);
 
   useEffect(() => {
-    const rootElement = document.getElementById("root");
     const theme = pageTheme?.isDarkModeOn ? "dark" : "light";
-
-    rootElement.classList.remove(pageTheme.isDarkModeOn ? "light" : "dark");
-
-    rootElement.classList.add(theme);
+    document.body.classList.remove(pageTheme.isDarkModeOn ? "light" : "dark");
+    document.body.classList.add(theme);
   }, [pageTheme.isDarkModeOn]);
 
   return (
@@ -35,6 +32,7 @@ function App() {
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+      <div id="popup-root"></div>
     </BrowserRouter>
   );
 }

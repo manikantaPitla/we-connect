@@ -17,7 +17,7 @@ function AuthLayout() {
       </ImageWrapper>
       <FormContainer>
         <LogoWrapper>
-          <img src={Logo} width={60} alt="we connect logo" />
+          <img src={Logo} alt="we connect logo" />
           <h1>
             We <span>Connect</span>
           </h1>

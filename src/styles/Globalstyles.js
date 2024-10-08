@@ -77,7 +77,10 @@ a {
 
 
 
-
+.popup-overlay {
+    backdrop-filter: blur(2px);
+    /* background-color: rgba(0,0,0,0.4); */
+  }
 
 
 

@@ -69,6 +69,12 @@ export const LogoWrapper = styled.div`
   gap: 10px;
   align-items: center;
 
+  img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
+
   h1 {
     font-size: 22px;
     span {
