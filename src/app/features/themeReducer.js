@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const weConnectTheme = JSON.parse(localStorage.getItem("weChatTheme"));
+const weConnectTheme = JSON.parse(localStorage.getItem("weConnectTheme"));
 const initialState = {
-  theme: weConnectTheme?.theme || "LIGHT",
+  isDarkModeOn: weConnectTheme?.isDarkModeOn || false,
 };
 
 const themeReducer = createSlice({
@@ -10,7 +10,11 @@ const themeReducer = createSlice({
   initialState,
   reducers: {
     setTheme: (state, action) => {
-      state.theme = action.payload;
+      state.isDarkModeOn = action.payload;
+      localStorage.setItem(
+        "weConnectTheme",
+        JSON.stringify({ isDarkModeOn: action.payload })
+      );
     },
   },
 });

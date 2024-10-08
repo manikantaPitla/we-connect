@@ -1,6 +1,6 @@
 import React from "react";
 import { dotPulse, lineWobble } from "ldrs";
-import logo from "../../assets/images/logo.svg";
+import logo from "../../assets/images/favicon.png";
 
 dotPulse.register();
 lineWobble.register();

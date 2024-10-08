@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { IoEyeOutline, IoEyeOffOutline } from "../../assets/icons";
+import { Eye, EyeSlash } from "../../assets/icons";
 import {
   AuthButton,
   AuthInput,
@@ -83,7 +83,7 @@ function SignIn() {
               : setPasswordType("password");
           }}
         >
-          {passwordType === "password" ? <IoEyeOutline /> : <IoEyeOffOutline />}
+          {passwordType === "password" ? <Eye /> : <EyeSlash />}
         </PasswordTypeButton>
       </AuthInput>
       <AuthButton type="submit">{loading ? <DotLoader /> : "Login"}</AuthButton>

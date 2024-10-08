@@ -78,7 +78,6 @@ export const LogoWrapper = styled.div`
 `;
 
 export const AuthTitle = styled.div`
-  /* margin-bottom: 20px; */
   h1 {
     font-size: 20px;
     margin-bottom: 5px;
@@ -113,7 +112,8 @@ export const PasswordTypeButton = styled.button`
   color: var(--line);
 
   svg {
-    font-size: 16px;
+    width: 20px;
+    height: 20px;
   }
 `;
 

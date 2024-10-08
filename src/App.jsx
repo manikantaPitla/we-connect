@@ -8,9 +8,13 @@ function App() {
   const pageTheme = useSelector((state) => state.theme);
 
   useEffect(() => {
-    const theme = pageTheme.theme === "DARK" ? "dark" : "light";
-    document.getElementById("root").classList.add(theme);
-  }, []);
+    const rootElement = document.getElementById("root");
+    const theme = pageTheme?.isDarkModeOn ? "dark" : "light";
+
+    rootElement.classList.remove(pageTheme.isDarkModeOn ? "light" : "dark");
+
+    rootElement.classList.add(theme);
+  }, [pageTheme.isDarkModeOn]);
 
   return (
     <BrowserRouter>

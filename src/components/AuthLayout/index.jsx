@@ -6,7 +6,7 @@ import {
   LogoWrapper,
 } from "./styles";
 import BgImage from "../../assets/images/bg-image.jpg";
-import Logo from "../../assets/images/logo.svg";
+import Logo from "../../assets/images/favicon.png";
 import { Outlet } from "react-router-dom";
 
 function AuthLayout() {
