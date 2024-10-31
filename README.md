@@ -2,6 +2,8 @@
 
 This is a chatting application. currently in development.
 
-### Technologies Used:
+### Packages Used:
 
-React.js, Styled-components, firebase, reduxjs-toolkit
+Styled-components, firebase, reduxjs-toolkit, reactjs-popup, react-toastify, ldrs, iconsax-react
+
+
