@@ -3,9 +3,12 @@ import { ProtectedRoute, AuthLayout } from "./components";
 import { Home, SignIn, SignUp, ForgotPassword, PageNotFound } from "./pages";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const pageTheme = useSelector((state) => state.theme);
+  console.log("App Component");
 
   useEffect(() => {
     const theme = pageTheme?.isDarkModeOn ? "dark" : "light";
@@ -32,6 +35,7 @@ function App() {
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+      <ToastContainer limit={0} />
       <div id="popup-root"></div>
     </BrowserRouter>
   );

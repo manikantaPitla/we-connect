@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeSlash } from "../../assets/icons";
 import {
-  AuthButton,
-  AuthInput,
-  AuthTitle,
-  AuthOptions,
+  ButtonEl,
+  InputEl,
+  TitleWrapper,
+  OptionsWrapper,
   FormWrapper,
-  PasswordTypeButton,
-  ErrorDisplay,
-} from "../../components/AuthLayout/styles";
+} from "../../styles/commonStyles";
 import { useLoading, useFormValidation } from "../../hooks";
 import DotLoader from "../../components/Loader";
-import { signInWithEmail } from "../../services/authServices";
+import { signInWithEmail, showError } from "../../services";
 
 function SignIn() {
   const [passwordType, setPasswordType] = useState("password");
@@ -24,13 +22,8 @@ function SignIn() {
     password: "",
   };
 
-  const [
-    onChangeCredentials,
-    credentials,
-    setCredentials,
-    validate,
-    validationError,
-  ] = useFormValidation(initialValues);
+  const [onChangeCredentials, credentials, setCredentials, validate] =
+    useFormValidation(initialValues, showError);
 
   const navigate = useNavigate();
 
@@ -45,6 +38,7 @@ function SignIn() {
         navigate("/");
       } catch (error) {
         console.log(error);
+        showError("Invalid credentials");
       } finally {
         stopLoading();
       }
@@ -53,11 +47,11 @@ function SignIn() {
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      <AuthTitle>
+      <TitleWrapper>
         <h1>Chat Awaits You!</h1>
         <p>Sign in to connect with your beloved ones.</p>
-      </AuthTitle>
-      <AuthInput>
+      </TitleWrapper>
+      <InputEl>
         <input
           type="email"
           placeholder="Email"
@@ -66,8 +60,8 @@ function SignIn() {
           onChange={onChangeCredentials}
           autoComplete="true"
         />
-      </AuthInput>
-      <AuthInput>
+      </InputEl>
+      <InputEl>
         <input
           type={passwordType}
           placeholder="password"
@@ -75,7 +69,7 @@ function SignIn() {
           value={credentials.password}
           onChange={onChangeCredentials}
         />
-        <PasswordTypeButton
+        <button
           type="button"
           onClick={() => {
             passwordType === "password"
@@ -84,16 +78,15 @@ function SignIn() {
           }}
         >
           {passwordType === "password" ? <Eye /> : <EyeSlash />}
-        </PasswordTypeButton>
-      </AuthInput>
-      <AuthButton type="submit">{loading ? <DotLoader /> : "Login"}</AuthButton>
-      <AuthOptions>
+        </button>
+      </InputEl>
+      <ButtonEl type="submit">{loading ? <DotLoader /> : "Login"}</ButtonEl>
+      <OptionsWrapper>
         <Link to="/auth/forgotpassword">Forgot your password?</Link>
         <p>
           New to We Connect? <Link to="/auth/signup">Create an Account!</Link>
         </p>
-      </AuthOptions>
-      <ErrorDisplay>{validationError}</ErrorDisplay>
+      </OptionsWrapper>
     </FormWrapper>
   );
 }

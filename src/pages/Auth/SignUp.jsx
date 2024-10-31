@@ -2,22 +2,18 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeSlash } from "../../assets/icons";
 import {
-  AuthButton,
-  AuthInput,
-  AuthTitle,
-  AuthOptions,
+  ButtonEl,
+  InputEl,
+  TitleWrapper,
+  OptionsWrapper,
   FormWrapper,
-  PasswordTypeButton,
-  ErrorDisplay,
-} from "../../components/AuthLayout/styles";
-
-import { signUpWithEmail } from "../../services/authServices";
+} from "../../styles/commonStyles";
 import DotLoader from "../../components/Loader";
 import { useLoading, useFormValidation } from "../../hooks";
+import { showError, signUpWithEmail } from "../../services";
 
 function SignUp() {
   const [passwordType, setPasswordType] = useState("password");
-  const [errorMessage, setErrorMessage] = useState("");
 
   const [loading, startLoading, stopLoading] = useLoading();
   const navigate = useNavigate();
@@ -28,23 +24,16 @@ function SignUp() {
     password: "",
   };
 
-  const [
-    onChangeCredentials,
-    credentials,
-    setCredentials,
-    validate,
-    validationError,
-  ] = useFormValidation(initialValues);
+  const [onChangeCredentials, credentials, setCredentials, validate] =
+    useFormValidation(initialValues, showError);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage("");
 
     const { name, email, password } = credentials;
 
     if (validate()) {
       startLoading();
-      console.log(credentials);
 
       try {
         await signUpWithEmail(name, email, password);
@@ -53,7 +42,9 @@ function SignUp() {
       } catch (error) {
         console.log(error);
         if (error.message == "Firebase: Error (auth/email-already-in-use).") {
-          setErrorMessage("Email already in use");
+          showError("Email already in use");
+        } else {
+          showError(error.message);
         }
       } finally {
         stopLoading();
@@ -63,11 +54,11 @@ function SignUp() {
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      <AuthTitle>
+      <TitleWrapper>
         <h1>Welcome,</h1>
         <p>Create your account to get started.</p>
-      </AuthTitle>
-      <AuthInput>
+      </TitleWrapper>
+      <InputEl>
         <input
           type="text"
           placeholder="Full Name"
@@ -76,8 +67,8 @@ function SignUp() {
           onChange={onChangeCredentials}
           autoComplete="true"
         />
-      </AuthInput>
-      <AuthInput>
+      </InputEl>
+      <InputEl>
         <input
           type="text"
           placeholder="Email Address"
@@ -86,8 +77,8 @@ function SignUp() {
           onChange={onChangeCredentials}
           autoComplete="true"
         />
-      </AuthInput>
-      <AuthInput>
+      </InputEl>
+      <InputEl>
         <input
           type={passwordType}
           placeholder="Password"
@@ -95,7 +86,7 @@ function SignUp() {
           value={credentials.password}
           onChange={onChangeCredentials}
         />
-        <PasswordTypeButton
+        <button
           type="button"
           onClick={() => {
             passwordType === "password"
@@ -104,17 +95,16 @@ function SignUp() {
           }}
         >
           {passwordType === "password" ? <Eye /> : <EyeSlash />}
-        </PasswordTypeButton>
-      </AuthInput>
-      <AuthButton type="submit">
+        </button>
+      </InputEl>
+      <ButtonEl type="submit">
         {loading ? <DotLoader /> : "Create Account"}
-      </AuthButton>
-      <AuthOptions>
+      </ButtonEl>
+      <OptionsWrapper>
         <p>
           Already have an account? <Link to="/auth/signin">Sign In</Link>
         </p>
-      </AuthOptions>
-      <ErrorDisplay>{validationError || errorMessage}</ErrorDisplay>
+      </OptionsWrapper>
     </FormWrapper>
   );
 }

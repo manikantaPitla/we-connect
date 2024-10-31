@@ -6,3 +6,10 @@ export const extractUserInfo = (user) => {
     photoURL: user.photoURL,
   };
 };
+
+
+export const generateCombineId = (currentUserId, userId) => {
+    return currentUserId > userId
+      ? currentUserId + userId
+      : userId + currentUserId;
+  };

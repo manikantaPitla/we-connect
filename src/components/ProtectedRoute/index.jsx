@@ -22,7 +22,7 @@ function ProtectedRoute({ children }) {
           removeUser();
           navigate("/auth/signin");
         }
-      }, 3000);
+      }, 2000);
     });
 
     return () => {

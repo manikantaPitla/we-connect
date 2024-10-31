@@ -3,13 +3,14 @@ import { LogoImage, MenuItem, MenuItemsWrapper, SideBarWrapper } from "./style";
 import Logo from "../../assets/images/favicon.png";
 import { Logout, Messages1, Moon, Sun1 } from "../../assets/icons";
 import { useAuthActions, useTheme } from "../../hooks";
-import { PopUpModal } from "../PopUp";
+import { PopUpModalSmall } from "../PopUp";
 import { signOutUser } from "../../services";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function SideMenu() {
   const { pageTheme, changeTheme } = useTheme();
+  console.log("Side Menu");
 
   const navigate = useNavigate();
   const { removeUser } = useAuthActions();
@@ -37,8 +38,8 @@ function SideMenu() {
         <MenuItem onClick={changeTheme}>
           {pageTheme?.isDarkModeOn ? <Sun1 /> : <Moon />}
         </MenuItem>
-        <PopUpModal
-          triggerElement={
+        <PopUpModalSmall
+          trigger={
             <MenuItem>
               <Logout />
             </MenuItem>

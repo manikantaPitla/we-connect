@@ -6,8 +6,8 @@ export const StyledPopUp = styled(Popup)`
     width: 300px;
     height: 150px;
     box-shadow: var(--shadow);
-    border-radius: var(--radius);
-    background-color: var(--background-color);
+    border-radius: var(--primary-border-radius);
+    background-color: var(--primary-background-color);
     border: none;
   }
 `;
@@ -24,7 +24,7 @@ export const ModalBody = styled.div`
 export const ModalTitle = styled.p`
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--primary-text-color);
 `;
 
 export const ModalButtonWrapper = styled.div`
@@ -35,16 +35,32 @@ export const ModalButtonWrapper = styled.div`
 export const ModalButton = styled.button`
   height: var(--height35);
   width: var(--width80);
-  border-radius: var(--radius);
-  border: 1px solid var(--primary);
-  color: var(--primary);
+  border-radius: var(--primary-border-radius);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
   background-color: transparent;
   font-size: 12px;
   font-weight: 500;
   outline: none;
 
   &:nth-child(2) {
-    background-color: var(--primary);
+    background-color: var(--primary-color);
     color: #ffffff;
+  }
+`;
+
+// Profile Modal Large
+
+export const StyledModalLarge = styled(Popup)`
+  &-content {
+    margin: 0 0 !important;
+    width: inherit;
+    box-shadow: var(--shadow);
+    padding: 0;
+    border: none;
+
+    @media screen and (max-width: 500px) {
+      width: 100%;
+    }
   }
 `;

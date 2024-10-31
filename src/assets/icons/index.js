@@ -1,2 +1,11 @@
-// export { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
-export { Logout, Messages1, Moon, Sun1, Eye, EyeSlash } from "iconsax-react";
+export {
+  Logout,
+  Messages1,
+  Moon,
+  Sun1,
+  Eye,
+  EyeSlash,
+  Edit,
+  Warning2,
+} from "iconsax-react";
+export { CiSearch } from "react-icons/ci";

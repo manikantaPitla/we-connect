@@ -1,16 +1,12 @@
 import styled from "styled-components";
+import { MainSharedContainer } from "../../styles/commonStyles";
 
-export const SideBarWrapper = styled.div`
-  background-color: var(--background-color);
+export const SideBarWrapper = styled(MainSharedContainer)`
   width: 80px;
   padding: 15px 0;
-  border-radius: var(--radius);
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  box-shadow: var(--shadow);
-  color: white;
+  user-select: none;
 
   @media screen and (max-width: 500px) {
     order: 1;
@@ -34,7 +30,6 @@ export const MenuItemsWrapper = styled.ul`
   padding-left: 0;
   list-style: none;
   flex-shrink: 0;
-  color: var(--text-primary);
 
   @media screen and (max-width: 500px) {
     flex-direction: row;
@@ -43,7 +38,7 @@ export const MenuItemsWrapper = styled.ul`
 
   .active {
     color: #ffffff;
-    background-color: var(--primary);
+    background-color: var(--primary-color);
   }
 `;
 
@@ -55,8 +50,8 @@ export const MenuItem = styled.li`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: var(--radius);
-  color: var(--text-primary);
+  border-radius: var(--primary-border-radius);
+  color: var(--primary-text-color);
 
   svg {
     width: 18px;
@@ -64,6 +59,6 @@ export const MenuItem = styled.li`
   }
 
   &:hover {
-    background-color: var(--primary-light);
+    background-color: var(--primary-light-color);
   }
 `;

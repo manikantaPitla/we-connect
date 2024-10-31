@@ -4,13 +4,16 @@ import {
   ModalButton,
   ModalButtonWrapper,
   ModalTitle,
+  StyledModalLarge,
   StyledPopUp,
 } from "./style";
 import "reactjs-popup/dist/index.css";
 
-export function PopUpModal({ triggerElement, children, content, action }) {
+export function PopUpModalSmall(props) {
+  const { children, content, action } = props;
+
   return (
-    <StyledPopUp modal trigger={triggerElement}>
+    <StyledPopUp modal {...props}>
       {(close) => (
         <ModalBody>
           <ModalTitle>{content?.title}</ModalTitle>
@@ -22,5 +25,15 @@ export function PopUpModal({ triggerElement, children, content, action }) {
         </ModalBody>
       )}
     </StyledPopUp>
+  );
+}
+
+export function PopUpModalLarge(props) {
+  const { children } = props;
+
+  return (
+    <StyledModalLarge modal {...props}>
+      {children}
+    </StyledModalLarge>
   );
 }

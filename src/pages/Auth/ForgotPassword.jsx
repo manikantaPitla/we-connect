@@ -1,12 +1,12 @@
 import React from "react";
-import {
-  AuthButton,
-  AuthInput,
-  AuthOptions,
-  AuthTitle,
-  FormWrapper,
-} from "../../components/AuthLayout/styles";
 import { Link } from "react-router-dom";
+import {
+  ButtonEl,
+  InputEl,
+  TitleWrapper,
+  OptionsWrapper,
+  FormWrapper,
+} from "../../styles/commonStyles";
 
 function ForgotPassword() {
   const handleSubmit = (e) => {
@@ -15,22 +15,22 @@ function ForgotPassword() {
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      <AuthTitle>
+      <TitleWrapper>
         <h1>Forgot Password</h1>
-      </AuthTitle>
-      <AuthInput>
+      </TitleWrapper>
+      <InputEl>
         <input
           type="email"
           placeholder="Enter your email address"
           autoComplete="true"
         />
-      </AuthInput>
-      <AuthButton type="submit">Send Code</AuthButton>
-      <AuthOptions>
+      </InputEl>
+      <ButtonEl type="submit">Send Code</ButtonEl>
+      <OptionsWrapper>
         <p>
           Go Back? <Link to="/auth/signin">Sign In</Link>
         </p>
-      </AuthOptions>
+      </OptionsWrapper>
     </FormWrapper>
   );
 }

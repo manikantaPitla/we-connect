@@ -5,29 +5,32 @@ const GlobalStyles = createGlobalStyle`
     padding: 0px;
     margin: 0px;
     box-sizing: border-box; 
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    font-family: "inter", sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    font-family: "inter", sans-serif;
 }
 
 
 :root {
-    --primary: #2655b1;
+    --primary-color: #2655b1;
+    --primary-light-color : rgba(38, 85, 177, 0.4) ;
+    
+    --primary-background-color: #1f2128;
+    --secondary-background-color: #242731;
 
-    --background-color: #1f2128;
-    --text-primary: #fff;
+    --primary-text-color: #fff;
+    --secondary-text-color: #808191;
 
-  --secondary-light: #242731;
-  --text-secondary: #808191;
   --primary-light: rgba(38, 85, 177, 0.4);
 
-  --border: 1px solid rgba(255, 255, 255, 0.2);
+  --primary-border: 1px solid rgba(255, 255, 255, 0.2);
+  --primary-border-radius: 16px;
 
-  --height: 45px;
+  --height45: 45px;
   --height35: 35px;
   --width80: 80px;
-  --radius: 16px;
-  --line: rgba(255, 255, 255, 0.2);
+
+
+  --secondary-light-color: rgba(255, 255, 255, 0.2);
 
   --shadow: 0px 1px 1px -1px rgba(255, 255, 255, 0.1),
     0px 1px 1px 0px rgba(255, 255, 255, 0.1),
@@ -35,13 +38,14 @@ const GlobalStyles = createGlobalStyle`
 }
 
 .light {
-  --background-color: #ffffff;
-  --text-primary: #212121;
+  --primary-background-color: #ffffff;
+  --secondary-background-color: #f0f8ff;
 
-  --border: 1px solid rgba(0, 0, 0, 0.2);
+  --primary-text-color: #212121;
+
+  --primary-border: 1px solid rgba(0, 0, 0, 0.2);
   
-  --secondary-light: #f0f8ff;
-  --line: rgba(0, 0, 0, 0.2);
+  --secondary-light-color: rgba(0, 0, 0, 0.2);
 
   --shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
     0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
@@ -79,10 +83,33 @@ a {
 
 .popup-overlay {
     backdrop-filter: blur(2px);
-    /* background-color: rgba(0,0,0,0.4); */
   }
 
+  .Toastify__toast-body {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+    
+.Toastify__toast {
+  min-height: 45px !important;
+  background-color: var(--primary-color) !important;
+  border-radius: var(--primary-border-radius) !important;
+  color: white !important;
+}
 
+
+.Toastify__toast-icon svg,
+.Toastify__close-button svg {
+  color: white !important;
+}
+
+@media screen and (max-width: 700px) {
+  .Toastify__toast {
+    margin: 10px 20px;
+  }
+}
 
 `;
 
