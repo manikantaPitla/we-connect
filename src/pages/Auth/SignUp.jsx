@@ -8,7 +8,7 @@ import {
   OptionsWrapper,
   FormWrapper,
 } from "../../styles/commonStyles";
-import DotLoader from "../../components/Loader";
+import { DotLoader } from "../../components";
 import { useLoading, useFormValidation } from "../../hooks";
 import { showError, signUpWithEmail } from "../../services";
 
@@ -40,11 +40,15 @@ function SignUp() {
         setCredentials(initialValues);
         navigate("/");
       } catch (error) {
-        console.log(error);
-        if (error.message == "Firebase: Error (auth/email-already-in-use).") {
-          showError("Email already in use");
-        } else {
-          showError(error.message);
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            showError("Email already exists");
+            break;
+          case "auth/network-request-failed":
+            showError("Check your network connection");
+            break;
+          default:
+            showError("Something went wrong!");
         }
       } finally {
         stopLoading();
@@ -65,7 +69,6 @@ function SignUp() {
           name="name"
           value={credentials.name}
           onChange={onChangeCredentials}
-          autoComplete="true"
         />
       </InputEl>
       <InputEl>
@@ -97,7 +100,7 @@ function SignUp() {
           {passwordType === "password" ? <Eye /> : <EyeSlash />}
         </button>
       </InputEl>
-      <ButtonEl type="submit">
+      <ButtonEl type="submit" disabled={loading}>
         {loading ? <DotLoader /> : "Create Account"}
       </ButtonEl>
       <OptionsWrapper>

@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import {
   ButtonFlex,
   FormContainer,
-  MainContainer,
   ProfileWrapper,
   SuggestProfileUpdate,
   Title,
 } from "./style";
 import { useSelector } from "react-redux";
-import { ButtonEl, InputEl } from "../../styles/commonStyles";
+import { ButtonEl, InputEl, StyledLargeModal } from "../../styles/commonStyles";
 import defaultImage from "../../assets/images/default-user.webp";
 import { Edit, Warning2 } from "../../assets/icons";
 import { useLoading, useAuthActions } from "../../hooks";
@@ -17,8 +16,9 @@ import {
   showSuccess,
   updateUserProfile,
   uploadMedia,
+  generateThumbnail,
 } from "../../services";
-import DotLoader from "../Loader";
+import { DotLoader } from "../Loader";
 
 function UpdateProfile({ closeModal }) {
   const [profileImage, setProfileImage] = useState(defaultImage);
@@ -33,14 +33,13 @@ function UpdateProfile({ closeModal }) {
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName);
-      user.photoURL && setProfileImage(user.photoURL);
+      user.photoURL && setProfileImage(user.thumbnail);
     }
   }, [user]);
 
   const handleClose = () => {
     setProfileFile(null);
     setDisplayName(null);
-
     closeModal();
   };
 
@@ -56,17 +55,22 @@ function UpdateProfile({ closeModal }) {
     }
   };
 
-  const uploadProfileImage = async (userId, file) => {
-    return await uploadMedia(userId, "profiles", file, (progress) =>
+  const uploadProfileImage = async (file) => {
+    return await uploadMedia(user.uid, "profiles", file, (progress) =>
       setImageUploadingStatus(`${progress}%`)
     );
+  };
+
+  const uploadThumbnailImage = async (file) => {
+    const resizedThumbnail = await generateThumbnail(file);
+    return await uploadMedia(user.uid, "thumbnails", resizedThumbnail);
   };
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
 
     if (
-      (profileImage === user.photoURL || profileImage === defaultImage) &&
+      (profileImage === user.thumbnail || profileImage === defaultImage) &&
       displayName === user.displayName
     ) {
       showError("Please make some changes to update profile.");
@@ -77,9 +81,17 @@ function UpdateProfile({ closeModal }) {
       startLoading();
 
       let profileUploadUrl;
+      let thumbnailurl;
+      console.log("started");
 
-      if (profileImage !== defaultImage && profileImage !== user.photoURL) {
-        profileUploadUrl = await uploadProfileImage(user.uid, profileFile);
+      if (profileImage !== defaultImage && profileImage !== user.thumbnail) {
+        profileUploadUrl = await uploadProfileImage(profileFile);
+        console.log("Profile Uploaded");
+
+        const resizedProfileImage = await generateThumbnail(profileFile);
+        thumbnailurl = await uploadThumbnailImage(resizedProfileImage);
+        console.log("Thumbnail Uploaded");
+
         setImageUploadingStatus("");
       }
 
@@ -87,24 +99,29 @@ function UpdateProfile({ closeModal }) {
 
       if (displayName !== user.displayName)
         dataToUpdate.displayName = displayName;
-      if (profileImage !== user.photoURL)
+
+      if (profileImage !== user.thumbnail) {
         dataToUpdate.photoURL = profileUploadUrl;
+        dataToUpdate.thumbnail = thumbnailurl;
+      }
 
       if (Object.keys(dataToUpdate).length > 0) {
         await updateUserProfile(dataToUpdate, setUser);
       }
-
       showSuccess("Profile updated successfully.");
+      console.log("Profile Data Updated");
+
+      console.log("END");
       closeModal();
     } catch (error) {
-      showError(error.message);
+      showError(error);
     } finally {
       stopLoading();
     }
   };
 
   return (
-    <MainContainer>
+    <StyledLargeModal>
       <Title>{user.photoURL ? "PROFILE" : "UPDATE PROFILE"}</Title>
       {!user?.photoURL && (
         <SuggestProfileUpdate>
@@ -162,7 +179,7 @@ function UpdateProfile({ closeModal }) {
           </ButtonEl>
         </ButtonFlex>
       </FormContainer>
-    </MainContainer>
+    </StyledLargeModal>
   );
 }
 

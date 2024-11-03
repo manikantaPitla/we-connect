@@ -11,6 +11,7 @@ export const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30px;
+
   @media screen and (max-width: 500px) {
     width: 100%;
   }
@@ -135,6 +136,7 @@ export const SuggestProfileUpdate = styled.div`
   align-items: center;
   gap: 10px;
   color: var(--primary-text-color);
+  font-size: 12px;
 `;
 
 export const ButtonFlex = styled.div`

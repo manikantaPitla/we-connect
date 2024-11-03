@@ -8,6 +8,7 @@ import NoImage from "../../assets/images/no-image.png";
 function Profile() {
   const user = useSelector((state) => state.auth.user);
   console.log("Profile Initialized");
+  console.log(user);
 
   useEffect(() => {}, [user]);
 
@@ -24,7 +25,7 @@ function Profile() {
           {user && (
             <>
               <img
-                src={user.photoURL}
+                src={user.thumbnail}
                 alt={user.displayName}
                 onError={handleImageError}
                 loading="lazy"

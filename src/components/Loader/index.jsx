@@ -1,13 +1,32 @@
 import React from "react";
-import { dotPulse, lineWobble } from "ldrs";
+import { dotPulse, lineWobble, ring } from "ldrs";
 import logo from "../../assets/images/favicon.png";
 
-dotPulse.register();
 lineWobble.register();
+dotPulse.register();
+ring.register();
 
-function DotLoader() {
-  return <l-dot-pulse size="43" speed="1.3" color="white"></l-dot-pulse>;
-}
+export const DotLoader = () => (
+  <l-dot-pulse size="43" speed="1.3" color="white"></l-dot-pulse>
+);
+
+export const CircleLoader = () => (
+  <div
+    style={{
+      flexGrow: 1,
+      display: "grid",
+      placeContent: "center",
+    }}
+  >
+    <l-ring
+      size="35"
+      stroke="3"
+      bg-opacity="0"
+      speed="2"
+      color="var(--primary-color)"
+    ></l-ring>
+  </div>
+);
 
 export const PageLoader = () => (
   <div
@@ -31,5 +50,3 @@ export const PageLoader = () => (
     ></l-line-wobble>
   </div>
 );
-
-export default DotLoader;

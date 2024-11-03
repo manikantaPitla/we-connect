@@ -20,7 +20,7 @@ export const signUpWithEmail = async (name, email, password) => {
 
     await handleUserIdentification(userCredential.user);
   } catch (error) {
-    throw new Error(error.message);
+    throw error;
   }
 };
 
@@ -32,9 +32,10 @@ export const signInWithEmail = async (email, password) => {
       email,
       password
     );
+
     return userCredential.user;
   } catch (error) {
-    throw new Error(error.message);
+    throw error;
   }
 };
 
@@ -56,6 +57,6 @@ const handleUserIdentification = async (user) => {
       await setDoc(doc(db, "userChats", user.uid), {});
     }
   } catch (error) {
-    throw new Error(error.message);
+    throw error;
   }
 };

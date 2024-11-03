@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoading, useAuthActions } from "../../hooks";
 import { PageLoader } from "../Loader";
-import { extractUserInfo, onAuthStateChanged, auth } from "../../services";
+import { onAuthStateChanged, auth, getUser } from "../../services";
 
 function ProtectedRoute({ children }) {
   const [loading, startLoading, stopLoading] = useLoading(true);
@@ -13,16 +13,18 @@ function ProtectedRoute({ children }) {
   useEffect(() => {
     startLoading();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setTimeout(() => {
-        stopLoading();
-        if (user) {
-          const userInfo = extractUserInfo(user);
-          setUser(userInfo);
-        } else {
-          removeUser();
-          navigate("/auth/signin");
-        }
-      }, 2000);
+      //   setTimeout(() => {
+      if (user) {
+        (async function () {
+          const userDocInfo = await getUser(user.uid);
+          setUser(userDocInfo);
+          stopLoading();
+        })();
+      } else {
+        removeUser();
+        navigate("/auth/signin");
+      }
+      //   }, 2000);
     });
 
     return () => {

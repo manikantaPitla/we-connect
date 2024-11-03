@@ -9,7 +9,7 @@ import {
   FormWrapper,
 } from "../../styles/commonStyles";
 import { useLoading, useFormValidation } from "../../hooks";
-import DotLoader from "../../components/Loader";
+import { DotLoader } from "../../components";
 import { signInWithEmail, showError } from "../../services";
 
 function SignIn() {
@@ -37,8 +37,16 @@ function SignIn() {
         setCredentials(initialValues);
         navigate("/");
       } catch (error) {
-        console.log(error);
-        showError("Invalid credentials");
+        switch (error.code) {
+          case "auth/network-request-failed":
+            showError("Check your network connection");
+            break;
+          case "auth/invalid-credential":
+            showError("Invalid Email or Password");
+            break;
+          default:
+            showError("Something went wrong!");
+        }
       } finally {
         stopLoading();
       }
@@ -80,7 +88,9 @@ function SignIn() {
           {passwordType === "password" ? <Eye /> : <EyeSlash />}
         </button>
       </InputEl>
-      <ButtonEl type="submit">{loading ? <DotLoader /> : "Login"}</ButtonEl>
+      <ButtonEl type="submit" disabled={loading}>
+        {loading ? <DotLoader /> : "Login"}
+      </ButtonEl>
       <OptionsWrapper>
         <Link to="/auth/forgotpassword">Forgot your password?</Link>
         <p>

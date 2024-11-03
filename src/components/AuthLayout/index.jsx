@@ -5,15 +5,16 @@ import {
   ImageWrapper,
   LogoWrapper,
 } from "./styles";
-import BgImage from "../../assets/images/bg-image.jpg";
 import Logo from "../../assets/images/favicon.png";
 import { Outlet } from "react-router-dom";
+
+import mainPoster from "../../assets/images/main-poster.webp";
 
 function AuthLayout() {
   return (
     <AuthContainer>
       <ImageWrapper>
-        <img src={BgImage} alt="chat background" />
+        <img src={mainPoster} alt="chat banner" loading="lazy" />
       </ImageWrapper>
       <FormContainer>
         <LogoWrapper>

@@ -7,5 +7,6 @@ export {
   EyeSlash,
   Edit,
   Warning2,
+  UserAdd,
 } from "iconsax-react";
 export { CiSearch } from "react-icons/ci";

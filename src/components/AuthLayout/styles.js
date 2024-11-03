@@ -13,16 +13,23 @@ export const AuthContainer = styled.div`
 `;
 
 export const ImageWrapper = styled.div`
-  flex: 1;
-  img {
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
+  display: none;
+
+  @media screen and (min-width: 768px) {
+    flex: 1;
+    img {
+      object-fit: cover;
+      height: 100%;
+      width: 100%;
+      object-position: 80%;
+    }
+    display: block;
   }
 
-  display: none;
-  @media screen and (min-width: 768px) {
-    display: block;
+  @media screen and (min-width: 1100px) {
+    img {
+      object-position: 90%;
+    }
   }
 `;
 

@@ -3,6 +3,24 @@ import { updateProfile } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
+import Resizer from "react-image-file-resizer";
+
+export const generateThumbnail = (file) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      300,
+      300,
+      "JPEG",
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      "file"
+    );
+  });
+
 export const uploadMedia = async (
   userId,
   mediaType,
@@ -12,13 +30,9 @@ export const uploadMedia = async (
   const date = new Date().getTime();
   const storageRef = ref(storage, `User Media/${userId}/${mediaType}/${date}`);
 
-  const uploadTask = uploadBytesResumable(
-    storageRef,
-    file
-    //     , {
-    //     contentType: "image/jpeg",
-    //   }
-  );
+  const uploadTask = uploadBytesResumable(storageRef, file, {
+    contentType: file.type,
+  });
 
   return new Promise((resolve, reject) => {
     uploadTask.on(
@@ -65,30 +79,3 @@ export const updateUserProfile = async (dataToUpdate, userCallBack) => {
     throw new Error("No user is currently signed in.");
   }
 };
-
-// export const updateUserProfile = async (profilePic) => {
-//   try {
-//     await updateUserProfileData({ photoURL: profilePic });
-//   } catch (error) {
-//     throw new Error("Error updating user profile:", error.message);
-//   }
-// };
-
-// export const updateUserName = async (displayName) => {
-//   try {
-//     await updateUserProfileData({ displayName });
-//   } catch (error) {
-//     throw new Error("Error updating username:", error.message);
-//   }
-// };
-
-// export const updateUserNameAndProfile = async (displayName, profilePic) => {
-//   try {
-//     await updateUserProfileData({
-//       photoURL: profilePic,
-//       displayName,
-//     });
-//   } catch (error) {
-//     throw new Error("Error updating profile and username :", error.message);
-//   }
-// };

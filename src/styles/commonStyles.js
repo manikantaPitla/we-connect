@@ -82,3 +82,20 @@ export const MainSharedContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+export const StyledLargeModal = styled.div`
+  background-color: var(--primary-background-color);
+  color: var(--primary-text-color);
+  height: 100%;
+  width: 380px;
+  box-shadow: var(--shadow);
+  overflow-y: auto;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  @media screen and (max-width: 500px) {
+    width: 100%;
+  }
+`;
