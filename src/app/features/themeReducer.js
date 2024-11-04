@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const weConnectTheme = JSON.parse(localStorage.getItem("weConnectTheme"));
 const initialState = {
-  isDarkModeOn: weConnectTheme?.isDarkModeOn || false,
+  isDarkModeOn:
+    JSON.parse(localStorage.getItem("weConnectTheme"))?.isDarkModeOn || false,
 };
 
 const themeReducer = createSlice({
