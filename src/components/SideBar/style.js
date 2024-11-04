@@ -23,6 +23,11 @@ export const SearchWrapper = styled.div`
     height: 1px;
     background-color: var(--secondary-light-color);
   }
+
+  span {
+    height: 45px;
+    border-radius: var(--primary-border-radius);
+  }
 `;
 
 export const UserListWrapper = styled.div`

@@ -61,6 +61,7 @@ button {
 a {
   text-decoration: none;
   font-weight: 500;
+  color: inherit;
 }
 
 button,

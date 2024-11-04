@@ -6,5 +6,7 @@ export { default as SideBar } from "./SideBar";
 export { default as Profile } from "./Profile";
 export { default as UpdateProfile } from "./UpdateProfile";
 export { default as ChatBody } from "./ChatBody";
+export { default as ChatBox } from "./ChatBox";
+export { default as ChatList } from "./ChatList";
 
 export { PopUpModalSmall, PopUpModalLarge } from "./PopUp";

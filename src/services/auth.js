@@ -2,9 +2,12 @@ import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import {
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import { getUser } from "./chat";
+import { useAuthActions } from "../hooks";
 
 // Create a new user
 export const signUpWithEmail = async (name, email, password) => {
@@ -59,4 +62,23 @@ const handleUserIdentification = async (user) => {
   } catch (error) {
     throw error;
   }
+};
+
+export const authUserProtection = async () => {
+  return new Promise((resolve, reject) => {
+    const unSubscribe = onAuthStateChanged(auth, async (user) => {
+      try {
+        if (user) {
+          const userInfo = await getUser(user.uid);
+          resolve(userInfo);
+        } else {
+          resolve(null);
+        }
+      } catch (error) {
+        reject(error);
+      } finally {
+        unSubscribe();
+      }
+    });
+  });
 };

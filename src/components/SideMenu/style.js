@@ -19,8 +19,8 @@ export const SideBarWrapper = styled(MainSharedContainer)`
 export const LogoImage = styled.img`
   cursor: pointer;
   border-radius: 16px;
-  height: 45px;
-  width: 45px !important;
+  height: 50px;
+  width: 50px !important;
 `;
 
 export const MenuItemsWrapper = styled.ul`
@@ -60,5 +60,22 @@ export const MenuItem = styled.li`
 
   &:hover {
     background-color: var(--primary-light-color);
+  }
+`;
+
+export const SkeletonMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  @media screen and (max-width: 500px) {
+    flex-direction: row;
+    gap: 15px;
+  }
+
+  span {
+    height: 50px;
+    width: 50px;
+    border-radius: var(--primary-border-radius);
   }
 `;

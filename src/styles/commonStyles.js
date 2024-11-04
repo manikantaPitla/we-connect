@@ -1,13 +1,13 @@
 import styled from "styled-components";
 
 export const InputEl = styled.div`
+  height: var(--height45);
+  border: var(--primary-border);
+  border-radius: var(--primary-border-radius);
+  color: var(--primary-text-color);
   display: flex;
   align-items: center;
-  border: var(--primary-border);
-  height: var(--height45);
-  border-radius: var(--primary-border-radius);
   overflow: hidden;
-  color: var(--primary-text-color);
 
   input {
     padding: 0px 15px;
@@ -38,13 +38,6 @@ export const ButtonEl = styled.button`
   width: 100%;
   font-size: 12px;
   color: #fff;
-`;
-
-// to be removed
-export const ErrorMessage = styled.p`
-  color: red;
-  text-align: center;
-  margin: 5px 0px;
 `;
 
 export const TitleWrapper = styled.div`

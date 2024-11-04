@@ -18,6 +18,7 @@ export const ProfileWrapper = styled(MainSharedContainer)`
   }
 
   div {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     gap: 3px;

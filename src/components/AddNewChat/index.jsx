@@ -3,16 +3,18 @@ import { InputEl, StyledLargeModal } from "../../styles/commonStyles";
 import { UserAdd, CiSearch } from "../../assets/icons";
 import {
   Header,
+  LoadingWrapper,
   ResponseMsg,
   SearchContainer,
   SearchLogo,
   SearchUsersList,
+  SkeletonWrapper,
 } from "./style";
 import searchUserImage from "../../assets/svg/search-img.svg";
 import { useLoading } from "../../hooks";
 import { searchUser, showError } from "../../services";
 import { useSelector } from "react-redux";
-import { CircleLoader, DotLoader } from "../Loader";
+import Skeleton from "react-loading-skeleton";
 
 function AddNewChat({ closeModal }) {
   const [searchValue, setSearchValue] = useState("");
@@ -68,7 +70,17 @@ function AddNewChat({ closeModal }) {
       </SearchContainer>
 
       {loading ? (
-        <CircleLoader />
+        <LoadingWrapper>
+          {Array.from({ length: 5 }).map((_, index) => (
+            <SkeletonWrapper key={index}>
+              <Skeleton circle width={50} height={50} />
+              <div>
+                <Skeleton width={100} />
+                <Skeleton width={150} />
+              </div>
+            </SkeletonWrapper>
+          ))}
+        </LoadingWrapper>
       ) : (
         <>
           {usersList.length > 0 ? (
@@ -86,21 +98,6 @@ function AddNewChat({ closeModal }) {
                       <p>{user.email}</p>
                     </div>
                   </>
-                  {/* {userAddStatus !== null && userAddStatus === user.uid ? (
-                <DotLoader />
-              ) : (
-                <>
-                  <img
-                    src={user.photoURL}
-                    alt={user.displayName}
-                    loading="lazy"
-                  />
-                  <div>
-                    <h1>{user.displayName}</h1>
-                    <p>{user.email}</p>
-                  </div>
-                </>
-              )} */}
                 </li>
               ))}
             </SearchUsersList>

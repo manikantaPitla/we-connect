@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { HomeContainer, FlexColumn } from "./styles.";
 import {
-  ChatBody,
+  ChatBox,
   Profile,
   SideBar,
   SideMenu,
@@ -9,18 +9,36 @@ import {
 } from "../../components";
 import { PopUpModalLarge } from "../../components";
 import { useSelector } from "react-redux";
+import { authUserProtection } from "../../services";
+import { useAuthActions } from "../../hooks";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [isModalVisible, setModalVisible] = useState(false);
   const user = useSelector((state) => state.auth.user);
 
+  const { setUser } = useAuthActions();
+  const navigate = useNavigate();
+
   useEffect(() => {
     setModalVisible(false);
-
-    if (user && user.photoURL === null) {
-      setModalVisible(true);
-    }
-  }, [user]);
+    const fetchUserData = async () => {
+      try {
+        const userInfo = await authUserProtection();
+        if (userInfo) {
+          setUser(userInfo);
+          if (!userInfo.photoURL) {
+            setModalVisible(true);
+          }
+        } else {
+          navigate("auth/signin");
+        }
+      } catch (error) {
+        console.log("user auth error :", error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   return (
     <HomeContainer>
@@ -39,7 +57,7 @@ function Home() {
             <SideBar />
             <Profile />
           </FlexColumn>
-          <ChatBody />
+          <ChatBox />
         </>
       )}
     </HomeContainer>

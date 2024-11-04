@@ -57,7 +57,7 @@ export const SearchUsersList = styled.ul`
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 
   li {
     background-color: var(--secondary-color);
@@ -65,11 +65,14 @@ export const SearchUsersList = styled.ul`
     display: flex;
     align-items: center;
     gap: 10px;
-    cursor: pointer;
     padding: 10px;
-    box-shadow: var(--shadow);
     border-radius: var(--primary-border-radius);
     color: var(--text-primary);
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: var(--shadow);
+    }
 
     img {
       width: 50px;
@@ -91,7 +94,7 @@ export const SearchUsersList = styled.ul`
       p {
         font-size: 12px;
         font-weight: 500;
-        color: var(--text-secondary);
+        color: var(--secondary-text-color);
       }
     }
   }
@@ -102,4 +105,26 @@ export const ResponseMsg = styled.div`
   text-align: center;
   font-size: 12px;
   color: var(--text-secondary);
+`;
+
+export const LoadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+export const SkeletonWrapper = styled.div`
+  background-color: var(--secondary-color);
+  height: 70px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  /* box-shadow: var(--shadow); */
+  border-radius: var(--primary-border-radius);
+  color: var(--text-primary);
+
+  div {
+    flex-grow: 1;
+  }
 `;

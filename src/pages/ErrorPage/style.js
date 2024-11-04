@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const NotFoundContainer = styled.div`
+export const ErrorMainContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -11,12 +11,17 @@ export const NotFoundContainer = styled.div`
   background-color: var(--primary-background-color);
 
   img {
-    width: 300px;
+    width: 250px;
   }
 
   p {
     text-align: center;
     color: var(--secondary-text-color);
+  }
+
+  div {
+    display: flex;
+    gap: 10px;
   }
 
   button {
@@ -26,11 +31,5 @@ export const NotFoundContainer = styled.div`
     background-color: var(--primary-color);
     color: #fff;
     border-radius: var(--primary-border-radius);
-  }
-
-  @media screen and (min-width: 500px) {
-    img {
-      width: 400px;
-    }
   }
 `;
