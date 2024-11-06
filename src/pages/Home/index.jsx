@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { HomeContainer, FlexColumn } from "./styles.";
 import {
   ChatBox,
@@ -8,17 +8,23 @@ import {
   UpdateProfile,
 } from "../../components";
 import { PopUpModalLarge } from "../../components";
-import { useSelector } from "react-redux";
-import { authUserProtection } from "../../services";
+import { authUserProtection, changeTab } from "../../services";
 import { useAuthActions } from "../../hooks";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [isModalVisible, setModalVisible] = useState(false);
-  const user = useSelector((state) => state.auth.user);
-
   const { setUser } = useAuthActions();
   const navigate = useNavigate();
+
+  const activeTab =
+    JSON.parse(localStorage.getItem("weConnect"))?.activeTab || "Chats";
+  const [currentTab, setCurrentTab] = useState(activeTab);
+
+  const onChangeCurrentTab = useCallback((tab) => {
+    setCurrentTab(tab);
+    changeTab(tab);
+  }, []);
 
   useEffect(() => {
     setModalVisible(false);
@@ -52,9 +58,9 @@ function Home() {
         </PopUpModalLarge>
       ) : (
         <>
-          <SideMenu />
+          <SideMenu tabActions={{ onChangeCurrentTab, currentTab }} />
           <FlexColumn>
-            <SideBar />
+            <SideBar tab={currentTab} />
             <Profile />
           </FlexColumn>
           <ChatBox />

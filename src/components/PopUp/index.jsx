@@ -1,13 +1,13 @@
 import React from "react";
 import {
   ModalBody,
-  ModalButton,
   ModalButtonWrapper,
   ModalTitle,
   StyledModalLarge,
   StyledPopUp,
 } from "./style";
 import "reactjs-popup/dist/index.css";
+import { ButtonL } from "../../styles/commonStyles";
 
 export function PopUpModalSmall(props) {
   const { children, content, action } = props;
@@ -18,8 +18,10 @@ export function PopUpModalSmall(props) {
         <ModalBody>
           <ModalTitle>{content?.title}</ModalTitle>
           <ModalButtonWrapper>
-            <ModalButton onClick={close}>Cancel</ModalButton>
-            <ModalButton onClick={action}>{content?.buttonText}</ModalButton>
+            <ButtonL $outline onClick={close}>
+              Cancel
+            </ButtonL>
+            <ButtonL onClick={action}>{content?.buttonText}</ButtonL>
           </ModalButtonWrapper>
           {children}
         </ModalBody>

@@ -10,7 +10,7 @@ export const InputEl = styled.div`
   overflow: hidden;
 
   input {
-    padding: 0px 15px;
+    padding: 0px ${(props) => (props.$nospace ? "0px" : "15px")};
     height: 100%;
     width: 100%;
     border: none;
@@ -30,14 +30,26 @@ export const InputEl = styled.div`
   }
 `;
 
-export const ButtonEl = styled.button`
-  background-color: var(--primary-color);
+export const ButtonXl = styled.button`
+  background-color: ${(props) =>
+    props.$outline ? "transparent" : "var(--primary-color)"};
   border-radius: var(--primary-border-radius);
   border: 1px solid var(--primary-color);
   height: var(--height45);
   width: 100%;
   font-size: 12px;
-  color: #fff;
+  color: ${(props) => (props.$outline ? "var(--primary-color)" : "#fff")};
+`;
+
+export const ButtonL = styled(ButtonXl)`
+  height: var(--height35);
+  width: var(--width80);
+  flex-shrink: 0;
+`;
+
+export const ButtonM = styled(ButtonL)`
+  height: 30px;
+  width: 60px;
 `;
 
 export const TitleWrapper = styled.div`

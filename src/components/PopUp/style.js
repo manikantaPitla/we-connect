@@ -32,22 +32,7 @@ export const ModalButtonWrapper = styled.div`
   gap: 10px;
 `;
 
-export const ModalButton = styled.button`
-  height: var(--height35);
-  width: var(--width80);
-  border-radius: var(--primary-border-radius);
-  border: 1px solid var(--primary-color);
-  color: var(--primary-color);
-  background-color: transparent;
-  font-size: 12px;
-  font-weight: 500;
-  outline: none;
 
-  &:nth-child(2) {
-    background-color: var(--primary-color);
-    color: #ffffff;
-  }
-`;
 
 // Profile Modal Large
 

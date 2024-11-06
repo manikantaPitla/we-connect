@@ -7,7 +7,6 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { getUser } from "./chat";
-import { useAuthActions } from "../hooks";
 
 // Create a new user
 export const signUpWithEmail = async (name, email, password) => {
@@ -42,7 +41,7 @@ export const signInWithEmail = async (email, password) => {
   }
 };
 
-//create users and usersChat collection
+//create users and usersChat collection initially
 const handleUserIdentification = async (user) => {
   const userData = {
     uid: user.uid,
@@ -58,12 +57,15 @@ const handleUserIdentification = async (user) => {
     if (!docSnap.exists()) {
       await setDoc(userDocRef, userData);
       await setDoc(doc(db, "userChats", user.uid), {});
+      await setDoc(doc(db, "connectionRequests", user.uid), {});
     }
   } catch (error) {
     throw error;
   }
 };
 
+
+//auth user protection
 export const authUserProtection = async () => {
   return new Promise((resolve, reject) => {
     const unSubscribe = onAuthStateChanged(auth, async (user) => {

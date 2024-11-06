@@ -79,3 +79,11 @@ export const updateUserProfile = async (dataToUpdate, userCallBack) => {
     throw new Error("No user is currently signed in.");
   }
 };
+
+export const changeTab = (tabValue) => {
+  const weConnect = JSON.parse(localStorage.getItem("weConnect"));
+  localStorage.setItem(
+    "weConnect",
+    JSON.stringify({ ...weConnect, activeTab: tabValue })
+  );
+};

@@ -1,27 +1,25 @@
-import React from "react";
+import React, { memo } from "react";
 import { SearchWrapper, SideBarWrapper, UserListWrapper } from "./style";
 import { CiSearch } from "../../assets/icons";
-import { ButtonEl, InputEl } from "../../styles/commonStyles";
-import { PopUpModalLarge } from "../PopUp";
-import AddNewChat from "../AddNewChat";
+import { ButtonXl, InputEl } from "../../styles/commonStyles";
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
-import { ChatList } from "..";
+import { ChatList, ConnectionList, AddNewChat, PopUpModalLarge } from "..";
 
-function SideBar() {
+function SideBar({ tab }) {
   console.log("Side Bar");
   const user = useSelector((state) => state.auth.user);
 
-  return (
-    <SideBarWrapper>
+  const renderChatList = () => (
+    <>
       <SearchWrapper>
         {user ? (
           <>
-            <InputEl>
+            <InputEl $nospace>
               <CiSearch />
               <input type="search" placeholder="Search" />
             </InputEl>
-            <PopUpModalLarge trigger={<ButtonEl>Start New Chat</ButtonEl>}>
+            <PopUpModalLarge trigger={<ButtonXl>Start New Chat</ButtonXl>}>
               {(close) => <AddNewChat closeModal={close} />}
             </PopUpModalLarge>
           </>
@@ -33,11 +31,22 @@ function SideBar() {
         )}
         <hr />
       </SearchWrapper>
-      <UserListWrapper>
-        <ChatList />
-      </UserListWrapper>
-    </SideBarWrapper>
+      <UserListWrapper>{<ChatList />}</UserListWrapper>
+    </>
   );
+
+  const renderComponents = () => {
+    switch (tab) {
+      case "Chats":
+        return renderChatList();
+      case "Connections":
+        return <ConnectionList />;
+      default:
+        return renderChatList();
+    }
+  };
+
+  return <SideBarWrapper>{renderComponents()}</SideBarWrapper>;
 }
 
-export default SideBar;
+export default memo(SideBar);

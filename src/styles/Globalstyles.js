@@ -23,7 +23,8 @@ const GlobalStyles = createGlobalStyle`
   --primary-light: rgba(38, 85, 177, 0.4);
 
   --primary-border: 1px solid rgba(255, 255, 255, 0.2);
-  --primary-border-radius: 16px;
+  /* --primary-border-radius: 16px; */
+  --primary-border-radius: 0px;
 
   --height45: 45px;
   --height35: 35px;
@@ -35,6 +36,10 @@ const GlobalStyles = createGlobalStyle`
   --shadow: 0px 1px 1px -1px rgba(255, 255, 255, 0.1),
     0px 1px 1px 0px rgba(255, 255, 255, 0.1),
     0px 1px 2px 0px rgba(255, 255, 255, 0.1);
+
+
+    --fs-12 : 12px;
+    --fs-14 : 14px;
 }
 
 .light {

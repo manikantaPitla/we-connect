@@ -1,29 +1,46 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   LogoImage,
   MenuItem,
   MenuItemsWrapper,
-  SideBarWrapper,
+  SideMenuWrapper,
   SkeletonMenu,
 } from "./style";
 import Logo from "../../assets/images/favicon.png";
-import { Logout, Messages1, Moon, Sun1 } from "../../assets/icons";
+import {
+  Logout,
+  Messages1,
+  Moon,
+  Sun1,
+  Profile2User,
+} from "../../assets/icons";
 import { useAuthActions, useTheme } from "../../hooks";
 import { PopUpModalSmall } from "../PopUp";
-import { signOutUser } from "../../services";
+import { showError, signOutUser } from "../../services";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-function SideMenu() {
+const tabItems = [
+  {
+    name: "Chats",
+    icon: Messages1,
+  },
+  {
+    name: "Connections",
+    icon: Profile2User,
+  },
+];
+
+function SideMenu({ tabActions }) {
   const { pageTheme, changeTheme } = useTheme();
   console.log("Side Menu");
 
   const navigate = useNavigate();
-  const { removeUser } = useAuthActions();
   const user = useSelector((state) => state.auth.user);
+  const { removeUser } = useAuthActions();
 
   const logout = async () => {
     try {
@@ -33,19 +50,27 @@ function SideMenu() {
       removeUser();
       navigate("/auth/signin");
     } catch (error) {
-      console.log(error.message);
+      showError(error.message);
     }
   };
 
   return (
-    <SideBarWrapper>
+    <SideMenuWrapper>
       {user ? (
         <>
           <LogoImage src={Logo} alt="we connect logo" loading="lazy" />
           <MenuItemsWrapper>
-            <MenuItem className="active">
-              <Messages1 />
-            </MenuItem>
+            {tabItems.map((eachItem) => (
+              <MenuItem
+                className={`${
+                  tabActions.currentTab === eachItem.name && "active"
+                }`}
+                onClick={() => tabActions.onChangeCurrentTab(eachItem.name)}
+                key={eachItem.name}
+              >
+                <eachItem.icon />
+              </MenuItem>
+            ))}
             <MenuItem onClick={changeTheme}>
               {pageTheme?.isDarkModeOn ? <Sun1 /> : <Moon />}
             </MenuItem>
@@ -70,11 +95,12 @@ function SideMenu() {
             <Skeleton />
             <Skeleton />
             <Skeleton />
+            <Skeleton />
           </SkeletonMenu>
         </>
       )}
-    </SideBarWrapper>
+    </SideMenuWrapper>
   );
 }
 
-export default SideMenu;
+export default memo(SideMenu);

@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ProtectedRoute, AuthLayout } from "./components";
+import { AuthLayout } from "./components";
 import {
   Home,
   SignIn,
@@ -9,7 +9,6 @@ import {
   //   ErrorPage,
 } from "./pages";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { SkeletonTheme } from "react-loading-skeleton";
@@ -17,13 +16,6 @@ import { SkeletonTheme } from "react-loading-skeleton";
 function App() {
   const pageTheme = useSelector((state) => state.theme);
   console.log("App Component");
-  console.log("PAGE THEME:", pageTheme);
-
-  //   useEffect(() => {
-  //     const theme = pageTheme?.isDarkModeOn ? "dark" : "light";
-  //     document.body.classList.remove(pageTheme.isDarkModeOn ? "light" : "dark");
-  //     document.body.classList.add(theme);
-  //   }, [pageTheme.isDarkModeOn]);
 
   return (
     <div className={pageTheme.isDarkModeOn ? "dark" : "light"}>

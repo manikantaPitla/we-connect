@@ -4,6 +4,7 @@ import { ChatItem, ChatListContainer } from "./style";
 import Skeleton from "react-loading-skeleton";
 
 function ChatList() {
+  console.log("ChatList");
   const user = useSelector((state) => state.auth.user);
 
   return (

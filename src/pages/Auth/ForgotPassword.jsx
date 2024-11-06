@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  ButtonEl,
+  ButtonXl,
   InputEl,
   TitleWrapper,
   OptionsWrapper,
@@ -25,7 +25,7 @@ function ForgotPassword() {
           autoComplete="true"
         />
       </InputEl>
-      <ButtonEl type="submit">Send Code</ButtonEl>
+      <ButtonXl type="submit">Send Code</ButtonXl>
       <OptionsWrapper>
         <p>
           Go Back? <Link to="/auth/signin">Sign In</Link>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import {
   ButtonFlex,
   FormContainer,
@@ -7,7 +7,7 @@ import {
   Title,
 } from "./style";
 import { useSelector } from "react-redux";
-import { ButtonEl, InputEl, StyledLargeModal } from "../../styles/commonStyles";
+import { ButtonXl, InputEl, StyledLargeModal } from "../../styles/commonStyles";
 import defaultImage from "../../assets/images/default-user.webp";
 import { Edit, Warning2 } from "../../assets/icons";
 import { useLoading, useAuthActions } from "../../hooks";
@@ -21,25 +21,29 @@ import {
 import { DotLoader } from "../Loader";
 
 function UpdateProfile({ closeModal }) {
-  const [profileImage, setProfileImage] = useState(defaultImage);
+  console.log("UpdateProfile");
+  const user = useSelector((state) => state.auth.user);
+
+  const [profileImage, setProfileImage] = useState(
+    user?.thumbnail || defaultImage
+  );
   const [profileFile, setProfileFile] = useState(null);
-  const [displayName, setDisplayName] = useState("");
+  const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [imageUploadingStatus, setImageUploadingStatus] = useState("");
 
-  const user = useSelector((state) => state.auth.user);
   const [loading, startLoading, stopLoading] = useLoading();
   const { setUser } = useAuthActions();
 
   useEffect(() => {
     if (user) {
-      setDisplayName(user.displayName);
-      user.photoURL && setProfileImage(user.thumbnail);
+      setDisplayName(user.displayName || "");
+      setProfileImage(user.thumbnail || defaultImage);
     }
   }, [user]);
 
   const handleClose = () => {
     setProfileFile(null);
-    setDisplayName(null);
+    setDisplayName(user?.displayName || "");
     closeModal();
   };
 
@@ -82,23 +86,18 @@ function UpdateProfile({ closeModal }) {
 
       let profileUploadUrl;
       let thumbnailurl;
-      console.log("started");
 
       if (profileImage !== defaultImage && profileImage !== user.thumbnail) {
         profileUploadUrl = await uploadProfileImage(profileFile);
-        console.log("Profile Uploaded");
-
         const resizedProfileImage = await generateThumbnail(profileFile);
         thumbnailurl = await uploadThumbnailImage(resizedProfileImage);
-        console.log("Thumbnail Uploaded");
-
-        setImageUploadingStatus("");
       }
 
       const dataToUpdate = {};
 
-      if (displayName !== user.displayName)
+      if (displayName !== user.displayName) {
         dataToUpdate.displayName = displayName;
+      }
 
       if (profileImage !== user.thumbnail) {
         dataToUpdate.photoURL = profileUploadUrl;
@@ -109,12 +108,10 @@ function UpdateProfile({ closeModal }) {
         await updateUserProfile(dataToUpdate, setUser);
       }
       showSuccess("Profile updated successfully.");
-      console.log("Profile Data Updated");
-
-      console.log("END");
       closeModal();
     } catch (error) {
       showError(error);
+      console.error("Error updating profile:", error);
     } finally {
       stopLoading();
     }
@@ -166,21 +163,21 @@ function UpdateProfile({ closeModal }) {
         </InputEl>
         <ButtonFlex>
           {user?.photoURL && (
-            <ButtonEl
+            <ButtonXl
               type="button"
               className="btn-outline"
               onClick={handleClose}
             >
               Cancel
-            </ButtonEl>
+            </ButtonXl>
           )}
-          <ButtonEl type="submit" disabled={loading}>
+          <ButtonXl type="submit" disabled={loading || !displayName}>
             {loading ? <DotLoader /> : "Update"}
-          </ButtonEl>
+          </ButtonXl>
         </ButtonFlex>
       </FormContainer>
     </StyledLargeModal>
   );
 }
 
-export default UpdateProfile;
+export default memo(UpdateProfile);

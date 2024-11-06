@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { MainSharedContainer } from "../../styles/commonStyles";
 
-export const SideBarWrapper = styled(MainSharedContainer)`
+export const SideMenuWrapper = styled(MainSharedContainer)`
   width: 80px;
   padding: 15px 0;
   align-items: center;
@@ -56,10 +56,9 @@ export const MenuItem = styled.li`
   svg {
     width: 18px;
     height: 18px;
-  }
-
-  &:hover {
-    background-color: var(--primary-light-color);
+    /* &:hover {
+      color: var(--primary-color);
+    } */
   }
 `;
 

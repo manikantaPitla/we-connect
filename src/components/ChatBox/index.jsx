@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { ChatBoxWrapper, DefaultUserContainer, DevContact } from "./style";
 import { useSelector } from "react-redux";
 import pageLogoImage from "../../assets/images/logo.svg";
@@ -7,6 +7,7 @@ import Skeleton from "react-loading-skeleton";
 
 function ChatBox() {
   const user = useSelector((state) => state.auth.user);
+  console.log("ChatBox");
 
   return (
     <ChatBoxWrapper>
@@ -68,4 +69,4 @@ function ChatBox() {
   );
 }
 
-export default ChatBox;
+export default memo(ChatBox);

@@ -8,6 +8,7 @@ export {
   Edit,
   Warning2,
   UserAdd,
+  Profile2User,
 } from "iconsax-react";
 export { CiSearch } from "react-icons/ci";
 export { FaGithub, FaLinkedin } from "react-icons/fa";

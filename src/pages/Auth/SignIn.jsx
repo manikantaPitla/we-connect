@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeSlash } from "../../assets/icons";
 import {
-  ButtonEl,
+  ButtonXl,
   InputEl,
   TitleWrapper,
   OptionsWrapper,
@@ -88,9 +88,9 @@ function SignIn() {
           {passwordType === "password" ? <Eye /> : <EyeSlash />}
         </button>
       </InputEl>
-      <ButtonEl type="submit" disabled={loading}>
+      <ButtonXl type="submit" disabled={loading}>
         {loading ? <DotLoader /> : "Login"}
-      </ButtonEl>
+      </ButtonXl>
       <OptionsWrapper>
         <Link to="/auth/forgotpassword">Forgot your password?</Link>
         <p>

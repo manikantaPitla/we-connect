@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { ProfileWrapper } from "./style";
 import { useSelector } from "react-redux";
 import { PopUpModalLarge } from "../PopUp";
@@ -51,4 +51,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default memo(Profile);

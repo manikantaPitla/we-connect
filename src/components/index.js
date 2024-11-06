@@ -8,5 +8,7 @@ export { default as UpdateProfile } from "./UpdateProfile";
 export { default as ChatBody } from "./ChatBody";
 export { default as ChatBox } from "./ChatBox";
 export { default as ChatList } from "./ChatList";
+export { default as ConnectionList } from "./ConnectionList";
+export { default as AddNewChat } from "./AddNewChat";
 
 export { PopUpModalSmall, PopUpModalLarge } from "./PopUp";

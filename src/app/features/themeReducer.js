@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isDarkModeOn:
-    JSON.parse(localStorage.getItem("weConnectTheme"))?.isDarkModeOn || false,
+    JSON.parse(localStorage.getItem("weConnect"))?.isDarkModeOn || false,
 };
 
 const themeReducer = createSlice({
@@ -12,7 +12,7 @@ const themeReducer = createSlice({
     setTheme: (state, action) => {
       state.isDarkModeOn = action.payload;
       localStorage.setItem(
-        "weConnectTheme",
+        "weConnect",
         JSON.stringify({ isDarkModeOn: action.payload })
       );
     },

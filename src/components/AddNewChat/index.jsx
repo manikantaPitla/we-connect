@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { InputEl, StyledLargeModal } from "../../styles/commonStyles";
+import { InputEl, StyledLargeModal, ButtonM } from "../../styles/commonStyles";
 import { UserAdd, CiSearch } from "../../assets/icons";
 import {
   Header,
@@ -9,19 +9,28 @@ import {
   SearchLogo,
   SearchUsersList,
   SkeletonWrapper,
+  UserListItem,
 } from "./style";
 import searchUserImage from "../../assets/svg/search-img.svg";
 import { useLoading } from "../../hooks";
-import { searchUser, showError } from "../../services";
+import {
+  searchUser,
+  sendConnectionRequest,
+  showError,
+  showSuccess,
+} from "../../services";
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 
 function AddNewChat({ closeModal }) {
+  console.log("AddNewChat ");
   const [searchValue, setSearchValue] = useState("");
   const [response, setResponse] = useState("");
   const [usersList, setUsersList] = useState([]);
 
   const [loading, startLoading, stopLoading] = useLoading();
+  const [connectionSentUser, setConnectionSentUser] = useState(null);
+
   const currentUser = useSelector((state) => state.auth.user);
 
   const handleUserSearch = async (e) => {
@@ -47,6 +56,22 @@ function AddNewChat({ closeModal }) {
     }
   };
 
+  const handleUserClick = async (recieverUserId) => {
+    setConnectionSentUser(recieverUserId);
+    console.log("request sending started");
+
+    try {
+      await sendConnectionRequest(currentUser.uid, recieverUserId);
+      console.log("request sending successful");
+      showSuccess("Request sent successfully");
+    } catch (error) {
+      showError(error.message);
+      console.log("request sending error");
+    } finally {
+      setConnectionSentUser(null);
+    }
+  };
+
   return (
     <StyledLargeModal>
       <Header>
@@ -54,7 +79,7 @@ function AddNewChat({ closeModal }) {
           <UserAdd size={19} />
           <p>Add user</p>
         </div>
-        <button onClick={closeModal}>Close</button>
+        <ButtonM onClick={closeModal}>Close</ButtonM>
       </Header>
       <SearchContainer onSubmit={handleUserSearch}>
         <InputEl>
@@ -85,20 +110,24 @@ function AddNewChat({ closeModal }) {
         <>
           {usersList.length > 0 ? (
             <SearchUsersList>
-              {usersList.map((user) => (
-                <li key={user.uid} onClick={() => handleClickUser(user)}>
-                  <>
-                    <img
-                      src={user.thumbnail}
-                      alt={user.displayName}
-                      loading="lazy"
-                    />
-                    <div>
-                      <h1>{user.displayName}</h1>
-                      <p>{user.email}</p>
-                    </div>
-                  </>
-                </li>
+              {usersList.map((eachUser) => (
+                <UserListItem key={eachUser.uid}>
+                  <img
+                    src={eachUser.thumbnail}
+                    alt={eachUser.displayName}
+                    loading="lazy"
+                  />
+                  <div>
+                    <h1>{eachUser.displayName}</h1>
+                    <p>{eachUser.email}</p>
+                  </div>
+                  <ButtonM onClick={() => handleUserClick(eachUser.uid)}>
+                    {connectionSentUser !== null &&
+                    connectionSentUser === eachUser.uid
+                      ? "Loading..."
+                      : "Request"}
+                  </ButtonM>
+                </UserListItem>
               ))}
             </SearchUsersList>
           ) : (

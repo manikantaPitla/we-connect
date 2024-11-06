@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeSlash } from "../../assets/icons";
 import {
-  ButtonEl,
+  ButtonXl,
   InputEl,
   TitleWrapper,
   OptionsWrapper,
@@ -100,9 +100,9 @@ function SignUp() {
           {passwordType === "password" ? <Eye /> : <EyeSlash />}
         </button>
       </InputEl>
-      <ButtonEl type="submit" disabled={loading}>
+      <ButtonXl type="submit" disabled={loading}>
         {loading ? <DotLoader /> : "Create Account"}
-      </ButtonEl>
+      </ButtonXl>
       <OptionsWrapper>
         <p>
           Already have an account? <Link to="/auth/signin">Sign In</Link>
