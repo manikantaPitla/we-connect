@@ -31,7 +31,7 @@ function UpdateProfile({ closeModal }) {
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [imageUploadingStatus, setImageUploadingStatus] = useState("");
 
-  const [loading, startLoading, stopLoading] = useLoading();
+  const { loading, startLoading, stopLoading } = useLoading();
   const { setUser } = useAuthActions();
 
   useEffect(() => {

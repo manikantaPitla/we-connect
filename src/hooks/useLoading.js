@@ -6,7 +6,7 @@ function useLoading(initialLoading = false) {
   const startLoading = () => setLoading(true);
   const stopLoading = () => setLoading(false);
 
-  return [loading, startLoading, stopLoading];
+  return { loading, startLoading, stopLoading };
 }
 
 export default useLoading;

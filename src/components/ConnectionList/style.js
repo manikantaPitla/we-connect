@@ -32,6 +32,7 @@ export const TabWrapper = styled.div`
 `;
 
 export const UserItemsContainer = styled.ul``;
+
 export const UserItem = styled.li`
   display: flex;
   align-items: center;
