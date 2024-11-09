@@ -1,14 +1,24 @@
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../config/firebase";
 import {
+  doc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  auth,
+  db,
+  realtimeDb,
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
   signInWithEmailAndPassword,
   updateProfile,
-} from "firebase/auth";
-import { getUser } from "./chat";
+  onAuthStateChanged,
+  ref,
+  onDisconnect,
+  set,
+  onValue,
+} from "./firebaseFunctions";
 
-// Create a new user
+import { getUserData } from "./chat";
+
+// Sign up a new user and initialize their data
 export const signUpWithEmail = async (name, email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -16,6 +26,7 @@ export const signUpWithEmail = async (name, email, password) => {
       email,
       password
     );
+
     await updateProfile(userCredential.user, {
       displayName: name,
     });
@@ -26,7 +37,7 @@ export const signUpWithEmail = async (name, email, password) => {
   }
 };
 
-// Login with email and password
+// Sign in with email and password
 export const signInWithEmail = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
@@ -41,46 +52,111 @@ export const signInWithEmail = async (email, password) => {
   }
 };
 
-//create users and usersChat collection initially
+// Set default user data in Firestore
 const handleUserIdentification = async (user) => {
-  const userData = {
-    uid: user.uid,
-    displayName: user.displayName,
-    email: user.email,
-    photoURL: user.photoURL,
+  const userDefaultData = {
+    userInfo: {
+      uid: user.uid,
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      thumbnailUrl: user.photoURL,
+      createdAt: serverTimestamp(),
+    },
+    connectionRequests: {
+      sent: [],
+      received: [],
+    },
   };
 
   try {
-    const userDocRef = doc(collection(db, "users"), user.uid);
-    const docSnap = await getDoc(userDocRef);
-
-    if (!docSnap.exists()) {
-      await setDoc(userDocRef, userData);
-      await setDoc(doc(db, "userChats", user.uid), {});
-      await setDoc(doc(db, "connectionRequests", user.uid), {});
-    }
+    await setDoc(doc(db, "users", user.uid), userDefaultData, { merge: true });
+    await setDoc(doc(db, "userChats", user.uid), {});
   } catch (error) {
+    console.error("Error during user identification:", error);
     throw error;
   }
 };
 
-
-//auth user protection
+//checking user exist in app or else return error
 export const authUserProtection = async () => {
   return new Promise((resolve, reject) => {
     const unSubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
-          const userInfo = await getUser(user.uid);
+          const userInfo = await getUserData(user.uid);
+
           resolve(userInfo);
         } else {
           resolve(null);
         }
       } catch (error) {
+        console.error("Error fetching user info:", error);
         reject(error);
       } finally {
         unSubscribe();
       }
     });
   });
+};
+
+// ****************************************************************
+
+// Sync user's online status in Firestore and Realtime Database
+const syncOnlineStatus = async (userId, isOnline) => {
+  try {
+    const statusRef = ref(realtimeDb, `status/${userId}`);
+    await set(statusRef, {
+      online: isOnline,
+      lastSeen: serverTimestamp(),
+    });
+
+    await updateDoc(doc(db, "users", userId), {
+      online: isOnline,
+      lastSeen: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error("Error syncing online status:", error);
+    throw new Error("Failed to sync online status.");
+  }
+};
+
+// Monitor user's connection status and update Firestore and Realtime Database
+const monitorUserConnection = async () => {
+  const user = auth.currentUser;
+
+  if (user) {
+    const userId = user.uid;
+    const statusRef = ref(realtimeDb, `status/${userId}`);
+
+    // Set offline status in Realtime Database when disconnected
+    onDisconnect(statusRef).set({
+      online: false,
+      lastSeen: serverTimestamp(),
+    });
+
+    // Track connection status in Realtime Database
+    const connectedRef = ref(realtimeDb, ".info/connected");
+    onValue(connectedRef, async (snapshot) => {
+      if (snapshot.val() === true) {
+        // User is online
+        await syncOnlineStatus(userId, true);
+
+        // Listen for tab close or reload to set Firestore status
+        window.addEventListener("beforeunload", async () => {
+          await syncOnlineStatus(userId, false);
+        });
+      } else {
+        // User is offline
+        try {
+          await updateDoc(doc(db, "users", userId), {
+            online: false,
+            lastSeen: serverTimestamp(),
+          });
+        } catch (error) {
+          console.error("Error updating Firestore on disconnect:", error);
+        }
+      }
+    });
+  }
 };

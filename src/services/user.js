@@ -7,9 +7,6 @@ export const extractUserInfo = (user) => {
   };
 };
 
-
-export const generateCombineId = (currentUserId, userId) => {
-    return currentUserId > userId
-      ? currentUserId + userId
-      : userId + currentUserId;
-  };
+export const generateCombineId = (currentUserId, requestUserId) => {
+  return [currentUserId, requestUserId].sort().join("_");
+};

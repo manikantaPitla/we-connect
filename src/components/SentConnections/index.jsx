@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getSentRequests } from "../../services";
+import {
+  declineConnectionRequest,
+  getUserConnectionRequests,
+} from "../../services";
 import { SkeletonWrapper, UserItem } from "./style";
 import { ButtonM } from "../../styles/commonStyles";
 import { useLoading } from "../../hooks";
 import Skeleton from "react-loading-skeleton";
+
+import defaultProfileImage from "../../assets/images/default-user.webp";
 
 function sentConnections() {
   const [userList, setUserList] = useState([]);
@@ -13,7 +18,7 @@ function sentConnections() {
 
   const fetchSentRequests = async () => {
     try {
-      const userList = await getSentRequests(user.uid);
+      const userList = await getUserConnectionRequests(user.uid);
       setUserList(userList);
     } catch (err) {
       console.log(err);
@@ -25,6 +30,14 @@ function sentConnections() {
   useEffect(() => {
     fetchSentRequests();
   }, []);
+
+  const handleRemoveRequest = async (receivedUserId) => {
+    try {
+      await declineConnectionRequest(user.uid, receivedUserId, true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -42,15 +55,31 @@ function sentConnections() {
         </>
       ) : (
         <>
-          {userList.map((user, index) => (
-            <UserItem key={index}>
-              <img src={user.photoUrl} alt={user.displayName} loading="lazy" />
-              <p>{user.displayName}</p>
-              <div>
-                <ButtonM $outline>Cancel</ButtonM>
-              </div>
-            </UserItem>
-          ))}
+          {userList.length > 0 ? (
+            <>
+              {userList.map((user, index) => (
+                <UserItem key={index}>
+                  <img
+                    src={user.thumbnailUrl || defaultProfileImage}
+                    alt={user.displayName || "default profile"}
+                    loading="lazy"
+                  />
+                  <p>{user.displayName}</p>
+                  <div>
+                    <ButtonM
+                      $outline
+                      type="button"
+                      onClick={() => handleRemoveRequest(user.uid)}
+                    >
+                      Cancel
+                    </ButtonM>
+                  </div>
+                </UserItem>
+              ))}
+            </>
+          ) : (
+            <p>No Requests</p>
+          )}
         </>
       )}
     </>

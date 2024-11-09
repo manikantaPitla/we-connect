@@ -28,7 +28,7 @@ export const uploadMedia = async (
   progressCallback
 ) => {
   const date = new Date().getTime();
-  const storageRef = ref(storage, `User Media/${userId}/${mediaType}/${date}`);
+  const storageRef = ref(storage, `user-media/${userId}/${mediaType}/${date}`);
 
   const uploadTask = uploadBytesResumable(storageRef, file, {
     contentType: file.type,

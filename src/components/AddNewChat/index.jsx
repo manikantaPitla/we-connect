@@ -22,13 +22,16 @@ import {
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 
+import { DotLoader } from "../Loader";
+import defaultProfileImage from "../../assets/images/default-user.webp";
+
 function AddNewChat({ closeModal }) {
   console.log("AddNewChat ");
   const [searchValue, setSearchValue] = useState("");
   const [response, setResponse] = useState("");
   const [usersList, setUsersList] = useState([]);
 
-  const [loading, startLoading, stopLoading] = useLoading();
+  const { loading, startLoading, stopLoading } = useLoading();
   const [connectionSentUser, setConnectionSentUser] = useState(null);
 
   const currentUser = useSelector((state) => state.auth.user);
@@ -113,8 +116,8 @@ function AddNewChat({ closeModal }) {
               {usersList.map((eachUser) => (
                 <UserListItem key={eachUser.uid}>
                   <img
-                    src={eachUser.thumbnail}
-                    alt={eachUser.displayName}
+                    src={eachUser.thumbnail || defaultProfileImage}
+                    alt={eachUser.displayName || "default profile"}
                     loading="lazy"
                   />
                   <div>
@@ -123,9 +126,11 @@ function AddNewChat({ closeModal }) {
                   </div>
                   <ButtonM onClick={() => handleUserClick(eachUser.uid)}>
                     {connectionSentUser !== null &&
-                    connectionSentUser === eachUser.uid
-                      ? "Loading..."
-                      : "Request"}
+                    connectionSentUser === eachUser.uid ? (
+                      <DotLoader />
+                    ) : (
+                      "Request"
+                    )}
                   </ButtonM>
                 </UserListItem>
               ))}

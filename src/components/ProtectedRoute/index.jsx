@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoading, useAuthActions } from "../../hooks";
 import { PageLoader } from "../Loader";
-import { onAuthStateChanged, auth, getUser } from "../../services";
+import { onAuthStateChanged, auth, getUserData } from "../../services";
 import { ErrorPage } from "../../pages";
 
 function ProtectedRoute({ children }) {
@@ -16,7 +16,7 @@ function ProtectedRoute({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
-          const userDocInfo = await getUser(user.uid);
+          const userDocInfo = await getUserData(user.uid);
           setUser(userDocInfo);
         } else {
           removeUser();
@@ -24,9 +24,7 @@ function ProtectedRoute({ children }) {
         }
       } catch (err) {
         console.error("Error loading...", err);
-        setError(
-          "An error occurred while loading. Please try again."
-        );
+        setError("An error occurred while loading. Please try again.");
       } finally {
         stopLoading();
       }

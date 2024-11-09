@@ -3,19 +3,14 @@ import { ProfileWrapper } from "./style";
 import { useSelector } from "react-redux";
 import { PopUpModalLarge } from "../PopUp";
 import UpdateProfile from "../UpdateProfile";
-import NoImage from "../../assets/images/no-image.png";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+
+import defaultProfileImage from "../../assets/images/default-user.webp";
 
 function Profile() {
   const user = useSelector((state) => state.auth.user);
   console.log("Profile initialized");
-
-  const handleImageError = (e) => {
-    console.log(e);
-    e.target.src = NoImage;
-    e.target.alt = "No Image";
-  };
 
   return (
     <PopUpModalLarge
@@ -24,9 +19,8 @@ function Profile() {
           {user ? (
             <>
               <img
-                src={user.thumbnail}
-                alt={user.displayName}
-                onError={handleImageError}
+                src={user.thumbnailUrl || defaultProfileImage}
+                alt={user.displayName || "default profile"}
                 loading="lazy"
               />
               <div>

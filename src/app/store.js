@@ -7,6 +7,13 @@ const store = configureStore({
     auth: authReducer,
     theme: themeReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["auth/addUser"],
+        ignoredPaths: ["auth.user.lastLogin", "auth.user.createdAt"],
+      },
+    }),
 });
 
 export default store;
