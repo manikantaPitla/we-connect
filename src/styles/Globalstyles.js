@@ -9,6 +9,13 @@ const GlobalStyles = createGlobalStyle`
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+*,
+*::before,
+*::after {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+}
+
 
 :root {
     --primary-color: #2655b1;
@@ -23,7 +30,7 @@ const GlobalStyles = createGlobalStyle`
   --primary-light: rgba(38, 85, 177, 0.4);
 
   --primary-border: 1px solid rgba(255, 255, 255, 0.2);
-  /* --primary-border-radius: 16px; */
+  --primary-border-radius: 16px;
   --primary-border-radius: 0px;
 
   --height45: 45px;

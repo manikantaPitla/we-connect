@@ -2,8 +2,10 @@ import styled from "styled-components";
 
 export const ConnectionContainer = styled.div`
   display: flex;
+  padding: 10px 0;
   flex-direction: column;
   gap: 20px;
+  flex: 1;
 
   h4 {
     font-size: 14px;
@@ -16,12 +18,15 @@ export const TabWrapper = styled.div`
   gap: 10px;
 
   button {
-    flex-grow: 1;
+    width: 100%;
     color: var(--primary-text-color);
-    padding: 15px 10px;
+    height: 40px;
+    border-radius: var(--primary-border-radius);
   }
 
   .active-tab {
+    background-color: var(--primary-color);
+    color: #fff;
     border-bottom: 1px solid var(--primary-color);
   }
 
@@ -31,7 +36,11 @@ export const TabWrapper = styled.div`
   }
 `;
 
-export const UserItemsContainer = styled.ul``;
+export const UserItemsContainer = styled.ul`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
 
 export const UserItem = styled.li`
   display: flex;

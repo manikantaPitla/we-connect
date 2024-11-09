@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { ChatBoxWrapper, DefaultUserContainer, DevContact } from "./style";
 import { useSelector } from "react-redux";
-import pageLogoImage from "../../assets/images/logo.svg";
+import pageLogoImage from "../../assets/images/favicon.png";
 import { FaGithub, FaLinkedin } from "../../assets/icons";
 import Skeleton from "react-loading-skeleton";
 

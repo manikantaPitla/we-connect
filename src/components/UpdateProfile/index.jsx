@@ -8,7 +8,7 @@ import {
 } from "./style";
 import { useSelector } from "react-redux";
 import { ButtonXl, InputEl, StyledLargeModal } from "../../styles/commonStyles";
-import defaultImage from "../../assets/images/default-user.webp";
+import defaultProfileImage from "../../assets/images/default-user.webp";
 import { Edit, Warning2 } from "../../assets/icons";
 import { useLoading, useAuthActions } from "../../hooks";
 import {
@@ -17,6 +17,7 @@ import {
   updateUserProfile,
   uploadMedia,
   generateThumbnail,
+  getUserData,
 } from "../../services";
 import { DotLoader } from "../Loader";
 
@@ -24,36 +25,48 @@ function UpdateProfile({ closeModal }) {
   console.log("UpdateProfile");
   const user = useSelector((state) => state.auth.user);
 
-  const [profileImage, setProfileImage] = useState(
-    user?.thumbnail || defaultImage
-  );
-  const [profileFile, setProfileFile] = useState(null);
-  const [displayName, setDisplayName] = useState(user?.displayName || "");
+  const [userProfile, setUserProfile] = useState({});
+
+  const [fileToUpload, setFileToUpload] = useState(null);
+
   const [imageUploadingStatus, setImageUploadingStatus] = useState("");
 
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { loading: initialLoad, stopLoading: stopInitialLoad } =
+    useLoading(true);
+
+  const {
+    loading: updateLoading,
+    startLoading: startUpdateLoading,
+    stopLoading: stopUpdateLoading,
+  } = useLoading();
+
   const { setUser } = useAuthActions();
 
-  useEffect(() => {
-    if (user) {
-      setDisplayName(user.displayName || "");
-      setProfileImage(user.thumbnail || defaultImage);
+  const fetchUser = async () => {
+    try {
+      const userData = await getUserData(user.uid);
+      console.log(userData);
+      setUserProfile(userData);
+    } catch (error) {
+    } finally {
+      stopInitialLoad();
     }
-  }, [user]);
-
-  const handleClose = () => {
-    setProfileFile(null);
-    setDisplayName(user?.displayName || "");
-    closeModal();
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, [user]);
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result);
-        setProfileFile(file);
+        setUserProfile((prevState) => ({
+          ...prevState,
+          thumbnailUrl: reader.result,
+        }));
+        setFileToUpload(file);
       };
       reader.readAsDataURL(file);
     }
@@ -65,32 +78,35 @@ function UpdateProfile({ closeModal }) {
     );
   };
 
-  const uploadThumbnailImage = async (file) => {
-    const resizedThumbnail = await generateThumbnail(file);
-    return await uploadMedia(user.uid, "thumbnails", resizedThumbnail);
+  const uploadThumbnailUrlImage = async (file) => {
+    const resizedThumbnailUrl = await generateThumbnail(file);
+    return await uploadMedia(user.uid, "thumbnails", resizedThumbnailUrl);
   };
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
 
-    if (
-      (profileImage === user.thumbnail || profileImage === defaultImage) &&
-      displayName === user.displayName
-    ) {
-      showError("Please make some changes to update profile.");
+    const { displayName } = userProfile;
+
+    if (displayName === user.displayName && fileToUpload === null) {
+      showError("Make changes to update profile");
       return;
     }
 
+    console.log({ displayName, fileToUpload });
+
     try {
-      startLoading();
+      startUpdateLoading();
 
       let profileUploadUrl;
-      let thumbnailurl;
+      let thumbnailUrlurl;
 
-      if (profileImage !== defaultImage && profileImage !== user.thumbnail) {
-        profileUploadUrl = await uploadProfileImage(profileFile);
-        const resizedProfileImage = await generateThumbnail(profileFile);
-        thumbnailurl = await uploadThumbnailImage(resizedProfileImage);
+      if (fileToUpload !== null) {
+        profileUploadUrl = await uploadProfileImage(fileToUpload);
+
+        const resizedProfileImage = await generateThumbnail(fileToUpload);
+
+        thumbnailUrlurl = await uploadThumbnailUrlImage(resizedProfileImage);
       }
 
       const dataToUpdate = {};
@@ -99,9 +115,9 @@ function UpdateProfile({ closeModal }) {
         dataToUpdate.displayName = displayName;
       }
 
-      if (profileImage !== user.thumbnail) {
+      if (fileToUpload !== null) {
         dataToUpdate.photoURL = profileUploadUrl;
-        dataToUpdate.thumbnail = thumbnailurl;
+        dataToUpdate.thumbnailUrl = thumbnailUrlurl;
       }
 
       if (Object.keys(dataToUpdate).length > 0) {
@@ -113,69 +129,84 @@ function UpdateProfile({ closeModal }) {
       showError(error);
       console.error("Error updating profile:", error);
     } finally {
-      stopLoading();
+      stopUpdateLoading();
     }
   };
 
   return (
     <StyledLargeModal>
-      <Title>{user.photoURL ? "PROFILE" : "UPDATE PROFILE"}</Title>
-      {!user?.photoURL && (
-        <SuggestProfileUpdate>
-          <Warning2 size={18} />
-          <p>Complete your profile with a profile pic</p>
-        </SuggestProfileUpdate>
-      )}
-      <FormContainer onSubmit={handleProfileUpdate}>
-        <ProfileWrapper>
-          <div>
-            <img src={profileImage} alt="user image" />
-            {imageUploadingStatus && (
-              <p>
-                <span>{imageUploadingStatus}</span>
-              </p>
-            )}
-            <label htmlFor="profile">
-              <Edit />
-            </label>
-          </div>
-
-          <input
-            type="file"
-            id="profile"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={handleProfileChange}
-          />
-        </ProfileWrapper>
-        {profileFile && <p>{profileFile.name}</p>}
-        <label>Name</label>
-        <InputEl>
-          <input
-            type="text"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-          />
-        </InputEl>
-        <label>Email</label>
-        <InputEl>
-          <input type="text" value={user?.email} disabled />
-        </InputEl>
-        <ButtonFlex>
-          {user?.photoURL && (
-            <ButtonXl
-              type="button"
-              className="btn-outline"
-              onClick={handleClose}
-            >
-              Cancel
-            </ButtonXl>
+      {initialLoad ? (
+        "loading..."
+      ) : (
+        <>
+          <Title>
+            {userProfile.thumbnailUrl ? "PROFILE" : "UPDATE PROFILE"}
+          </Title>
+          {!userProfile.thumbnailUrl && (
+            <SuggestProfileUpdate>
+              <Warning2 size={18} />
+              <p>Complete your profile with a profile pic</p>
+            </SuggestProfileUpdate>
           )}
-          <ButtonXl type="submit" disabled={loading || !displayName}>
-            {loading ? <DotLoader /> : "Update"}
-          </ButtonXl>
-        </ButtonFlex>
-      </FormContainer>
+          <FormContainer onSubmit={handleProfileUpdate}>
+            <ProfileWrapper>
+              <div>
+                <img
+                  src={userProfile.thumbnailUrl || defaultProfileImage}
+                  alt="user profile"
+                />
+                {imageUploadingStatus && (
+                  <p>
+                    <span>{imageUploadingStatus}</span>
+                  </p>
+                )}
+                <label htmlFor="profile">
+                  <Edit />
+                </label>
+              </div>
+
+              <input
+                type="file"
+                id="profile"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleProfileChange}
+              />
+            </ProfileWrapper>
+            {fileToUpload && <p>{fileToUpload.name}</p>}
+            <label>Name</label>
+            <InputEl>
+              <input
+                type="text"
+                value={userProfile.displayName}
+                onChange={(e) =>
+                  setUserProfile((prevState) => ({
+                    ...prevState,
+                    displayName: e.target.value,
+                  }))
+                }
+              />
+            </InputEl>
+            <label>Email</label>
+            <InputEl>
+              <input type="text" value={userProfile.email} disabled />
+            </InputEl>
+            <ButtonFlex>
+              <ButtonXl
+                type="button"
+                className="btn-outline"
+                onClick={closeModal}
+              >
+                Cancel
+              </ButtonXl>
+
+              <ButtonXl type="submit" disabled={updateLoading}>
+                {updateLoading ? <DotLoader /> : "Update"}
+              </ButtonXl>
+            </ButtonFlex>
+          </FormContainer>
+        </>
+      )}
     </StyledLargeModal>
   );
 }

@@ -58,18 +58,6 @@ export const UserListItem = styled.li`
   padding: 10px;
   border-radius: var(--primary-border-radius);
   color: var(--text-primary);
-  /* box-shadow: var(--shadow); */
-
-  &:hover {
-    box-shadow: var(--shadow);
-  }
-
-  img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50px;
-    object-fit: cover;
-  }
 
   div {
     flex-grow: 1;

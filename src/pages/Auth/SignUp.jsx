@@ -15,7 +15,7 @@ import { showError, signUpWithEmail } from "../../services";
 function SignUp() {
   const [passwordType, setPasswordType] = useState("password");
 
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { loading, stopLoading, startLoading } = useLoading();
   const navigate = useNavigate();
 
   const initialValues = {

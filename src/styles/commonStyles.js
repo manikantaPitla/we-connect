@@ -49,7 +49,7 @@ export const ButtonL = styled(ButtonXl)`
 
 export const ButtonM = styled(ButtonL)`
   height: 30px;
-  width: 60px;
+  width: 70px;
 `;
 
 export const TitleWrapper = styled.div`
@@ -80,7 +80,7 @@ export const FormWrapper = styled.form`
   }
 `;
 
-export const MainSharedContainer = styled.div`
+export const MainSharedContainer = styled.section`
   background-color: var(--primary-background-color);
   box-shadow: var(--shadow);
   border-radius: var(--primary-border-radius);
@@ -103,4 +103,12 @@ export const StyledLargeModal = styled.div`
   @media screen and (max-width: 500px) {
     width: 100%;
   }
+`;
+
+export const ImageSmall = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  object-fit: cover;
+  background-color: #fff;
 `;

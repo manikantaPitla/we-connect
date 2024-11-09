@@ -10,14 +10,8 @@ export const ProfileWrapper = styled(MainSharedContainer)`
   align-items: center;
   gap: 10px;
 
-  img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50px;
-    object-fit: cover;
-  }
-
   div {
+    display: block;
     flex-grow: 1;
     display: flex;
     flex-direction: column;

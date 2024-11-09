@@ -3,23 +3,27 @@ import { useSelector } from "react-redux";
 import {
   declineConnectionRequest,
   getUserConnectionRequests,
+  showError,
+  showSuccess,
 } from "../../services";
-import { SkeletonWrapper, UserItem } from "./style";
+import { NoRequestsWrapper, SkeletonWrapper, UserItem } from "./style";
 import { ButtonM } from "../../styles/commonStyles";
 import { useLoading } from "../../hooks";
 import Skeleton from "react-loading-skeleton";
+import { DotLoader } from "../Loader";
 
 import defaultProfileImage from "../../assets/images/default-user.webp";
 
 function sentConnections() {
-  const [userList, setUserList] = useState([]);
+  const [sentRequestsList, setSentRequestsList] = useState([]);
+
   const user = useSelector((state) => state.auth.user);
-  const { loading, stopLoading } = useLoading(true);
+  const { loading, stopLoading, loadingId, setLoadingId } = useLoading(true);
 
   const fetchSentRequests = async () => {
     try {
       const userList = await getUserConnectionRequests(user.uid);
-      setUserList(userList);
+      setSentRequestsList(userList);
     } catch (err) {
       console.log(err);
     } finally {
@@ -32,10 +36,20 @@ function sentConnections() {
   }, []);
 
   const handleRemoveRequest = async (receivedUserId) => {
+    setLoadingId(receivedUserId);
     try {
       await declineConnectionRequest(user.uid, receivedUserId, true);
+
+      setSentRequestsList(
+        sentRequestsList.filter(
+          (sentRequest) => sentRequest.uid !== receivedUserId
+        )
+      );
+      showSuccess("Sent request removed successfully");
     } catch (error) {
-      console.log(error);
+      showError("Error while removing request");
+    } finally {
+      setLoadingId(null);
     }
   };
 
@@ -55,9 +69,9 @@ function sentConnections() {
         </>
       ) : (
         <>
-          {userList.length > 0 ? (
+          {sentRequestsList.length > 0 ? (
             <>
-              {userList.map((user, index) => (
+              {sentRequestsList.map((user, index) => (
                 <UserItem key={index}>
                   <img
                     src={user.thumbnailUrl || defaultProfileImage}
@@ -70,15 +84,22 @@ function sentConnections() {
                       $outline
                       type="button"
                       onClick={() => handleRemoveRequest(user.uid)}
+                      disabled={loadingId === user.uid}
                     >
-                      Cancel
+                      {loadingId === user.uid ? (
+                        <DotLoader changeColor={true} sizeSmall={true} />
+                      ) : (
+                        "Remove"
+                      )}
                     </ButtonM>
                   </div>
                 </UserItem>
               ))}
             </>
           ) : (
-            <p>No Requests</p>
+            <NoRequestsWrapper>
+              <p>No requests sent</p>
+            </NoRequestsWrapper>
           )}
         </>
       )}

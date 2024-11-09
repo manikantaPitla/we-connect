@@ -3,10 +3,11 @@ import { MainSharedContainer } from "../../styles/commonStyles";
 
 export const SideBarWrapper = styled(MainSharedContainer)`
   width: 300px;
-  flex-shrink: 0;
   flex: 1;
   padding: 10px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 
   @media screen and (max-width: 768px) {
     width: 100%;

@@ -7,6 +7,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 import defaultProfileImage from "../../assets/images/default-user.webp";
+import { ImageSmall } from "../../styles/commonStyles";
 
 function Profile() {
   const user = useSelector((state) => state.auth.user);
@@ -18,7 +19,7 @@ function Profile() {
         <ProfileWrapper>
           {user ? (
             <>
-              <img
+              <ImageSmall
                 src={user.thumbnailUrl || defaultProfileImage}
                 alt={user.displayName || "default profile"}
                 loading="lazy"

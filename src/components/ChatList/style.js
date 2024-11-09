@@ -7,7 +7,7 @@ export const ChatListContainer = styled.ul`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding-right: 5px;
+  gap: 10px;
 
   .active {
     border-radius: var(--primary-border-radius);
@@ -23,18 +23,10 @@ export const ChatItem = styled.li`
   padding: 10px;
 
   .chat-list-image-container {
-    height: 50px;
-    width: 50px;
-    border-radius: 50px;
-
-    img {
-      object-fit: cover;
-      width: 100%;
-      height: 100%;
-    }
   }
 
-  .chat-list-user-content {
+  .chat-list-user-content,
+  div {
     flex-grow: 1;
     display: flex;
     flex-direction: column;

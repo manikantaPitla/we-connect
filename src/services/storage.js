@@ -28,7 +28,7 @@ export const uploadMedia = async (
   progressCallback
 ) => {
   const date = new Date().getTime();
-  const storageRef = ref(storage, `user-media/${userId}/${mediaType}/${date}`);
+  const storageRef = ref(storage, `user_media/${userId}/${mediaType}/${date}`);
 
   const uploadTask = uploadBytesResumable(storageRef, file, {
     contentType: file.type,
@@ -66,17 +66,29 @@ export const updateUserProfile = async (dataToUpdate, userCallBack) => {
       await updateProfile(user, { ...dataToUpdate });
 
       const docRef = doc(db, "users", user.uid);
-      await updateDoc(docRef, { ...dataToUpdate });
-
       const docSnap = await getDoc(docRef);
+
       if (docSnap.exists()) {
-        userCallBack(docSnap.data());
+        const existingData = docSnap.data();
+
+        const updatedUserInfo = {
+          ...existingData.userInfo,
+          ...dataToUpdate,
+        };
+
+        await updateDoc(docRef, {
+          userInfo: updatedUserInfo,
+        });
+
+        const updatedDocSnap = await getDoc(docRef);
+
+        if (updatedDocSnap.exists()) {
+          userCallBack(updatedDocSnap.data().userInfo);
+        }
       }
     } catch (error) {
-      throw new Error(error.message);
+      throw error;
     }
-  } else {
-    throw new Error("No user is currently signed in.");
   }
 };
 

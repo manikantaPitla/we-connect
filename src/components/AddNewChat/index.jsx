@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { InputEl, StyledLargeModal, ButtonM } from "../../styles/commonStyles";
+import {
+  InputEl,
+  StyledLargeModal,
+  ButtonM,
+  ImageSmall,
+} from "../../styles/commonStyles";
 import { UserAdd, CiSearch } from "../../assets/icons";
 import {
   Header,
@@ -31,8 +36,13 @@ function AddNewChat({ closeModal }) {
   const [response, setResponse] = useState("");
   const [usersList, setUsersList] = useState([]);
 
-  const { loading, startLoading, stopLoading } = useLoading();
-  const [connectionSentUser, setConnectionSentUser] = useState(null);
+  const {
+    loading,
+    stopLoading,
+    startLoading,
+    loadingId: requestLoadingId,
+    setLoadingId: sendRequestLoadingId,
+  } = useLoading();
 
   const currentUser = useSelector((state) => state.auth.user);
 
@@ -60,18 +70,16 @@ function AddNewChat({ closeModal }) {
   };
 
   const handleUserClick = async (recieverUserId) => {
-    setConnectionSentUser(recieverUserId);
-    console.log("request sending started");
+    sendRequestLoadingId(recieverUserId);
 
     try {
       await sendConnectionRequest(currentUser.uid, recieverUserId);
-      console.log("request sending successful");
       showSuccess("Request sent successfully");
     } catch (error) {
       showError(error.message);
       console.log("request sending error");
     } finally {
-      setConnectionSentUser(null);
+      sendRequestLoadingId(null);
     }
   };
 
@@ -115,23 +123,35 @@ function AddNewChat({ closeModal }) {
             <SearchUsersList>
               {usersList.map((eachUser) => (
                 <UserListItem key={eachUser.uid}>
-                  <img
-                    src={eachUser.thumbnail || defaultProfileImage}
-                    alt={eachUser.displayName || "default profile"}
+                  <ImageSmall
+                    src={eachUser.thumbnailUrl || defaultProfileImage}
+                    alt={eachUser.displayName}
                     loading="lazy"
                   />
                   <div>
                     <h1>{eachUser.displayName}</h1>
                     <p>{eachUser.email}</p>
                   </div>
-                  <ButtonM onClick={() => handleUserClick(eachUser.uid)}>
-                    {connectionSentUser !== null &&
-                    connectionSentUser === eachUser.uid ? (
-                      <DotLoader />
-                    ) : (
-                      "Request"
-                    )}
-                  </ButtonM>
+                  {eachUser.isConnectionRequestPending ? (
+                    <ButtonM>Pending</ButtonM>
+                  ) : (
+                    <>
+                      {eachUser.alreadyConnected ? (
+                        <ButtonM>Chat</ButtonM>
+                      ) : (
+                        <ButtonM
+                          onClick={() => handleUserClick(eachUser.uid)}
+                          disabled={requestLoadingId === eachUser.uid}
+                        >
+                          {requestLoadingId === eachUser.uid ? (
+                            <DotLoader sizeSmall={true} />
+                          ) : (
+                            "Request"
+                          )}
+                        </ButtonM>
+                      )}
+                    </>
+                  )}
                 </UserListItem>
               ))}
             </SearchUsersList>

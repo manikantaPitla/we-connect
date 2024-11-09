@@ -5,7 +5,7 @@ import {
   arrayRemove,
   serverTimestamp,
 } from "./firebaseFunctions";
-import { getUserData } from "./chat";
+import { getUserChatData, getUserData } from "./chat";
 import { generateCombineId } from "./user";
 import {
   collection,
@@ -22,6 +22,17 @@ export const sendConnectionRequest = async (senderId, receiverId) => {
 
     if (senderData.includes(receiverId)) {
       throw new Error("Connection request already sent.");
+    }
+
+    const isUserAlreadyConnected = await getUserChatData(
+      senderId,
+      receiverId,
+      true
+    );
+    console.log(isUserAlreadyConnected);
+
+    if (isUserAlreadyConnected.exists) {
+      throw new Error("User already connected");
     }
 
     const batch = writeBatch(db);
@@ -50,15 +61,17 @@ export const getUserConnectionRequests = async (
   try {
     const usersIdList = await getUserData(userId, true, isRequestUsers);
 
-    if (usersIdList !== undefined) {
+    if (usersIdList && usersIdList.length > 0) {
       const usersQuery = query(
         collection(db, "users"),
         where("userInfo.uid", "in", usersIdList)
       );
+
       const querySnapshot = await getDocs(usersQuery);
       const requestUsersList = querySnapshot.docs.map(
         (doc) => doc.data().userInfo
       );
+
       return requestUsersList;
     }
 
@@ -68,19 +81,19 @@ export const getUserConnectionRequests = async (
   }
 };
 
-const modifyConnectionRequest = async (receivedUserId, requestUserId) => {
-  const currentUserDocRef = doc(db, "users", receivedUserId);
-  const requestUserDocRef = doc(db, "users", requestUserId);
+const modifyConnectionRequest = async (requestedUserId, recievedUserId) => {
+  const requestedUserDocRef = doc(db, "users", requestedUserId);
+  const receivedUserDocRef = doc(db, "users", recievedUserId);
 
   try {
     const batch = writeBatch(db);
 
-    batch.update(currentUserDocRef, {
-      "connectionRequests.received": arrayRemove(requestUserId),
+    batch.update(requestedUserDocRef, {
+      "connectionRequests.sent": arrayRemove(recievedUserId),
     });
 
-    batch.update(requestUserDocRef, {
-      "connectionRequests.sent": arrayRemove(receivedUserId),
+    batch.update(receivedUserDocRef, {
+      "connectionRequests.received": arrayRemove(requestedUserId),
     });
 
     await batch.commit();
@@ -90,22 +103,21 @@ const modifyConnectionRequest = async (receivedUserId, requestUserId) => {
   }
 };
 
-const setUserToChats = async (receivedUserId, requestUserId) => {
-  console.log({ receivedUserId, requestUserId });
-  const currentUserRef = doc(db, "userChats", receivedUserId);
-  const requestedUserRef = doc(db, "userChats", requestUserId);
+const setUserToChats = async (acceptingUserId, requestedUserId) => {
+  const acceptingUserDocRef = doc(db, "userChats", acceptingUserId);
+  const requestedUserDocRef = doc(db, "userChats", requestedUserId);
 
-  const combineId = generateCombineId(receivedUserId, requestUserId);
+  const combineId = generateCombineId(acceptingUserId, requestedUserId);
 
   try {
     const batch = writeBatch(db);
 
-    const currentUserDoc = await getDoc(currentUserRef);
+    const acceptingUserDoc = await getDoc(acceptingUserDocRef);
 
-    if (currentUserDoc.exists()) {
-      batch.update(currentUserRef, {
+    if (acceptingUserDoc.exists()) {
+      batch.update(acceptingUserDocRef, {
         [combineId]: {
-          connectedUserId: requestUserId,
+          connectedUserId: requestedUserId,
           lastMessage: "Connection request accepted",
           lastMessageTimeStamp: serverTimestamp(),
           unreadCount: 0,
@@ -113,12 +125,12 @@ const setUserToChats = async (receivedUserId, requestUserId) => {
       });
     }
 
-    const requestedUserDoc = await getDoc(requestedUserRef);
+    const requestedUserDoc = await getDoc(requestedUserDocRef);
 
     if (requestedUserDoc.exists()) {
-      batch.update(requestedUserRef, {
+      batch.update(requestedUserDocRef, {
         [combineId]: {
-          connectedUserId: receivedUserId,
+          connectedUserId: acceptingUserId,
           lastMessage: "Connection request accepted",
           lastMessageTimeStamp: serverTimestamp(),
           unreadCount: 0,
@@ -134,12 +146,12 @@ const setUserToChats = async (receivedUserId, requestUserId) => {
 };
 
 export const acceptConnectionRequest = async (
-  receivedUserId,
-  requestUserId
+  requestedUserId,
+  receivedUserId
 ) => {
   try {
-    await modifyConnectionRequest(receivedUserId, requestUserId);
-    await setUserToChats(receivedUserId, requestUserId);
+    await modifyConnectionRequest(requestedUserId, receivedUserId);
+    await setUserToChats(receivedUserId, requestedUserId);
   } catch (error) {
     console.log("SET USER TO CHAT ERROR: " + error.message);
     throw error;
@@ -147,14 +159,14 @@ export const acceptConnectionRequest = async (
 };
 
 export const declineConnectionRequest = async (
+  requestedUserId,
   receivedUserId,
-  requestUserId,
   isCancellingSentRequest = false
 ) => {
   try {
     isCancellingSentRequest
-      ? await modifyConnectionRequest(requestUserId, receivedUserId)
-      : await modifyConnectionRequest(receivedUserId, requestUserId);
+      ? await modifyConnectionRequest(requestedUserId, receivedUserId)
+      : await modifyConnectionRequest(receivedUserId, requestedUserId);
     console.log("REMOVED BOTH USER REQUESTS LIST");
   } catch (error) {
     throw error;
