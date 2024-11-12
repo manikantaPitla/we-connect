@@ -31,7 +31,6 @@ const GlobalStyles = createGlobalStyle`
 
   --primary-border: 1px solid rgba(255, 255, 255, 0.2);
   --primary-border-radius: 16px;
-  --primary-border-radius: 0px;
 
   --height45: 45px;
   --height35: 35px;

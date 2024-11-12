@@ -8,6 +8,7 @@ export const InputEl = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
+  flex-shrink: 0;
 
   input {
     padding: 0px ${(props) => (props.$nospace ? "0px" : "15px")};
@@ -82,10 +83,14 @@ export const FormWrapper = styled.form`
 
 export const MainSharedContainer = styled.section`
   background-color: var(--primary-background-color);
-  box-shadow: var(--shadow);
-  border-radius: var(--primary-border-radius);
   display: flex;
-  flex-direction: column;
+  /* border: var(--primary-border); */
+
+  @media screen and (min-width: 950px) {
+    box-shadow: var(--shadow);
+    border-radius: var(--primary-border-radius);
+    border: none;
+  }
 `;
 
 export const StyledLargeModal = styled.div`
@@ -111,4 +116,9 @@ export const ImageSmall = styled.img`
   border-radius: 50px;
   object-fit: cover;
   background-color: #fff;
+
+  @media screen and (max-width: 950px) {
+    height: 45px;
+    width: 45px;
+  }
 `;

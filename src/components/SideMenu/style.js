@@ -2,38 +2,55 @@ import styled from "styled-components";
 import { MainSharedContainer } from "../../styles/commonStyles";
 
 export const SideMenuWrapper = styled(MainSharedContainer)`
-  width: 80px;
-  padding: 15px 0;
+  padding: 10px 15px;
   align-items: center;
+  flex-direction: column;
   justify-content: space-between;
-  user-select: none;
+  width: 80px;
 
-  @media screen and (max-width: 500px) {
-    order: 1;
-    flex-direction: row;
-    width: 100%;
-    padding: 10px 15px;
+  img {
+    width: 45px;
+    height: 45px;
   }
-`;
 
-export const LogoImage = styled.img`
-  cursor: pointer;
-  border-radius: 16px;
-  height: 50px;
-  width: 50px !important;
+  @media screen and (max-width: 950px) {
+    border-right: var(--primary-border);
+    width: 65px;
+  }
+
+  @media screen and (min-width: 800px) {
+    flex: 0;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  @media screen and (max-width: 600px) {
+    flex: 1;
+    border: none;
+  }
+
+  @media screen and (max-width: 450px) {
+    flex-direction: row;
+    order: 1;
+    padding: 15px;
+
+    img {
+      display: none;
+    }
+  }
 `;
 
 export const MenuItemsWrapper = styled.ul`
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding-left: 0;
+  gap: 10px;
   list-style: none;
   flex-shrink: 0;
+  flex-direction: column;
 
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 450px) {
+    flex: 1;
     flex-direction: row;
-    gap: 15px;
+    justify-content: space-around;
   }
 
   .active {
@@ -43,7 +60,6 @@ export const MenuItemsWrapper = styled.ul`
 `;
 
 export const MenuItem = styled.li`
-  padding: 10px;
   cursor: pointer;
   height: 50px;
   width: 50px;
@@ -52,6 +68,11 @@ export const MenuItem = styled.li`
   align-items: center;
   border-radius: var(--primary-border-radius);
   color: var(--primary-text-color);
+
+  @media screen and (max-width: 950px) {
+    height: 45px;
+    width: 45px;
+  }
 
   svg {
     width: 18px;

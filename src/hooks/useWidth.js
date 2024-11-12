@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function useWidth(debounceDelay = 200) {
+function useWidth(debounceDelay = 150) {
   const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {

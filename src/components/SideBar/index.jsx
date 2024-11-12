@@ -4,7 +4,13 @@ import { CiSearch } from "../../assets/icons";
 import { ButtonXl, InputEl } from "../../styles/commonStyles";
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
-import { ChatList, ConnectionList, AddNewChat, PopUpModalLarge } from "..";
+import {
+  ChatList,
+  ConnectionList,
+  AddNewChat,
+  PopUpModalLarge,
+  Profile,
+} from "..";
 
 function SideBar({ tab }) {
   console.log("Side Bar");
@@ -19,7 +25,11 @@ function SideBar({ tab }) {
               <CiSearch />
               <input type="search" placeholder="Search" />
             </InputEl>
-            <PopUpModalLarge trigger={<ButtonXl>Start New Chat</ButtonXl>}>
+            <PopUpModalLarge
+              trigger={
+                <ButtonXl className="button-content">Start New Chat</ButtonXl>
+              }
+            >
               {(close) => <AddNewChat closeModal={close} />}
             </PopUpModalLarge>
           </>
@@ -41,6 +51,8 @@ function SideBar({ tab }) {
         return renderChatList();
       case "Connections":
         return <ConnectionList />;
+      case "Profile":
+        return <Profile />;
       default:
         return renderChatList();
     }

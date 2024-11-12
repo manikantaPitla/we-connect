@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import {
-  LogoImage,
   MenuItem,
   MenuItemsWrapper,
   SideMenuWrapper,
@@ -19,18 +18,25 @@ import { PopUpModalSmall } from "../PopUp";
 import { showError, signOutUser } from "../../services";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import defaultProfileImage from "../../assets/images/default-user.webp";
 
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { ImageSmall } from "../../styles/commonStyles";
 
 const tabItems = [
   {
-    name: "Chats",
-    icon: Messages1,
+    tabName: "Profile",
+    profileUrl: null,
+    tabIcon: null,
   },
   {
-    name: "Connections",
-    icon: Profile2User,
+    tabName: "Chats",
+    tabIcon: Messages1,
+  },
+  {
+    tabName: "Connections",
+    tabIcon: Profile2User,
   },
 ];
 
@@ -58,17 +64,24 @@ function SideMenu({ tabActions }) {
     <SideMenuWrapper>
       {user ? (
         <>
-          <LogoImage src={Logo} alt="we connect logo" loading="lazy" />
+          <img src={Logo} alt="we connect logo" loading="lazy" />
           <MenuItemsWrapper>
-            {tabItems.map((eachItem) => (
+            {tabItems.map((eachTab) => (
               <MenuItem
                 className={`${
-                  tabActions.currentTab === eachItem.name && "active"
+                  tabActions.currentTab === eachTab.tabName && "active"
                 }`}
-                onClick={() => tabActions.onChangeCurrentTab(eachItem.name)}
-                key={eachItem.name}
+                onClick={() => tabActions.onChangeCurrentTab(eachTab.tabName)}
+                key={eachTab.tabName}
               >
-                <eachItem.icon />
+                {eachTab.tabIcon ? (
+                  <eachTab.tabIcon />
+                ) : (
+                  <ImageSmall
+                    src={user.thumbnailUrl || defaultProfileImage}
+                    alt={eachTab.tabName}
+                  />
+                )}
               </MenuItem>
             ))}
             <MenuItem onClick={changeTheme}>
