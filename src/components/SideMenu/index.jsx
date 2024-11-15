@@ -71,7 +71,12 @@ function SideMenu({ tabActions }) {
       {user ? (
         <>
           <MenuItem as="div">
-            <img className="page-logo" src={Logo} alt="we connect logo" loading="lazy" />
+            <img
+              className="page-logo"
+              src={Logo}
+              alt="we connect logo"
+              loading="lazy"
+            />
             <MenuContent>
               <p>WeConnect</p>
             </MenuContent>
@@ -123,9 +128,13 @@ function SideMenu({ tabActions }) {
         </>
       ) : (
         <>
-          <Skeleton height={50} width={50} circle />
+          <Skeleton className="page-logo" height={50} width={50} circle />
           <SkeletonMenu>
-            <Skeleton count={4} />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
           </SkeletonMenu>
         </>
       )}

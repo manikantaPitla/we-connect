@@ -21,7 +21,6 @@ export const SideMenuWrapper = styled(MainSharedContainer)`
 
   @media screen and (max-width: 450px) {
     flex-direction: row;
-    order: 1;
     padding: 15px;
 
     .page-logo {
@@ -54,11 +53,15 @@ export const MenuItem = styled.li`
   cursor: pointer;
   display: flex;
   align-items: center;
-  /* justify-content: center; */
-  /* border-radius: ${(props) =>
-    props.$circle ? "50px" : "var(--primary-border-radius)"}; */
+  border-radius: ${(props) =>
+    props.$circle ? "50px" : "var(--primary-border-radius)"};
   border-radius: var(--primary-border-radius);
   color: var(--primary-text-color);
+
+  .page-logo {
+    width: 50px;
+    height: 100%;
+  }
 `;
 
 export const MenuContent = styled.div`
@@ -89,19 +92,16 @@ export const MenuIcons = styled.div`
   }
 `;
 
-export const SkeletonMenu = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-
-  @media screen and (max-width: 500px) {
-    flex-direction: row;
-    gap: 15px;
-  }
-
+export const SkeletonMenu = styled(MenuItemsWrapper)`
   span {
     height: 50px;
-    width: 50px;
+    width: 100%;
     border-radius: var(--primary-border-radius);
+  }
+
+  @media screen and (max-width: 450px) {
+    span {
+      width: 50px;
+    }
   }
 `;
