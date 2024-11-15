@@ -12,8 +12,8 @@ export const HomeContainer = styled.div`
   gap: 10px;
 
   @media screen and (max-width: 950px) {
-    padding: 0;
-    gap: 0;
+    /* padding: 0;
+    gap: 0; */
   }
 
   @media screen and (max-width: 450px) {
@@ -21,28 +21,28 @@ export const HomeContainer = styled.div`
   }
 `;
 
-export const FlexColumn = styled.div`
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
+// export const FlexColumn = styled.div`
+//   display: flex;
+//   gap: 10px;
+//   flex-direction: column;
 
-  @media screen and (max-width: 950px) {
-    gap: 0;
-    border-right: var(--primary-border);
-  }
+//   @media screen and (max-width: 950px) {
+//     /* gap: 0; */
+//     /* border-right: var(--primary-border); */
+//   }
 
-  @media screen and (max-width: 500px) {
-    gap: 0;
-    border: none;
-    flex: 1;
-  }
-`;
+//   @media screen and (max-width: 500px) {
+//     /* gap: 0;
+//     border: none;
+//     flex: 1; */
+//   }
+// `;
 
 export const ComponentWrapper = styled.div`
   display: flex;
 
   @media screen and (max-width: 950px) {
-    border-right: var(--primary-border);
+    /* border-right: var(--primary-border); */
   }
   @media screen and (max-width: 600px) {
     flex-direction: column;
@@ -52,6 +52,6 @@ export const ComponentWrapper = styled.div`
     flex-direction: row;
     order: 1;
     border: none;
-    border-top: var(--primary-border);
+    /* border-top: var(--primary-border); */
   }
 `;

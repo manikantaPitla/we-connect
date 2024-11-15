@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { HomeContainer, FlexColumn, ComponentWrapper } from "./styles.";
+import { HomeContainer, ComponentWrapper } from "./styles.";
 import { ChatBox, SideBar, SideMenu } from "../../components";
 import { authUserProtection, changeTab } from "../../services";
 import { useAuthActions, useWidth } from "../../hooks";
@@ -44,10 +44,8 @@ function Home() {
       <ComponentWrapper>
         <SideMenu tabActions={tabActions} />
       </ComponentWrapper>
-      <FlexColumn>
-        <SideBar tab={currentTab} />
-      </FlexColumn>
-      {width >= 650 && <ChatBox />}
+      <SideBar tab={currentTab} />
+      {width > 800 && <ChatBox />}
     </HomeContainer>
   );
 }

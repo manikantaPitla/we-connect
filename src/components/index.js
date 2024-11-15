@@ -1,5 +1,5 @@
 export { default as ProtectedRoute } from "./ProtectedRoute";
-export { DotLoader, CircleLoader, PageLoader } from "./Loader";
+export * from "./Loader";
 export { default as AuthLayout } from "./AuthLayout";
 export { default as SideMenu } from "./SideMenu";
 export { default as SideBar } from "./SideBar";

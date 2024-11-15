@@ -13,46 +13,47 @@ export const AuthContainer = styled.div`
 `;
 
 export const ImageWrapper = styled.div`
-  display: none;
-
-  @media screen and (min-width: 768px) {
-    flex: 1;
-    img {
-      object-fit: cover;
-      height: 100%;
-      width: 100%;
-      object-position: 80%;
-    }
-    display: block;
+  flex: 1;
+  img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    object-position: 80%;
   }
 
-  @media screen and (min-width: 1100px) {
+  @media screen and (max-width: 800px) {
+    display: none;
+  }
+
+  @media screen and (max-width: 900px) {
     img {
-      object-position: 90%;
+      object-position: 75%;
     }
   }
 `;
 
-export const FormContainer = styled.div`
+export const FormWrapper = styled.div`
   background-color: var(--primary-background-color);
   color: var(--primary-text-color);
-  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  padding: 120px 25px;
   gap: 60px;
 
-  @media screen and (min-width: 600px) {
-    padding: 120px 70px;
-    min-width: 500px;
+  padding: 120px 50px;
+  align-items: stretch;
+  min-width: 500px;
+
+  @media screen and (max-width: 800px) {
     align-items: center;
+    min-width: 100%;
   }
-  @media screen and (min-width: 768px) {
-    padding: 120px 50px;
-    align-items: stretch;
-    width: 500px;
-    min-width: 500px;
+
+  @media screen and (max-width: 600px) {
+    padding: 120px 30px;
+  }
+
+  @media screen and (max-width: 500px) {
+    padding: 120px 20px;
   }
 `;
 
@@ -75,4 +76,14 @@ export const LogoWrapper = styled.div`
       color: var(--primary-color);
     }
   }
+`;
+
+export const ThemeWrapper = styled.button`
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50px;
+  background-color: var(--secondary-background-color);
 `;

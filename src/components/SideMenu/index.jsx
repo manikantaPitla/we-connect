@@ -1,5 +1,7 @@
 import React, { memo } from "react";
 import {
+  MenuContent,
+  MenuIcons,
   MenuItem,
   MenuItemsWrapper,
   SideMenuWrapper,
@@ -14,45 +16,49 @@ import {
   Profile2User,
 } from "../../assets/icons";
 import { useAuthActions, useTheme } from "../../hooks";
-import { PopUpModalSmall } from "../PopUp";
-import { showError, signOutUser } from "../../services";
+import { ModalSmall } from "../../utils";
+import { showError, signOutAuth } from "../../services";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import defaultProfileImage from "../../assets/images/default-user.webp";
-
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ImageSmall } from "../../styles/commonStyles";
 
-const tabItems = [
-  {
-    tabName: "Profile",
-    profileUrl: null,
-    tabIcon: null,
-  },
-  {
-    tabName: "Chats",
-    tabIcon: Messages1,
-  },
-  {
-    tabName: "Connections",
-    tabIcon: Profile2User,
-  },
-];
-
 function SideMenu({ tabActions }) {
   const { pageTheme, changeTheme } = useTheme();
-  console.log("Side Menu");
-
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const { removeUser } = useAuthActions();
 
+  const tabItems = [
+    {
+      tabName: "Profile",
+      profileUrl: user?.thumbnailUrl || defaultProfileImage,
+      tabIcon: null,
+      action: () => tabActions.onChangeCurrentTab("Profile"),
+    },
+    {
+      tabName: "Chats",
+      tabIcon: Messages1,
+      action: () => tabActions.onChangeCurrentTab("Chats"),
+    },
+    {
+      tabName: "Connections",
+      tabIcon: Profile2User,
+      action: () => tabActions.onChangeCurrentTab("Connections"),
+    },
+    {
+      tabName: pageTheme.isDarkModeOn ? "Light Mode" : "Dark Mode",
+      tabIcon: pageTheme.isDarkModeOn ? Sun1 : Moon,
+      action: changeTheme,
+    },
+  ];
+
   const logout = async () => {
     try {
       if (!user) return;
-
-      await signOutUser();
+      await signOutAuth();
       removeUser();
       navigate("/auth/signin");
     } catch (error) {
@@ -64,33 +70,47 @@ function SideMenu({ tabActions }) {
     <SideMenuWrapper>
       {user ? (
         <>
-          <img src={Logo} alt="we connect logo" loading="lazy" />
+          <MenuItem as="div">
+            <img className="page-logo" src={Logo} alt="we connect logo" loading="lazy" />
+            <MenuContent>
+              <p>WeConnect</p>
+            </MenuContent>
+          </MenuItem>
           <MenuItemsWrapper>
             {tabItems.map((eachTab) => (
               <MenuItem
                 className={`${
                   tabActions.currentTab === eachTab.tabName && "active"
                 }`}
-                onClick={() => tabActions.onChangeCurrentTab(eachTab.tabName)}
+                onClick={eachTab.action}
                 key={eachTab.tabName}
+                $circle={!eachTab.tabIcon}
               >
-                {eachTab.tabIcon ? (
-                  <eachTab.tabIcon />
-                ) : (
-                  <ImageSmall
-                    src={user.thumbnailUrl || defaultProfileImage}
-                    alt={eachTab.tabName}
-                  />
-                )}
+                <MenuIcons>
+                  {eachTab.tabIcon ? (
+                    <eachTab.tabIcon />
+                  ) : (
+                    <ImageSmall
+                      src={eachTab.profileUrl}
+                      alt={eachTab.tabName}
+                    />
+                  )}
+                </MenuIcons>
+
+                <MenuContent>
+                  <p>{eachTab.tabName}</p>
+                </MenuContent>
               </MenuItem>
             ))}
-            <MenuItem onClick={changeTheme}>
-              {pageTheme?.isDarkModeOn ? <Sun1 /> : <Moon />}
-            </MenuItem>
-            <PopUpModalSmall
+            <ModalSmall
               trigger={
                 <MenuItem>
-                  <Logout />
+                  <MenuIcons>
+                    <Logout />
+                  </MenuIcons>
+                  <MenuContent>
+                    <p>Logout</p>
+                  </MenuContent>
                 </MenuItem>
               }
               content={{
@@ -105,10 +125,7 @@ function SideMenu({ tabActions }) {
         <>
           <Skeleton height={50} width={50} circle />
           <SkeletonMenu>
-            <Skeleton />
-            <Skeleton />
-            <Skeleton />
-            <Skeleton />
+            <Skeleton count={4} />
           </SkeletonMenu>
         </>
       )}

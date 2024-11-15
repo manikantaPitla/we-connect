@@ -5,8 +5,9 @@ import {
   InputEl,
   TitleWrapper,
   OptionsWrapper,
-  FormWrapper,
+  FormContainer,
 } from "../../styles/commonStyles";
+import { DotLoader } from "../../utils";
 
 function ForgotPassword() {
   const handleSubmit = (e) => {
@@ -14,7 +15,7 @@ function ForgotPassword() {
   };
 
   return (
-    <FormWrapper onSubmit={handleSubmit}>
+    <FormContainer onSubmit={handleSubmit}>
       <TitleWrapper>
         <h1>Forgot Password</h1>
       </TitleWrapper>
@@ -23,6 +24,7 @@ function ForgotPassword() {
           type="email"
           placeholder="Enter your email address"
           autoComplete="true"
+          name="email"
         />
       </InputEl>
       <ButtonXl type="submit">Send Code</ButtonXl>
@@ -31,7 +33,7 @@ function ForgotPassword() {
           Go Back? <Link to="/auth/signin">Sign In</Link>
         </p>
       </OptionsWrapper>
-    </FormWrapper>
+    </FormContainer>
   );
 }
 

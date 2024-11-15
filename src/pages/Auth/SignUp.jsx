@@ -6,9 +6,9 @@ import {
   InputEl,
   TitleWrapper,
   OptionsWrapper,
-  FormWrapper,
+  FormContainer,
 } from "../../styles/commonStyles";
-import { DotLoader } from "../../components";
+import { DotLoader } from "../../utils";
 import { useLoading, useFormValidation } from "../../hooks";
 import { showError, signUpWithEmail } from "../../services";
 
@@ -57,7 +57,7 @@ function SignUp() {
   };
 
   return (
-    <FormWrapper onSubmit={handleSubmit}>
+    <FormContainer onSubmit={handleSubmit}>
       <TitleWrapper>
         <h1>Welcome,</h1>
         <p>Create your account to get started.</p>
@@ -69,6 +69,7 @@ function SignUp() {
           name="name"
           value={credentials.name}
           onChange={onChangeCredentials}
+          autocomplete="true"
         />
       </InputEl>
       <InputEl>
@@ -108,7 +109,7 @@ function SignUp() {
           Already have an account? <Link to="/auth/signin">Sign In</Link>
         </p>
       </OptionsWrapper>
-    </FormWrapper>
+    </FormContainer>
   );
 }
 

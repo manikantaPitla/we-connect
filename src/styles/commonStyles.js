@@ -1,5 +1,48 @@
 import styled from "styled-components";
 
+// **************Auth Layout Styles******************
+
+export const FormContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  @media screen and (max-width: 800px) {
+    width: 65%;
+  }
+
+  @media screen and (max-width: 600px) {
+    width: 80%;
+  }
+
+  @media screen and (max-width: 500px) {
+    width: 100%;
+  }
+`;
+
+export const TitleWrapper = styled.div`
+  h1 {
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+`;
+
+export const GreetContainer = styled.div`
+  h1 {
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+`;
+
+export const OptionsWrapper = styled.div`
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--secondary-text-color);
+`;
+
 export const InputEl = styled.div`
   height: var(--height45);
   border: var(--primary-border);
@@ -53,42 +96,13 @@ export const ButtonM = styled(ButtonL)`
   width: 70px;
 `;
 
-export const TitleWrapper = styled.div`
-  h1 {
-    font-size: 20px;
-    margin-bottom: 5px;
-  }
-`;
-
-export const OptionsWrapper = styled.div`
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: var(--secondary-text-color);
-`;
-
-export const FormWrapper = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  @media screen and (min-width: 600px) {
-    width: 80%;
-  }
-  @media screen and (min-width: 768px) {
-    width: 100%;
-  }
-`;
-
 export const MainSharedContainer = styled.section`
-  background-color: var(--primary-background-color);
   display: flex;
-  /* border: var(--primary-border); */
+  background-color: var(--primary-background-color);
+  border-radius: var(--primary-border-radius);
+  box-shadow: var(--shadow);
 
   @media screen and (min-width: 950px) {
-    box-shadow: var(--shadow);
-    border-radius: var(--primary-border-radius);
     border: none;
   }
 `;
@@ -117,8 +131,8 @@ export const ImageSmall = styled.img`
   object-fit: cover;
   background-color: #fff;
 
-  @media screen and (max-width: 950px) {
+  /* @media screen and (max-width: 950px) {
     height: 45px;
     width: 45px;
-  }
+  } */
 `;

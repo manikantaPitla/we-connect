@@ -2,16 +2,20 @@ import styled from "styled-components";
 import { MainSharedContainer } from "../../styles/commonStyles";
 
 export const SideBarWrapper = styled(MainSharedContainer)`
-  width: 350px;
+  width: 320px;
   padding: 10px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  flex: 1;
 
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 800px) {
     width: 100%;
     flex: 1;
+    padding: 10px 50px;
+  }
+
+  @media screen and (max-width: 500px) {
+    padding: 10px;
   }
 `;
 

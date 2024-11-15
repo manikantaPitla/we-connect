@@ -17,8 +17,8 @@ import {
 } from "./firebaseFunctions";
 
 import { getUserData } from "./chat";
+import { signOut } from "firebase/auth";
 
-// Sign up a new user and initialize their data
 export const signUpWithEmail = async (name, email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -37,7 +37,6 @@ export const signUpWithEmail = async (name, email, password) => {
   }
 };
 
-// Sign in with email and password
 export const signInWithEmail = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
@@ -50,6 +49,11 @@ export const signInWithEmail = async (email, password) => {
   } catch (error) {
     throw error;
   }
+};
+
+export const signOutAuth = async () => {
+  await signOut(auth);
+  localStorage.removeItem("weConnect");
 };
 
 // Set default user data in Firestore

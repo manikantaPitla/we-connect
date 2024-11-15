@@ -133,18 +133,3 @@ export const SuggestProfileUpdate = styled.div`
   font-size: 12px;
 `;
 
-export const ButtonFlex = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  button {
-    flex: 1;
-
-    &.btn-outline {
-      border: 1px solid var(--primary-color);
-      background-color: transparent;
-      color: var(--primary-color);
-    }
-  }
-`;

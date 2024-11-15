@@ -25,8 +25,8 @@ export const DefaultUserContainer = styled.div`
     margin-bottom: 100px;
 
     div {
-      width: 150px;
-      height: 150px;
+      width: 100px;
+      height: 100px;
       img {
         width: 100%;
       }

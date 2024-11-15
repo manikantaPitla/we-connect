@@ -8,25 +8,15 @@ export const SideMenuWrapper = styled(MainSharedContainer)`
   justify-content: space-between;
   width: 80px;
 
-  img {
-    width: 45px;
-    height: 45px;
-  }
-
-  @media screen and (max-width: 950px) {
-    border-right: var(--primary-border);
-    width: 65px;
-  }
-
-  @media screen and (min-width: 800px) {
-    flex: 0;
-    flex-direction: column;
-    justify-content: space-between;
+  @media screen and (max-width: 800px) {
+    width: 200px;
+    align-items: stretch;
   }
 
   @media screen and (max-width: 600px) {
     flex: 1;
     border: none;
+    width: 80px;
   }
 
   @media screen and (max-width: 450px) {
@@ -34,7 +24,7 @@ export const SideMenuWrapper = styled(MainSharedContainer)`
     order: 1;
     padding: 15px;
 
-    img {
+    .page-logo {
       display: none;
     }
   }
@@ -60,26 +50,42 @@ export const MenuItemsWrapper = styled.ul`
 `;
 
 export const MenuItem = styled.li`
-  cursor: pointer;
   height: 50px;
-  width: 50px;
+  cursor: pointer;
   display: flex;
-  justify-content: center;
   align-items: center;
+  /* justify-content: center; */
+  /* border-radius: ${(props) =>
+    props.$circle ? "50px" : "var(--primary-border-radius)"}; */
   border-radius: var(--primary-border-radius);
   color: var(--primary-text-color);
+`;
 
-  @media screen and (max-width: 950px) {
-    height: 45px;
-    width: 45px;
+export const MenuContent = styled.div`
+  display: none;
+
+  @media screen and (max-width: 800px) {
+    display: block;
+    flex: 1;
+
+    p {
+      font-size: 14px;
+    }
   }
+  @media screen and (max-width: 600px) {
+    display: none;
+  }
+`;
 
+export const MenuIcons = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 100%;
   svg {
     width: 18px;
     height: 18px;
-    /* &:hover {
-      color: var(--primary-color);
-    } */
   }
 `;
 

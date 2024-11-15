@@ -6,10 +6,10 @@ import {
   InputEl,
   TitleWrapper,
   OptionsWrapper,
-  FormWrapper,
+  FormContainer,
 } from "../../styles/commonStyles";
 import { useLoading, useFormValidation } from "../../hooks";
-import { DotLoader } from "../../components";
+import { DotLoader } from "../../utils";
 import { signInWithEmail, showError } from "../../services";
 
 function SignIn() {
@@ -54,7 +54,7 @@ function SignIn() {
   };
 
   return (
-    <FormWrapper onSubmit={handleSubmit}>
+    <FormContainer onSubmit={handleSubmit}>
       <TitleWrapper>
         <h1>Chat Awaits You!</h1>
         <p>Sign in to connect with your beloved ones.</p>
@@ -97,7 +97,7 @@ function SignIn() {
           New to We Connect? <Link to="/auth/signup">Create an Account!</Link>
         </p>
       </OptionsWrapper>
-    </FormWrapper>
+    </FormContainer>
   );
 }
 

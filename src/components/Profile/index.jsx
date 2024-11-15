@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useState } from "react";
 import {
-  ButtonFlex,
   FormContainer,
   MainContainer,
   ProfileWrapper,
@@ -20,9 +19,9 @@ import {
   generateThumbnail,
   getUserData,
 } from "../../services";
-import { DotLoader } from "../Loader";
+import { CircleLoader, DotLoader } from "../../utils";
 
-function UpdateProfile({ closeModal }) {
+function UpdateProfile() {
   console.log("UpdateProfile");
   const user = useSelector((state) => state.auth.user);
 
@@ -125,7 +124,6 @@ function UpdateProfile({ closeModal }) {
         await updateUserProfile(dataToUpdate, setUser);
       }
       showSuccess("Profile updated successfully.");
-      closeModal();
     } catch (error) {
       showError(error);
       console.error("Error updating profile:", error);
@@ -137,7 +135,7 @@ function UpdateProfile({ closeModal }) {
   return (
     <MainContainer>
       {initialLoad ? (
-        "loading..."
+        <CircleLoader />
       ) : (
         <>
           <Title>
@@ -192,19 +190,9 @@ function UpdateProfile({ closeModal }) {
             <InputEl>
               <input type="text" value={userProfile.email} disabled />
             </InputEl>
-            <ButtonFlex>
-              <ButtonXl
-                type="button"
-                className="btn-outline"
-                onClick={closeModal}
-              >
-                Cancel
-              </ButtonXl>
-
-              <ButtonXl type="submit" disabled={updateLoading}>
-                {updateLoading ? <DotLoader /> : "Update"}
-              </ButtonXl>
-            </ButtonFlex>
+            <ButtonXl type="submit" disabled={updateLoading}>
+              {updateLoading ? <DotLoader /> : "Update"}
+            </ButtonXl>
           </FormContainer>
         </>
       )}
