@@ -55,7 +55,6 @@ export const MenuItem = styled.li`
   align-items: center;
   border-radius: ${(props) =>
     props.$circle ? "50px" : "var(--primary-border-radius)"};
-  border-radius: var(--primary-border-radius);
   color: var(--primary-text-color);
 
   .page-logo {

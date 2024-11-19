@@ -31,6 +31,7 @@ function Home() {
           navigate("auth/signin");
         }
       } catch (error) {
+        navigate("page-error");
         console.log("user auth error :", error);
       }
     };

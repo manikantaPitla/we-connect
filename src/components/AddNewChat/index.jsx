@@ -27,7 +27,7 @@ import {
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 
-import { DotLoader } from "../Loader";
+import { DotLoader } from "../../utils";
 import defaultProfileImage from "../../assets/images/default-user.webp";
 
 function AddNewChat({ closeModal }) {

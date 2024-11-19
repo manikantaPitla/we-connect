@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const MainContainer = styled.div`
+  flex: 1;
   padding: 30px 10px;
   display: flex;
   flex-direction: column;
@@ -132,4 +133,3 @@ export const SuggestProfileUpdate = styled.div`
   color: var(--primary-text-color);
   font-size: 12px;
 `;
-

@@ -4,10 +4,7 @@ import { ChatItem, ChatListContainer } from "./style";
 import Skeleton from "react-loading-skeleton";
 import { getUserChats } from "../../services";
 import { useLoading } from "../../hooks";
-import { getTime, resizeLastMessage } from "../../services";
-
-import defaultProfileImage from "../../assets/images/default-user.webp";
-import { ImageSmall } from "../../styles/commonStyles";
+import ChatListUserItem from "../ChatListUserItem";
 function ChatList() {
   console.log("ChatList");
   const user = useSelector((state) => state.auth.user);
@@ -60,29 +57,12 @@ function ChatList() {
             <>
               {chatList.length > 0 ? (
                 <>
-                  {chatList.map((userData) => {
-                    const {
-                      chatId,
-                      thumbnailUrl,
-                      displayName,
-                      lastMessage,
-                      lastMessageTimeStamp,
-                    } = userData;
-
-                    return (
-                      <ChatItem key={chatId}>
-                        <ImageSmall
-                          src={thumbnailUrl || defaultProfileImage}
-                          alt={displayName}
-                        />
-                        <div>
-                          <h1>{displayName}</h1>
-                          <p>{resizeLastMessage(lastMessage)}</p>
-                        </div>
-                        <p>{getTime(lastMessageTimeStamp)}</p>
-                      </ChatItem>
-                    );
-                  })}
+                  {chatList.map((userData) => (
+                    <ChatListUserItem
+                      key={userData.chatId}
+                      userData={userData}
+                    />
+                  ))}
                 </>
               ) : (
                 "No chats"

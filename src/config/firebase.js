@@ -6,12 +6,12 @@ import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: "we-connect-dev-official.firebaseapp.com",
-  projectId: "we-connect-dev-official",
-  storageBucket: "we-connect-dev-official.appspot.com",
-  messagingSenderId: "710292818478",
-  appId: "1:710292818478:web:32c2d51f18efb03f572dbf",
-  measurementId: "G-GG1MB1YK1W",
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGE_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 export const app = initializeApp(firebaseConfig);

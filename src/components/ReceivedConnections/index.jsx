@@ -13,7 +13,7 @@ import { useLoading } from "../../hooks";
 import Skeleton from "react-loading-skeleton";
 
 import defaultProfileImage from "../../assets/images/default-user.webp";
-import { DotLoader } from "../Loader";
+import { DotLoader } from "../../utils";
 
 function ReceivedConnections() {
   const [receivedRequestsList, setReceivedRequestsList] = useState([]);

@@ -6,9 +6,19 @@ export const extractUserInfo = (user) => {
     photoURL: user.photoURL,
   };
 };
+export const extractChatUserInfo = (user) => {
+  return {
+    chatId: user.chatId,
+    email: user.email,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+    thumbnailUrl: user.thumbnailUrl,
+    connectedUserId: user.connectedUserId,
+  };
+};
 
-export const generateCombineId = (requestedUserId, requestUserId) => {
-  return [requestedUserId, requestUserId].sort().join("_");
+export const generateCombineId = (senderId, receiverId) => {
+  return [senderId, receiverId].sort().join("_");
 };
 
 export const getTime = (timestamp) => {

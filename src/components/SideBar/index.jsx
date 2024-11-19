@@ -19,7 +19,7 @@ function SideBar({ tab }) {
           <>
             <InputEl $nospace>
               <CiSearch />
-              <input type="search" placeholder="Search" name="search" />
+              <input type="text" placeholder="Search" name="search" />
             </InputEl>
             <ModalLarge
               trigger={

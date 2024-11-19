@@ -1,15 +1,16 @@
 import styled from "styled-components";
 import { MainSharedContainer } from "../../styles/commonStyles";
 
-export const ChatBoxWrapper = styled(MainSharedContainer)`
+export const ChatBoxWrapper = styled.div`
   flex: 1;
-  padding: 15px;
   list-style: none;
-  overflow-y: auto;
   gap: 10px;
+
+  display: flex;
+  flex-direction: column;
 `;
 
-export const DefaultUserContainer = styled.div`
+export const DefaultUserContainer = styled(MainSharedContainer)`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -33,7 +34,7 @@ export const DefaultUserContainer = styled.div`
     }
 
     h3 {
-        color: var(--primary-color);
+      color: var(--primary-color);
     }
     p {
       font-size: 14px;

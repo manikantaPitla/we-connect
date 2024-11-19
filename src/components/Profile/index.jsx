@@ -45,7 +45,6 @@ function UpdateProfile() {
   const fetchUser = async () => {
     try {
       const userData = await getUserData(user.uid);
-      console.log(userData);
       setUserProfile(userData);
     } catch (error) {
     } finally {
@@ -93,8 +92,6 @@ function UpdateProfile() {
       return;
     }
 
-    console.log({ displayName, fileToUpload });
-
     try {
       startUpdateLoading();
 
@@ -123,12 +120,15 @@ function UpdateProfile() {
       if (Object.keys(dataToUpdate).length > 0) {
         await updateUserProfile(dataToUpdate, setUser);
       }
+
       showSuccess("Profile updated successfully.");
     } catch (error) {
       showError(error);
       console.error("Error updating profile:", error);
     } finally {
+      setImageUploadingStatus("");
       stopUpdateLoading();
+      setFileToUpload(null);
     }
   };
 

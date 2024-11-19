@@ -1,14 +1,21 @@
 import {
   and,
+  arrayUnion,
   collection,
   doc,
   getDoc,
   getDocs,
+  increment,
   query,
+  serverTimestamp,
+  Timestamp,
+  updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { generateCombineId } from "./user";
+import { uploadMedia } from "./storage";
 
 export const getUserChatData = async (
   currentUserId,
@@ -82,7 +89,6 @@ export const searchUser = async (searchValue, currentUserId) => {
   }
 };
 
-// Function to retrieve all chat data for a user
 export const getUserChats = async (currentUserId) => {
   try {
     const userChatsRef = doc(db, "userChats", currentUserId);
@@ -134,5 +140,80 @@ export const getUserData = async (
     return null;
   } catch (error) {
     throw new Error(`Error getting user data: ${error.message}`);
+  }
+};
+export const sendMessage = async (
+  senderId,
+  receiverId,
+  chatData,
+  setMediaLoading
+) => {
+  const { message, file } = chatData;
+
+  const combineId = generateCombineId(senderId, receiverId);
+  try {
+    let mediaURL = null;
+
+    if (file) {
+      const mediaType =
+        (file.type.startsWith("image/") && "images") ||
+        (file.type.startsWith("video/") && "videos") ||
+        (file.type.startsWith("audio/") && "audios");
+      mediaURL = await uploadMedia(senderId, mediaType, file, (progress) =>
+        setMediaLoading(progress)
+      );
+    }
+
+    const chatDocRef = doc(db, "chats", combineId);
+    const senderChatRef = doc(db, "userChats", senderId);
+    const receiverChatRef = doc(db, "userChats", receiverId);
+
+    const timestamp = serverTimestamp();
+
+    const batch = writeBatch(db);
+
+    batch.update(chatDocRef, {
+      messages: arrayUnion({
+        id: `${Date.now()}_${senderId}`,
+        type: "private",
+        text: message,
+        senderId,
+        media: mediaURL,
+        timestamp: Timestamp.now(),
+      }),
+    });
+
+    batch.update(senderChatRef, {
+      [`${combineId}.lastMessage`]: message || "Media Sent",
+      [`${combineId}.lastMessageTimeStamp`]: timestamp,
+      [`${combineId}.unreadCount`]: 0,
+    });
+
+    batch.update(receiverChatRef, {
+      [`${combineId}.lastMessage`]: message || "Media Sent",
+      [`${combineId}.lastMessageTimeStamp`]: timestamp,
+      [`${combineId}.unreadCount`]: increment(1),
+    });
+
+    await batch.commit();
+    console.log("Message sent successfully");
+  } catch (error) {
+    console.error("Error sending message:", error);
+    throw error;
+  }
+};
+
+export const getUserMessagesData = async (senderId, receiverId) => {
+  const combineId = generateCombineId(senderId, receiverId);
+
+  const messagesDocRef = doc(db, "chats", combineId);
+
+  try {
+    const messagesDocData = await getDoc(messagesDocRef);
+    if (messagesDocData.exists()) {
+      return messagesDocData.data();
+    }
+  } catch (error) {
+    throw error;
   }
 };

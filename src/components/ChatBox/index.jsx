@@ -4,51 +4,65 @@ import { useSelector } from "react-redux";
 import pageLogoImage from "../../assets/images/favicon.png";
 import { FaGithub, FaLinkedin } from "../../assets/icons";
 import Skeleton from "react-loading-skeleton";
+import ChatHeader from "../ChatHeader";
+import ChatBody from "../ChatBody";
+import ChatInput from "../ChatInput";
 
 function ChatBox() {
   const user = useSelector((state) => state.auth.user);
+  const currentChatUser = useSelector((state) => state.chat.currentChatUser);
   console.log("ChatBox");
 
   return (
     <ChatBoxWrapper>
       {user ? (
-        <DefaultUserContainer>
-          <div className="mid-container">
-            <div>
-              <img
-                src={pageLogoImage}
-                alt="We Connect Logo"
-                loading="lazy"
-                //   onError={handleErrImage}
-              />
-            </div>
-            <h3>We Connect</h3>
-            <p>
-              Hey {user.displayName} !, Lets get ready to chat with our loved
-              one's .
-            </p>
-          </div>
-          <DevContact>
-            <p>Checkout developer's profile</p>
-            <div>
-              <a
-                href="https://www.linkedin.com/in/manikanta8/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <FaLinkedin />
-              </a>
-              <a
-                href="https://github.com/manikantaPitla"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <FaGithub />
-              </a>
-            </div>
-          </DevContact>
-        </DefaultUserContainer>
+        <>
+          {currentChatUser ? (
+            <>
+              <ChatHeader chatUserData={currentChatUser} />
+              <ChatBody />
+              <ChatInput />
+            </>
+          ) : (
+            <DefaultUserContainer>
+              <div className="mid-container">
+                <div>
+                  <img
+                    src={pageLogoImage}
+                    alt="We Connect Logo"
+                    loading="lazy"
+                  />
+                </div>
+                <h3>We Connect</h3>
+                <p>
+                  Hey {user.displayName} !, Lets get ready to chat with our
+                  loved one's .
+                </p>
+              </div>
+              <DevContact>
+                <p>Checkout developer's profile</p>
+                <div>
+                  <a
+                    href="https://www.linkedin.com/in/manikanta8/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <FaLinkedin />
+                  </a>
+                  <a
+                    href="https://github.com/manikantaPitla"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <FaGithub />
+                  </a>
+                </div>
+              </DevContact>
+            </DefaultUserContainer>
+          )}
+        </>
       ) : (
+        // loading skeleton
         <DefaultUserContainer>
           <div></div>
           <div className="mid-container">

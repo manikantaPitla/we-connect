@@ -1,21 +1,24 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AuthLayout } from "./components";
+import { AuthLayout, ChatBox } from "./components";
 import {
   Home,
   SignIn,
   SignUp,
   ForgotPassword,
   PageNotFound,
-  //   ErrorPage,
+  ErrorPage,
 } from "./pages";
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { SkeletonTheme } from "react-loading-skeleton";
+import { useWidth } from "./hooks";
 
 function App() {
   const pageTheme = useSelector((state) => state.theme);
   console.log("App Component");
+
+  const width = useWidth();
 
   return (
     <div className={pageTheme.isDarkModeOn ? "dark" : "light"}>
@@ -28,6 +31,9 @@ function App() {
         >
           <Routes>
             <Route path="/" element={<Home />} />
+            {width <= 800 && (
+              <Route path="chat/:chatId" element={<ChatBox />} />
+            )}
             <Route path="/auth" element={<AuthLayout />}>
               <Route index element={<SignIn />} />
               <Route index path="signin" element={<SignIn />} />
@@ -35,7 +41,7 @@ function App() {
               <Route path="forgotpassword" element={<ForgotPassword />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
-            {/* <Route path="page-error" element={<ErrorPage />} /> */}
+            <Route path="page-error" element={<ErrorPage />} />
           </Routes>
           <ToastContainer limit={0} />
           <div id="popup-root"></div>

@@ -3,3 +3,4 @@ export { default as useFormValidation } from "./useFormValidation";
 export { default as useAuthActions } from "./useAuthActions";
 export { default as useTheme } from "./useTheme";
 export { default as useWidth } from "./useWidth";
+export { default as useSwitchChat } from "./useSwitchChat";

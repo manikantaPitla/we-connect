@@ -69,7 +69,7 @@ function SignUp() {
           name="name"
           value={credentials.name}
           onChange={onChangeCredentials}
-          autocomplete="true"
+          autoComplete="true"
         />
       </InputEl>
       <InputEl>

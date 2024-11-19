@@ -10,7 +10,7 @@ import { NoRequestsWrapper, SkeletonWrapper, UserItem } from "./style";
 import { ButtonM } from "../../styles/commonStyles";
 import { useLoading } from "../../hooks";
 import Skeleton from "react-loading-skeleton";
-import { DotLoader } from "../Loader";
+import { DotLoader } from "../../utils";
 
 import defaultProfileImage from "../../assets/images/default-user.webp";
 

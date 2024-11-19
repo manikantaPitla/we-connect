@@ -5,9 +5,11 @@ import {
   ModalTitle,
   StyledModalLarge,
   ModalSmallCustomStyles,
+  SmallModalMenu,
+  ModalViewMediaWrapper,
 } from "./style";
 import "reactjs-popup/dist/index.css";
-import { ButtonL } from "../../styles/commonStyles";
+import { ButtonL, ButtonXl } from "../../styles/commonStyles";
 
 export function ModalSmall(props) {
   const { children, content, action } = props;
@@ -38,5 +40,40 @@ export function ModalLarge(props) {
     <StyledModalLarge modal {...props}>
       {children}
     </StyledModalLarge>
+  );
+}
+
+export function ModalMenu(props) {
+  return <SmallModalMenu {...props}></SmallModalMenu>;
+}
+
+export function ModalViewMedia(props) {
+  const { children, action = null, ...propsData } = props;
+
+  const handleAction = (closeModal) => {
+    if (action === null) return;
+
+    action();
+    closeModal();
+  };
+
+  return (
+    <ModalViewMediaWrapper modal {...propsData} closeOnDocumentClick={false}>
+      {(close) => (
+        <>
+          <div className="modal-content">
+            {children}
+            <div className="button-wrapper">
+              <ButtonXl onClick={close}>Close</ButtonXl>
+              {action !== null && (
+                <ButtonXl onClick={() => handleAction(close)}>
+                  Clear Media
+                </ButtonXl>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </ModalViewMediaWrapper>
   );
 }

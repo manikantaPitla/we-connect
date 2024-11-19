@@ -15,7 +15,7 @@ import {
   Sun1,
   Profile2User,
 } from "../../assets/icons";
-import { useAuthActions, useTheme } from "../../hooks";
+import { useAuthActions, useSwitchChat, useTheme } from "../../hooks";
 import { ModalSmall } from "../../utils";
 import { showError, signOutAuth } from "../../services";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +30,7 @@ function SideMenu({ tabActions }) {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const { removeUser } = useAuthActions();
+  const { clearCurrentChat } = useSwitchChat();
 
   const tabItems = [
     {
@@ -70,7 +71,7 @@ function SideMenu({ tabActions }) {
     <SideMenuWrapper>
       {user ? (
         <>
-          <MenuItem as="div">
+          <MenuItem as="div" onClick={clearCurrentChat}>
             <img
               className="page-logo"
               src={Logo}
@@ -89,7 +90,7 @@ function SideMenu({ tabActions }) {
                 }`}
                 onClick={eachTab.action}
                 key={eachTab.tabName}
-                $circle={!eachTab.tabIcon}
+                $circle={eachTab.tabIcon === null}
               >
                 <MenuIcons>
                   {eachTab.tabIcon ? (

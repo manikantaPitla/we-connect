@@ -121,6 +121,19 @@ a {
   .Toastify__toast {
     margin: 10px 20px;
   }
+
+
+
+}
+
+
+@keyframes animateView {
+  from {
+    scale: 0;
+  }
+  to {
+    scale: 1;
+  }
 }
 
 `;

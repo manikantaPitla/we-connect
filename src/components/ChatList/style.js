@@ -9,7 +9,7 @@ export const ChatListContainer = styled.ul`
   overflow-y: auto;
   gap: 10px;
 
-  .active {
+  .active-chat {
     border-radius: var(--primary-border-radius);
     background-color: var(--primary-light-color);
   }

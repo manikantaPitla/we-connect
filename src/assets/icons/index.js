@@ -9,6 +9,14 @@ export {
   Warning2,
   UserAdd,
   Profile2User,
+  Send,
+  Image,
+  AttachSquare,
+  Video,
+  Play,
+  Music,
+  MusicPlay,
 } from "iconsax-react";
 export { CiSearch } from "react-icons/ci";
+export { HiDotsVertical } from "react-icons/hi";
 export { FaGithub, FaLinkedin } from "react-icons/fa";

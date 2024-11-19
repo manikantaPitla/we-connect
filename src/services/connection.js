@@ -12,6 +12,7 @@ import {
   getDoc,
   getDocs,
   query,
+  Timestamp,
   where,
   writeBatch,
 } from "firebase/firestore";
@@ -108,6 +109,7 @@ const setUserToChats = async (acceptingUserId, requestedUserId) => {
   const requestedUserDocRef = doc(db, "userChats", requestedUserId);
 
   const combineId = generateCombineId(acceptingUserId, requestedUserId);
+  const chatDocRef = doc(db, "chats", combineId);
 
   try {
     const batch = writeBatch(db);
@@ -118,7 +120,7 @@ const setUserToChats = async (acceptingUserId, requestedUserId) => {
       batch.update(acceptingUserDocRef, {
         [combineId]: {
           connectedUserId: requestedUserId,
-          lastMessage: "Connection request accepted",
+          lastMessage: "You are now connected",
           lastMessageTimeStamp: serverTimestamp(),
           unreadCount: 0,
         },
@@ -131,10 +133,25 @@ const setUserToChats = async (acceptingUserId, requestedUserId) => {
       batch.update(requestedUserDocRef, {
         [combineId]: {
           connectedUserId: acceptingUserId,
-          lastMessage: "Connection request accepted",
+          lastMessage: "You are now connected",
           lastMessageTimeStamp: serverTimestamp(),
           unreadCount: 0,
         },
+      });
+    }
+
+    const chatDoc = await getDoc(chatDocRef);
+    if (!chatDoc.exists()) {
+      batch.set(chatDocRef, {
+        messages: arrayUnion({
+          id: `${Date.now()}_${acceptingUserId}`,
+          type: "connection",
+          text: "You are now connected",
+          senderId: acceptingUserId,
+          media: null,
+          timestamp: Timestamp.now(),
+        }),
+        createdAt: serverTimestamp(),
       });
     }
 
