@@ -145,11 +145,15 @@ const setUserToChats = async (acceptingUserId, requestedUserId) => {
       batch.set(chatDocRef, {
         messages: arrayUnion({
           id: `${Date.now()}_${acceptingUserId}`,
-          type: "connection",
+          messageType: "connection",
           text: "You are now connected",
           senderId: acceptingUserId,
           media: null,
+          mediaType: null,
           timestamp: Timestamp.now(),
+          isDeleted: false,
+          isEdited: false,
+          reactions: {},
         }),
         createdAt: serverTimestamp(),
       });

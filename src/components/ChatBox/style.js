@@ -5,9 +5,9 @@ export const ChatBoxWrapper = styled.div`
   flex: 1;
   list-style: none;
   gap: 10px;
-
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 `;
 
 export const DefaultUserContainer = styled(MainSharedContainer)`

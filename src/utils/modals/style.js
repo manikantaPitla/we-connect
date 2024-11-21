@@ -56,7 +56,7 @@ export const SmallModalMenu = styled(Popup)`
   &-content {
     width: fit-content !important;
     border-radius: var(--primary-border-radius) !important;
-    background-color: var(--primary-border-color);
+    background-color: var(--primary-background-color);
     border: var(--primary-border);
     box-shadow: var(--shadow);
   }
@@ -74,6 +74,7 @@ export const ModalViewMediaWrapper = styled(Popup)`
     padding: 0;
     width: inherit;
     background-color: transparent;
+    z-index: 100;
 
     .modal-content {
       animation: animateView 0.4s;

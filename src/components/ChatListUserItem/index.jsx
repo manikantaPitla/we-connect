@@ -20,8 +20,6 @@ function ChatListUserItem({ userData }) {
     connectedUserId,
     chatId,
   } = userData;
-
-  console.log("userData:", userData);
   const currentChatUser = useSelector((state) => state.chat.currentChatUser);
 
   const { setCurrentChat } = useSwitchChat();

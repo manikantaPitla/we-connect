@@ -7,6 +7,7 @@ export const SideBarWrapper = styled(MainSharedContainer)`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 
   @media screen and (max-width: 800px) {
     width: 100%;

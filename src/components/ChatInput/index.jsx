@@ -19,7 +19,7 @@ import {
 import { ModalMenu, ModalViewMedia } from "../../utils/modals";
 import { useSelector } from "react-redux";
 import { sendMessage } from "../../services";
-import { useLoading } from "../../hooks";
+import { useChat, useLoading } from "../../hooks";
 
 function ChatInput() {
   console.log("ChatInput");
@@ -35,7 +35,10 @@ function ChatInput() {
 
   const currentChatUser = useSelector((state) => state.chat.currentChatUser);
   const currentUser = useSelector((state) => state.auth.user);
+
   const messageInputRef = useRef(null);
+  const { addNewMessage } = useChat();
+
   const { loading, stopLoading, startLoading } = useLoading(false);
 
   useEffect(() => {
@@ -90,7 +93,8 @@ function ChatInput() {
           currentUser.uid,
           currentChatUser.connectedUserId,
           chatData,
-          setMediaUploadingStatus
+          setMediaUploadingStatus,
+          addNewMessage
         );
       } catch (error) {
         console.log(error);

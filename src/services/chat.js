@@ -146,20 +146,27 @@ export const sendMessage = async (
   senderId,
   receiverId,
   chatData,
-  setMediaLoading
+  setMediaLoading,
+  addNewMessage
 ) => {
   const { message, file } = chatData;
 
   const combineId = generateCombineId(senderId, receiverId);
   try {
     let mediaURL = null;
+    let mediaType = null;
 
     if (file) {
-      const mediaType =
+      const mediaPath =
         (file.type.startsWith("image/") && "images") ||
         (file.type.startsWith("video/") && "videos") ||
         (file.type.startsWith("audio/") && "audios");
-      mediaURL = await uploadMedia(senderId, mediaType, file, (progress) =>
+
+      console.log("path", mediaPath, mediaPath.slice(0, -1));
+
+      mediaType = mediaPath.slice(0, -1);
+      console.log("Media type", mediaType);
+      mediaURL = await uploadMedia(senderId, mediaPath, file, (progress) =>
         setMediaLoading(progress)
       );
     }
@@ -170,17 +177,25 @@ export const sendMessage = async (
 
     const timestamp = serverTimestamp();
 
+    const newMessageObj = {
+      id: `${Date.now()}_${senderId}`,
+      text: message || null,
+      senderId,
+      messageType: "chat",
+      media: mediaURL,
+      mediaType,
+      timestamp: Timestamp.now(),
+      isDeleted: false,
+      isEdited: false,
+      reactions: {},
+    };
+
+    addNewMessage(newMessageObj);
+
     const batch = writeBatch(db);
 
     batch.update(chatDocRef, {
-      messages: arrayUnion({
-        id: `${Date.now()}_${senderId}`,
-        type: "private",
-        text: message,
-        senderId,
-        media: mediaURL,
-        timestamp: Timestamp.now(),
-      }),
+      messages: arrayUnion(newMessageObj),
     });
 
     batch.update(senderChatRef, {
@@ -203,7 +218,11 @@ export const sendMessage = async (
   }
 };
 
-export const getUserMessagesData = async (senderId, receiverId) => {
+export const getUserMessagesData = async (
+  senderId,
+  receiverId,
+  setMessages
+) => {
   const combineId = generateCombineId(senderId, receiverId);
 
   const messagesDocRef = doc(db, "chats", combineId);
@@ -211,7 +230,7 @@ export const getUserMessagesData = async (senderId, receiverId) => {
   try {
     const messagesDocData = await getDoc(messagesDocRef);
     if (messagesDocData.exists()) {
-      return messagesDocData.data();
+      setMessages(messagesDocData.data());
     }
   } catch (error) {
     throw error;

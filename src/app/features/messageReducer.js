@@ -1,20 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-  messageList: [],
+  messageList: {},
 };
 
 const messageReducer = createSlice({
   name: "messages",
   initialState,
   reducers: {
-    setMessages: (state, action) => {
+    setChatMessages: (state, action) => {
       state.messageList = action.payload;
     },
 
-    addMessage: (state, action) => {
-      state.messageList.push(action.payload);
+    addChatMessage: (state, action) => {
+      state.messageList.messages.push(action.payload);
     },
-    updateMessage: (state, action) => {
+    updateChatMessage: (state, action) => {
       const index = state.messageList.findIndex(
         (msg) => msg.id === action.payload.id
       );
@@ -25,6 +25,6 @@ const messageReducer = createSlice({
   },
 });
 
-export const { addMessage, updateMessage, setMessages } =
+export const { setChatMessages, addChatMessage, updateChatMessage } =
   messageReducer.actions;
 export default messageReducer.reducer;
