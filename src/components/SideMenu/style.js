@@ -90,17 +90,3 @@ export const MenuIcons = styled.div`
     height: 18px;
   }
 `;
-
-export const SkeletonMenu = styled(MenuItemsWrapper)`
-  span {
-    height: 50px;
-    width: 100%;
-    border-radius: var(--primary-border-radius);
-  }
-
-  @media screen and (max-width: 450px) {
-    span {
-      width: 50px;
-    }
-  }
-`;

@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AuthLayout, ChatBox } from "./components";
+import { AuthLayout, ChatBox, ProtectedRoute } from "./components";
 import {
   Home,
   SignIn,
@@ -13,7 +13,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { SkeletonTheme } from "react-loading-skeleton";
 import { useWidth } from "./hooks";
-
 function App() {
   const pageTheme = useSelector((state) => state.theme);
   console.log("App Component");
@@ -30,9 +29,23 @@ function App() {
           highlightColor={pageTheme.isDarkModeOn ? "#444" : "#f5f5f5"}
         >
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
             {width <= 800 && (
-              <Route path="chat/:chatId" element={<ChatBox />} />
+              <Route
+                path="chat"
+                element={
+                  <ProtectedRoute chatLoading={true}>
+                    <ChatBox />
+                  </ProtectedRoute>
+                }
+              />
             )}
             <Route path="/auth" element={<AuthLayout />}>
               <Route index element={<SignIn />} />

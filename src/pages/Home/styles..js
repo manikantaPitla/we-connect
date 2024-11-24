@@ -18,6 +18,8 @@ export const HomeContainer = styled.div`
 
   @media screen and (max-width: 450px) {
     flex-direction: column;
+    padding: 0px;
+    gap: 0px;
   }
 `;
 

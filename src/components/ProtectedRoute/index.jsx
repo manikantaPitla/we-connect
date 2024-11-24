@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useLoading, useAuthActions } from "../../hooks";
 import { onAuthStateChanged, auth, getUserData } from "../../services";
 import { ErrorPage } from "../../pages";
+import { PageLoader } from "../../utils";
 
-function ProtectedRoute({ children }) {
-  const [loading, startLoading, stopLoading] = useLoading(true);
+function ProtectedRoute({ children, chatLoading = false }) {
+  const { loading, startLoading, stopLoading } = useLoading(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { setUser, removeUser } = useAuthActions();
@@ -21,8 +22,8 @@ function ProtectedRoute({ children }) {
           removeUser();
           navigate("/auth/signin");
         }
-      } catch (err) {
-        console.error("Error loading...", err);
+      } catch (error) {
+        console.error("Error loading...", error);
         setError("An error occurred while loading. Please try again.");
       } finally {
         stopLoading();
@@ -31,11 +32,11 @@ function ProtectedRoute({ children }) {
 
     return () => {
       unsubscribe();
-      stopLoading();
     };
   }, [navigate]);
 
   if (loading) {
+    if (chatLoading) return "chat is loading...";
     return <PageLoader />;
   }
 

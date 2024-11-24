@@ -5,7 +5,6 @@ import {
   MenuItem,
   MenuItemsWrapper,
   SideMenuWrapper,
-  SkeletonMenu,
 } from "./style";
 import Logo from "../../assets/images/favicon.png";
 import {
@@ -21,7 +20,6 @@ import { showError, signOutAuth } from "../../services";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import defaultProfileImage from "../../assets/images/default-user.webp";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ImageSmall } from "../../styles/commonStyles";
 
@@ -69,76 +67,58 @@ function SideMenu({ tabActions }) {
 
   return (
     <SideMenuWrapper>
-      {user ? (
-        <>
-          <MenuItem as="div" onClick={clearCurrentChat}>
-            <img
-              className="page-logo"
-              src={Logo}
-              alt="we connect logo"
-              loading="lazy"
-            />
+      <MenuItem as="div" onClick={clearCurrentChat}>
+        <img
+          className="page-logo"
+          src={Logo}
+          alt="we connect logo"
+          loading="lazy"
+        />
+        <MenuContent>
+          <p>WeConnect</p>
+        </MenuContent>
+      </MenuItem>
+      <MenuItemsWrapper>
+        {tabItems.map((eachTab) => (
+          <MenuItem
+            className={`${
+              tabActions.currentTab === eachTab.tabName && "active"
+            }`}
+            onClick={eachTab.action}
+            key={eachTab.tabName}
+            $circle={eachTab.tabIcon === null}
+          >
+            <MenuIcons>
+              {eachTab.tabIcon ? (
+                <eachTab.tabIcon />
+              ) : (
+                <ImageSmall src={eachTab.profileUrl} alt={eachTab.tabName} />
+              )}
+            </MenuIcons>
+
             <MenuContent>
-              <p>WeConnect</p>
+              <p>{eachTab.tabName}</p>
             </MenuContent>
           </MenuItem>
-          <MenuItemsWrapper>
-            {tabItems.map((eachTab) => (
-              <MenuItem
-                className={`${
-                  tabActions.currentTab === eachTab.tabName && "active"
-                }`}
-                onClick={eachTab.action}
-                key={eachTab.tabName}
-                $circle={eachTab.tabIcon === null}
-              >
-                <MenuIcons>
-                  {eachTab.tabIcon ? (
-                    <eachTab.tabIcon />
-                  ) : (
-                    <ImageSmall
-                      src={eachTab.profileUrl}
-                      alt={eachTab.tabName}
-                    />
-                  )}
-                </MenuIcons>
-
-                <MenuContent>
-                  <p>{eachTab.tabName}</p>
-                </MenuContent>
-              </MenuItem>
-            ))}
-            <ModalSmall
-              trigger={
-                <MenuItem>
-                  <MenuIcons>
-                    <Logout />
-                  </MenuIcons>
-                  <MenuContent>
-                    <p>Logout</p>
-                  </MenuContent>
-                </MenuItem>
-              }
-              content={{
-                title: "Are you sure you want to log out?",
-                buttonText: "Logout",
-              }}
-              action={logout}
-            />
-          </MenuItemsWrapper>
-        </>
-      ) : (
-        <>
-          <Skeleton className="page-logo" height={50} width={50} circle />
-          <SkeletonMenu>
-            <Skeleton />
-            <Skeleton />
-            <Skeleton />
-            <Skeleton />
-            <Skeleton />
-          </SkeletonMenu>
-        </>
-      )}
+        ))}
+        <ModalSmall
+          trigger={
+            <MenuItem>
+              <MenuIcons>
+                <Logout />
+              </MenuIcons>
+              <MenuContent>
+                <p>Logout</p>
+              </MenuContent>
+            </MenuItem>
+          }
+          content={{
+            title: "Are you sure you want to log out?",
+            buttonText: "Logout",
+          }}
+          action={logout}
+        />
+      </MenuItemsWrapper>
     </SideMenuWrapper>
   );
 }

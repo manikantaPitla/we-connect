@@ -99,15 +99,16 @@ export const getUserChats = async (currentUserId) => {
 
       const chatList = await Promise.all(
         Object.entries(userChatsData).map(async ([chatId, chatInfo]) => {
-          const userData = await getUserData(chatInfo.connectedUserId);
+          const { uid, ...data } = await getUserData(chatInfo.connectedUserId);
           return {
             chatId,
-            ...userData,
+            ...data,
             ...chatInfo,
           };
         })
       );
 
+      console.log("chatList: ", chatList);
       return chatList;
     } else {
       console.log("No chats found for this user.");
@@ -142,6 +143,7 @@ export const getUserData = async (
     throw new Error(`Error getting user data: ${error.message}`);
   }
 };
+
 export const sendMessage = async (
   senderId,
   receiverId,

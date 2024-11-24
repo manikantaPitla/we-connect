@@ -105,6 +105,11 @@ export const MainSharedContainer = styled.section`
   @media screen and (min-width: 950px) {
     border: none;
   }
+
+  @media screen and (max-width: 450px) {
+    border-radius: none;
+    box-shadow: none;
+  }
 `;
 
 export const StyledLargeModal = styled.div`

@@ -1,28 +1,54 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { ChatBoxWrapper, DefaultUserContainer, DevContact } from "./style";
 import { useSelector } from "react-redux";
 import pageLogoImage from "../../assets/images/favicon.png";
 import { FaGithub, FaLinkedin } from "../../assets/icons";
-import Skeleton from "react-loading-skeleton";
 import ChatHeader from "../ChatHeader";
 import ChatBody from "../ChatBody";
 import ChatInput from "../ChatInput";
+import { useCustomParams, useWidth } from "../../hooks";
+import { getUserData } from "../../services";
+import { CircleLoader } from "../../utils/loaders";
 
 function ChatBox() {
-  const user = useSelector((state) => state.auth.user);
-  const currentChatUser = useSelector((state) => state.chat.currentChatUser);
   console.log("ChatBox");
+  const user = useSelector((state) => state.auth.user);
+  const chatUser = useSelector((state) => state.chat.currentChatUser);
+
+  const width = useWidth();
+  const { connectedUserId } = useCustomParams();
+  const [currentChatUser, setCurrentChatUser] = useState(null);
+
+  useEffect(() => {
+    const fetchChatUser = async () => {
+      try {
+        const fetchedUser = await getUserData(connectedUserId);
+        setCurrentChatUser(fetchedUser);
+      } catch (err) {
+        setCurrentChatUser(null);
+        console.error("Error fetching chat user:", err);
+      }
+    };
+
+    if (width <= 800) {
+      fetchChatUser();
+    } else {
+      setCurrentChatUser(chatUser);
+    }
+  }, [width, connectedUserId, chatUser]);
 
   return (
     <ChatBoxWrapper>
-      {user ? (
+      {currentChatUser ? (
         <>
-          {currentChatUser ? (
-            <>
-              <ChatHeader chatUserData={currentChatUser} />
-              <ChatBody />
-              <ChatInput />
-            </>
+          <ChatHeader chatUserData={currentChatUser} />
+          <ChatBody />
+          <ChatInput />
+        </>
+      ) : (
+        <>
+          {width <= 800 ? (
+            <CircleLoader />
           ) : (
             <DefaultUserContainer>
               <div className="mid-container">
@@ -61,23 +87,6 @@ function ChatBox() {
             </DefaultUserContainer>
           )}
         </>
-      ) : (
-        // loading skeleton
-        <DefaultUserContainer>
-          <div></div>
-          <div className="mid-container">
-            <Skeleton height={150} width={150} circle />
-            <Skeleton width={150} />
-            <Skeleton width={300} />
-          </div>
-          <DevContact>
-            <Skeleton width={200} height={8} />
-            <div>
-              <Skeleton height={15} width={15} />
-              <Skeleton height={15} width={15} />
-            </div>
-          </DevContact>
-        </DefaultUserContainer>
       )}
     </ChatBoxWrapper>
   );

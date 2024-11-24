@@ -30,3 +30,5 @@ export const CircleLoader = () => (
     ></l-ring>
   </div>
 );
+
+export { default as PageLoader } from "./PageLoader/index";

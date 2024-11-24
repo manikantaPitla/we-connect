@@ -16,7 +16,7 @@ export function ModalSmall(props) {
   const { title, buttonText } = content;
 
   return (
-    <ModalSmallCustomStyles modal {...props}>
+    <ModalSmallCustomStyles modal {...props} closeOnDocumentClick={false}>
       {(close) => (
         <ModalBody>
           <ModalTitle>{title}</ModalTitle>

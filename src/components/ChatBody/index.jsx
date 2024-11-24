@@ -7,10 +7,9 @@ import {
 } from "./style";
 import { getUserMessagesData } from "../../services/chat";
 import { useSelector } from "react-redux";
-import { useChat } from "../../hooks";
+import { useChat, useCustomParams, useWidth } from "../../hooks";
 
 function ChatBody() {
-  const currentChatUser = useSelector((state) => state.chat.currentChatUser);
   const currentUser = useSelector((state) => state.auth.user);
   const messageListData = useSelector((state) => state.messages.messageList);
 
@@ -18,14 +17,15 @@ function ChatBody() {
 
   const { setMessages } = useChat();
 
-  // Fetch messages when the current chat changes
+  const { connectedUserId } = useCustomParams();
+
   useEffect(() => {
     const fetchMessages = async () => {
-      if (currentUser?.uid && currentChatUser?.connectedUserId) {
+      if (currentUser?.uid && connectedUserId) {
         try {
           await getUserMessagesData(
             currentUser.uid,
-            currentChatUser.connectedUserId,
+            connectedUserId,
             setMessages
           );
         } catch (error) {
@@ -35,12 +35,10 @@ function ChatBody() {
     };
 
     fetchMessages();
-  }, [currentUser?.uid, currentChatUser?.connectedUserId, setMessages]);
+  }, [currentUser?.uid, connectedUserId, setMessages]);
 
-  // Memoized messages list to avoid unnecessary recalculations
   const messagesList = useMemo(() => messageListData || {}, [messageListData]);
 
-  // Auto-scroll to the bottom of the chat container when messages change
   useEffect(() => {
     if (chatContainerScroll.current) {
       chatContainerScroll.current.scrollTo({

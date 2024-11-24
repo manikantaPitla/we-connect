@@ -7,7 +7,10 @@ export const ChatBoxWrapper = styled.div`
   gap: 10px;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+
+  @media screen and (max-width: 800px) {
+    height: 100vh;
+  }
 `;
 
 export const DefaultUserContainer = styled(MainSharedContainer)`

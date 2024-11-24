@@ -48,30 +48,20 @@ function ChatList() {
 
   return (
     <ChatListContainer>
-      {user ? (
+      {loading ? (
+        <RenderLoading />
+      ) : (
         <>
-          {" "}
-          {loading ? (
-            <RenderLoading />
-          ) : (
+          {chatList.length > 0 ? (
             <>
-              {chatList.length > 0 ? (
-                <>
-                  {chatList.map((userData) => (
-                    <ChatListUserItem
-                      key={userData.chatId}
-                      userData={userData}
-                    />
-                  ))}
-                </>
-              ) : (
-                "No chats"
-              )}
+              {chatList.map((userData) => (
+                <ChatListUserItem key={userData.chatId} userData={userData} />
+              ))}
             </>
+          ) : (
+            "No chats"
           )}
         </>
-      ) : (
-        <RenderLoading />
       )}
     </ChatListContainer>
   );

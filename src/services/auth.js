@@ -104,6 +104,24 @@ export const authUserProtection = async () => {
   });
 };
 
+export const checkUserExistence = async (
+  setUser,
+  isNavigating = false,
+  navigate
+) => {
+  try {
+    const userInfo = await authUserProtection();
+    if (userInfo) {
+      setUser(userInfo);
+    } else {
+      isNavigating && navigate("auth/signin");
+    }
+  } catch (error) {
+    isNavigating && navigate("page-error");
+    console.log("user auth error :", error);
+  }
+};
+
 // ****************************************************************
 
 // Sync user's online status in Firestore and Realtime Database

@@ -15,26 +15,17 @@ function SideBar({ tab }) {
   const renderChatList = () => (
     <>
       <SearchWrapper>
-        {user ? (
-          <>
-            <InputEl $nospace>
-              <CiSearch />
-              <input type="text" placeholder="Search" name="search" />
-            </InputEl>
-            <ModalLarge
-              trigger={
-                <ButtonXl className="button-content">Start New Chat</ButtonXl>
-              }
-            >
-              {(close) => <AddNewChat closeModal={close} />}
-            </ModalLarge>
-          </>
-        ) : (
-          <>
-            <Skeleton />
-            <Skeleton />
-          </>
-        )}
+        <InputEl $nospace>
+          <CiSearch />
+          <input type="text" placeholder="Search" name="search" />
+        </InputEl>
+        <ModalLarge
+          trigger={
+            <ButtonXl className="button-content">Start New Chat</ButtonXl>
+          }
+        >
+          {(close) => <AddNewChat closeModal={close} />}
+        </ModalLarge>
         <hr />
       </SearchWrapper>
       <UserListWrapper>{<ChatList />}</UserListWrapper>
