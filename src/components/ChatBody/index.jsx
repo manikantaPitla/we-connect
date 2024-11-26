@@ -8,7 +8,7 @@ import {
 } from "./style";
 import { getUserMessagesData } from "../../services/chat";
 import { useSelector } from "react-redux";
-import { useChat, useCustomParams, useWidth } from "../../hooks";
+import { useChat, useCustomParams } from "../../hooks";
 import { getDateTime, getTime } from "../../services/user";
 
 function ChatBody() {
@@ -19,17 +19,13 @@ function ChatBody() {
 
   const { setMessages } = useChat();
 
-  const { connectedUserId } = useCustomParams();
+  const { connectedUserId, chatId } = useCustomParams();
 
   useEffect(() => {
     const fetchMessages = async () => {
       if (currentUser?.uid && connectedUserId) {
         try {
-          await getUserMessagesData(
-            currentUser.uid,
-            connectedUserId,
-            setMessages
-          );
+          await getUserMessagesData(chatId, setMessages);
         } catch (error) {
           console.error("Error fetching messages:", error);
         }

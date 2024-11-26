@@ -9,16 +9,12 @@ function ChatList({ searchVal }) {
   console.log("ChatList");
   const user = useSelector((state) => state.auth.user);
   const [chatList, setChatList] = useState([]);
-  const filteredChatList = chatList.filter((chat) =>
-    chat.displayName.toLowerCase().includes(searchVal.toLowerCase())
-  );
 
   const { loading, stopLoading } = useLoading(true);
 
   const fetchUserList = async (userId) => {
     try {
-      const data = await getUserChats(userId);
-      setChatList(data);
+      getUserChats(userId, setChatList);
     } catch (error) {
       console.error(error);
     } finally {
@@ -31,6 +27,10 @@ function ChatList({ searchVal }) {
       fetchUserList(user.uid);
     }
   }, [user]);
+
+  const filteredChatList = chatList?.filter((chat) =>
+    chat.displayName.toLowerCase().includes(searchVal.toLowerCase())
+  );
 
   const RenderLoading = () => (
     <>
@@ -55,7 +55,7 @@ function ChatList({ searchVal }) {
         <RenderLoading />
       ) : (
         <>
-          {filteredChatList.length > 0 ? (
+          {filteredChatList?.length > 0 ? (
             <>
               {filteredChatList.map((userData) => (
                 <ChatListUserItem key={userData.chatId} userData={userData} />

@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   increment,
+  onSnapshot,
   query,
   serverTimestamp,
   Timestamp,
@@ -89,35 +90,41 @@ export const searchUser = async (searchValue, currentUserId) => {
   }
 };
 
-export const getUserChats = async (currentUserId) => {
+export const getUserChats = (currentUserId, setChatList) => {
   try {
     const userChatsRef = doc(db, "userChats", currentUserId);
-    const userChatsDoc = await getDoc(userChatsRef);
 
-    if (userChatsDoc.exists()) {
-      const userChatsData = userChatsDoc.data();
+    const unSubscribe = onSnapshot(userChatsRef, async (userChatsDoc) => {
+      if (userChatsDoc.exists()) {
+        const userChatsData = userChatsDoc.data();
 
-      const chatList = await Promise.all(
-        Object.entries(userChatsData).map(async ([chatId, chatInfo]) => {
-          const { uid, email, ...data } = await getUserData(
-            chatInfo.connectedUserId
-          );
-          return {
-            chatId,
-            ...data,
-            ...chatInfo,
-            createdAt: data.createdAt.toMillis(),
-            lastMessageTimeStamp: chatInfo.lastMessageTimeStamp.toMillis(),
-          };
-        })
-      );
+        const chatList = await Promise.all(
+          Object.entries(userChatsData).map(async ([chatId, chatInfo]) => {
+            const { lastMessageTimeStamp, ...restData } = chatInfo;
 
-      console.log("chatList: ", chatList);
-      return chatList;
-    } else {
-      console.log("No chats found for this user.");
-      return [];
-    }
+            const userData = await getUserData(chatInfo.connectedUserId);
+            const { uid, email, ...userDetails } = userData;
+
+            const formattedChatInfo = {
+              chatId,
+              ...restData,
+              ...userDetails,
+              createdAt: userDetails.createdAt?.toMillis() || null,
+              lastMessageTimeStamp: lastMessageTimeStamp?.toMillis() || null,
+            };
+            return formattedChatInfo;
+          })
+        );
+        console.log(chatList);
+
+        setChatList(chatList);
+      } else {
+        console.log("No chats found for this user.");
+        setChatList([]);
+      }
+    });
+
+    return unSubscribe;
   } catch (error) {
     console.error("Error fetching user chats:", error);
     throw new Error(`Failed to retrieve chats for user ${currentUserId}`);
@@ -224,33 +231,32 @@ export const sendMessage = async (
   }
 };
 
-export const getUserMessagesData = async (
-  senderId,
-  receiverId,
-  setMessages
-) => {
-  const combineId = generateCombineId(senderId, receiverId);
-
-  const messagesDocRef = doc(db, "chats", combineId);
+export const getUserMessagesData = async (chatId, setMessages) => {
+  const messagesDocRef = doc(db, "chats", chatId);
 
   try {
-    const messagesDocData = await getDoc(messagesDocRef);
-    if (messagesDocData.exists()) {
-      const messageData = messagesDocData.data();
+    const unSubscribe = onSnapshot(messagesDocRef, (messagesDocData) => {
+      if (messagesDocData.exists()) {
+        const messageData = messagesDocData.data();
 
-      const messageList = messagesDocData.data().messages.map((eachMessage) => {
-        return {
-          ...eachMessage,
-          timestamp: eachMessage.timestamp.toMillis(),
-        };
-      });
+        const messageList = messagesDocData
+          .data()
+          .messages.map((eachMessage) => {
+            return {
+              ...eachMessage,
+              timestamp: eachMessage.timestamp.toMillis(),
+            };
+          });
 
-      console.log(messageList);
-      setMessages({
-        createdAt: messageData.createdAt.toMillis(),
-        messages: messageList,
-      });
-    }
+        console.log(messageList);
+        setMessages({
+          createdAt: messageData.createdAt.toMillis(),
+          messages: messageList,
+        });
+      }
+    });
+
+    return unSubscribe;
   } catch (error) {
     throw error;
   }

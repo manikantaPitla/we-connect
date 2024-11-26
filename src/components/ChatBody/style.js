@@ -51,7 +51,7 @@ export const ChatMessageItem = styled.div`
       : "var(--secondary-background-color)"};
   padding: 10px;
   border-radius: var(--primary-border-radius);
-  color: ${(props) => (props.$sender ? "#fff" : "#000")};
+  color: ${(props) => (props.$sender ? "#fff" : "var(--primary-text-color)")};
 
   p {
     font-size: 12px;

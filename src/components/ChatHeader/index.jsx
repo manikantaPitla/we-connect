@@ -6,7 +6,7 @@ import { HeaderWrapper } from "./style";
 import { ModalViewMedia } from "../../utils/modals";
 
 function ChatHeader({ chatUserData }) {
-  const { thumbnailUrl, displayName } = chatUserData;
+  const { thumbnailUrl, photoURL, displayName } = chatUserData;
   console.log("Chat Header");
   return (
     <HeaderWrapper>
@@ -19,7 +19,7 @@ function ChatHeader({ chatUserData }) {
             />
           }
         >
-          <img src={thumbnailUrl || defaultProfileImage} alt={displayName} />
+          <img src={photoURL || defaultProfileImage} alt={displayName} />
         </ModalViewMedia>
         <div>
           <h5>{displayName}</h5>
