@@ -99,11 +99,15 @@ export const getUserChats = async (currentUserId) => {
 
       const chatList = await Promise.all(
         Object.entries(userChatsData).map(async ([chatId, chatInfo]) => {
-          const { uid, ...data } = await getUserData(chatInfo.connectedUserId);
+          const { uid, email, ...data } = await getUserData(
+            chatInfo.connectedUserId
+          );
           return {
             chatId,
             ...data,
             ...chatInfo,
+            createdAt: data.createdAt.toMillis(),
+            lastMessageTimeStamp: chatInfo.lastMessageTimeStamp.toMillis(),
           };
         })
       );
@@ -177,7 +181,7 @@ export const sendMessage = async (
     const senderChatRef = doc(db, "userChats", senderId);
     const receiverChatRef = doc(db, "userChats", receiverId);
 
-    const timestamp = serverTimestamp();
+    const timestamp = Timestamp.now();
 
     const newMessageObj = {
       id: `${Date.now()}_${senderId}`,
@@ -186,13 +190,13 @@ export const sendMessage = async (
       messageType: "chat",
       media: mediaURL,
       mediaType,
-      timestamp: Timestamp.now(),
+      timestamp,
       isDeleted: false,
       isEdited: false,
       reactions: {},
     };
 
-    addNewMessage(newMessageObj);
+    addNewMessage({ ...newMessageObj, timestamp: timestamp.toMillis() });
 
     const batch = writeBatch(db);
 
@@ -232,7 +236,20 @@ export const getUserMessagesData = async (
   try {
     const messagesDocData = await getDoc(messagesDocRef);
     if (messagesDocData.exists()) {
-      setMessages(messagesDocData.data());
+      const messageData = messagesDocData.data();
+
+      const messageList = messagesDocData.data().messages.map((eachMessage) => {
+        return {
+          ...eachMessage,
+          timestamp: eachMessage.timestamp.toMillis(),
+        };
+      });
+
+      console.log(messageList);
+      setMessages({
+        createdAt: messageData.createdAt.toMillis(),
+        messages: messageList,
+      });
     }
   } catch (error) {
     throw error;

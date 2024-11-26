@@ -10,6 +10,7 @@ export const ChatBoxWrapper = styled.div`
 
   @media screen and (max-width: 800px) {
     height: 100vh;
+    gap: 0px;
   }
 `;
 

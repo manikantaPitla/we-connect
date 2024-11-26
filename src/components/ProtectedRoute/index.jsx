@@ -36,8 +36,7 @@ function ProtectedRoute({ children, chatLoading = false }) {
   }, [navigate]);
 
   if (loading) {
-    if (chatLoading) return "chat is loading...";
-    return <PageLoader />;
+    return <PageLoader chatLoader={chatLoading} />;
   }
 
   if (error) {

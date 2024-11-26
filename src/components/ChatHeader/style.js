@@ -12,6 +12,12 @@ export const HeaderWrapper = styled.header`
   justify-content: space-between;
   align-items: center;
 
+  @media screen and (max-width: 800px) {
+    box-shadow: none;
+    border-radius: 0px;
+    border-bottom: var(--primary-border);
+  }
+
   .user-chat-profile {
     display: flex;
     align-items: center;

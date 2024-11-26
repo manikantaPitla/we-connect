@@ -22,7 +22,7 @@ export const generateCombineId = (senderId, receiverId) => {
 };
 
 export const getTime = (timestamp) => {
-  return new Date(timestamp.seconds * 1000).toLocaleString("en-US", {
+  return new Date(timestamp).toLocaleString("en-US", {
     hour: "numeric",
     minute: "numeric",
     hour12: true,
@@ -34,4 +34,17 @@ export const resizeLastMessage = (message) => {
     return message.substring(0, 20) + " ...";
   }
   return message;
+};
+
+export const getDateTime = (milliSeconds) => {
+  const date = new Date(milliSeconds);
+
+  return date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 };

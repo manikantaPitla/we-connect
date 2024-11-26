@@ -9,6 +9,14 @@ export const ChatInputWrapper = styled.form`
   box-shadow: var(--shadow);
   border-radius: var(--primary-border-radius);
   background-color: var(--primary-background-color);
+
+  @media screen and (max-width: 800px) {
+    border-top: var(--primary-border);
+    /* border-radius: 0px; */
+    /* box-shadow: none; */
+    border-radius: 50px;
+    margin: 0px 10px 10px 10px;
+  }
 `;
 
 export const ChatInputElement = styled.input`
@@ -44,6 +52,10 @@ export const ButtonElement = styled.button`
 export const ChatSubmitButton = styled(ButtonElement)`
   background-color: var(--primary-color);
   color: #fff;
+
+  &:hover {
+    background-color: var(--primary-color);
+  }
 `;
 
 export const MediaOptionsWrapper = styled.div`

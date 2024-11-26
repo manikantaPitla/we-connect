@@ -20,7 +20,13 @@ import {
 } from "../../../components/ChatList/style";
 
 import { DevContact } from "../../../components/ChatBox/style";
+import { HeaderWrapper } from "../../../components/ChatHeader/style";
+import { ChatBodyWrapper } from "../../../components/ChatBody/style";
 
+import {
+  ChatInputWrapper,
+  ChatSubmitButton,
+} from "../../../components/ChatInput/style";
 export {
   ComponentWrapper,
   ChatBoxWrapper,
@@ -29,6 +35,7 @@ export {
   ChatListContainer,
   ChatItem,
   DevContact,
+  ChatSubmitButton,
 };
 
 export const MainLoaderWrapper = styled(HomeContainer)``;
@@ -59,3 +66,10 @@ export const SideBarSkeleton = styled(SideBarWrapper)``;
 
 // CHATBOX SKELETON STYLES****************************************************************
 export const ChatBoxSkeleton = styled(DefaultUserContainer)``;
+
+// CHAT LOADING SKELETON STYLES****************************************************************
+
+export const ChatSkeleton = styled(ChatBoxWrapper)``;
+export const ChatHeaderSkeleton = styled(HeaderWrapper)``;
+export const ChatBodySkeleton = styled(ChatBodyWrapper)``;
+export const ChatInputSkeleton = styled(ChatInputWrapper)``;

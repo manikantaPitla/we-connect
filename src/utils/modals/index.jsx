@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import {
   ModalBody,
   ModalButtonWrapper,
@@ -43,9 +43,9 @@ export function ModalLarge(props) {
   );
 }
 
-export function ModalMenu(props) {
-  return <SmallModalMenu {...props}></SmallModalMenu>;
-}
+export const ModalMenu = forwardRef((props, ref) => {
+  return <SmallModalMenu ref={ref} {...props}></SmallModalMenu>;
+});
 
 export function ModalViewMedia(props) {
   const { children, action = null, ...propsData } = props;

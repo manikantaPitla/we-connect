@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { SearchWrapper, SideBarWrapper, UserListWrapper } from "./style";
 import { CiSearch } from "../../assets/icons";
 import { ButtonXl, InputEl } from "../../styles/commonStyles";
@@ -10,14 +10,20 @@ import { ModalLarge } from "../../utils";
 
 function SideBar({ tab }) {
   console.log("Side Bar");
-  const user = useSelector((state) => state.auth.user);
+
+  const [searchVal, setSearchVal] = useState("");
 
   const renderChatList = () => (
     <>
       <SearchWrapper>
         <InputEl $nospace>
           <CiSearch />
-          <input type="text" placeholder="Search" name="search" />
+          <input
+            type="text"
+            placeholder="Search"
+            name="search"
+            onChange={(e) => setSearchVal(e.target.value)}
+          />
         </InputEl>
         <ModalLarge
           trigger={
@@ -28,7 +34,7 @@ function SideBar({ tab }) {
         </ModalLarge>
         <hr />
       </SearchWrapper>
-      <UserListWrapper>{<ChatList />}</UserListWrapper>
+      <UserListWrapper>{<ChatList searchVal={searchVal} />}</UserListWrapper>
     </>
   );
 

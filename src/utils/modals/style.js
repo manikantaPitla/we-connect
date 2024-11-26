@@ -53,6 +53,8 @@ export const StyledModalLarge = styled(Popup)`
 // ************** Modal Menu ******************
 
 export const SmallModalMenu = styled(Popup)`
+  /* animation */
+
   &-content {
     width: fit-content !important;
     border-radius: var(--primary-border-radius) !important;
@@ -77,7 +79,6 @@ export const ModalViewMediaWrapper = styled(Popup)`
     z-index: 100;
 
     .modal-content {
-      animation: animateView 0.4s;
       display: flex;
       flex-direction: column;
       align-items: stretch;

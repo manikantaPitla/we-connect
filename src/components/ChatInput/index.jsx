@@ -36,8 +36,11 @@ function ChatInput() {
   const currentChatUser = useSelector((state) => state.chat.currentChatUser);
   const currentUser = useSelector((state) => state.auth.user);
 
-  const messageInputRef = useRef(null);
   const { addNewMessage } = useChat();
+  const messageInputRef = useRef(null);
+
+  const modalMenuRef = useRef(null);
+  const closeModalMenu = () => modalMenuRef.current.close();
 
   const { loading, stopLoading, startLoading } = useLoading(false);
 
@@ -70,7 +73,10 @@ function ChatInput() {
           filePreview,
         };
       });
+
+      closeModalMenu();
     },
+
     [chatData.filePreview]
   );
 
@@ -87,6 +93,7 @@ function ChatInput() {
 
       console.log("starting....");
       if (!message && !file) return;
+      startLoading();
       console.log("verified....");
 
       console.log(chatData);
@@ -220,6 +227,7 @@ function ChatInput() {
       {mediaUploadingStatus}
       <RenderMediaPreview />
       <ModalMenu
+        ref={modalMenuRef}
         position="top right"
         offsetY={20}
         trigger={
@@ -230,7 +238,7 @@ function ChatInput() {
       >
         <RenderMediaOptions />
       </ModalMenu>
-      <ChatSubmitButton type="submit">
+      <ChatSubmitButton type="submit" disabled={loading}>
         <Send />
       </ChatSubmitButton>
     </ChatInputWrapper>

@@ -5,10 +5,13 @@ import Skeleton from "react-loading-skeleton";
 import { getUserChats } from "../../services";
 import { useLoading } from "../../hooks";
 import ChatListUserItem from "../ChatListUserItem";
-function ChatList() {
+function ChatList({ searchVal }) {
   console.log("ChatList");
   const user = useSelector((state) => state.auth.user);
   const [chatList, setChatList] = useState([]);
+  const filteredChatList = chatList.filter((chat) =>
+    chat.displayName.toLowerCase().includes(searchVal.toLowerCase())
+  );
 
   const { loading, stopLoading } = useLoading(true);
 
@@ -52,9 +55,9 @@ function ChatList() {
         <RenderLoading />
       ) : (
         <>
-          {chatList.length > 0 ? (
+          {filteredChatList.length > 0 ? (
             <>
-              {chatList.map((userData) => (
+              {filteredChatList.map((userData) => (
                 <ChatListUserItem key={userData.chatId} userData={userData} />
               ))}
             </>
