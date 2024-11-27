@@ -14,8 +14,8 @@ export const ChatInputWrapper = styled.form`
     border-top: var(--primary-border);
     /* border-radius: 0px; */
     /* box-shadow: none; */
-    border-radius: 50px;
-    margin: 0px 10px 10px 10px;
+    border-radius: 0px;
+    /* margin: 0px 10px 10px 10px; */
   }
 `;
 

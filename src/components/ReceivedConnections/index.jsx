@@ -7,51 +7,62 @@ import {
   showError,
   showSuccess,
 } from "../../services";
-import { NoRequestsWrapper, SkeletonWrapper, UserItem } from "./style";
+import { NoRequestsWrapper, UserItem } from "./style";
 import { ButtonM, ImageSmall } from "../../styles/commonStyles";
 import { useLoading } from "../../hooks";
-import Skeleton from "react-loading-skeleton";
 
-import defaultProfileImage from "../../assets/images/default-user.webp";
-import { DotLoader } from "../../utils";
+import {
+  defaultProfileImage,
+  DotLoader,
+  ReceivedConnectionsSkeleton,
+} from "../../utils";
 
 function ReceivedConnections() {
   const [receivedRequestsList, setReceivedRequestsList] = useState([]);
   const user = useSelector((state) => state.auth.user);
 
-  const {
-    loading,
-    stopLoading,
-    loadingId: declineLoadingId,
-    setLoadingId: setDeclineLoadingId,
-  } = useLoading(true);
+  const { loadingId: declineLoadingId, setLoadingId: setDeclineLoadingId } =
+    useLoading();
+
+  const { loading, stopLoading } = useLoading(true);
+
   const { loadingId: acceptLoadingId, setLoadingId: setAcceptLoadingId } =
     useLoading();
 
-  const fetchReceivedRequests = async () => {
-    try {
-      const userList = await getUserConnectionRequests(user.uid, false);
-      setReceivedRequestsList(userList);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      stopLoading();
-    }
-  };
-
   useEffect(() => {
+    let unsubscribe;
+    const fetchReceivedRequests = async () => {
+      try {
+        unsubscribe = await getUserConnectionRequests(
+          user.userId,
+          "received",
+          setReceivedRequestsList
+        );
+      } catch (error) {
+        console.error("failed to get received requests: ", error);
+      } finally {
+        stopLoading();
+      }
+    };
+
     fetchReceivedRequests();
-  }, []);
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user.userId]);
 
   const handleAcceptRequest = async (requestedUserId) => {
     if (declineLoadingId) return;
 
     setAcceptLoadingId(requestedUserId);
     try {
-      await acceptConnectionRequest(requestedUserId, user.uid);
-      setReceivedRequestsList(
-        receivedRequestsList.filter(
-          (recievedRequest) => recievedRequest.uid !== requestedUserId
+      await acceptConnectionRequest(requestedUserId, user.userId);
+      setReceivedRequestsList((prevState) =>
+        prevState.filter(
+          (recievedRequest) => recievedRequest.userId !== requestedUserId
         )
       );
     } catch (error) {
@@ -67,74 +78,66 @@ function ReceivedConnections() {
 
     setDeclineLoadingId(receivedUserId);
     try {
-      await declineConnectionRequest(user.uid, receivedUserId);
-
-      setReceivedRequestsList(
-        receivedRequestsList.filter(
-          (recievedRequest) => recievedRequest.uid !== receivedUserId
+      await declineConnectionRequest(user.userId, receivedUserId);
+      setReceivedRequestsList((prevState) =>
+        prevState.filter(
+          (recievedRequest) => recievedRequest.userId !== receivedUserId
         )
       );
       showSuccess("Sent request removed successfully");
     } catch (error) {
       console.log(error);
-      showError("Error while removing request");
+      showError("Failed to remove request");
     } finally {
+      setDeclineLoadingId(null);
     }
   };
-
   return (
     <>
       {loading ? (
-        <>
-          {Array.from({ length: 4 }).map((_, index) => (
-            <SkeletonWrapper key={index}>
-              <Skeleton height={50} width={50} circle />
-              <p>
-                <Skeleton />
-              </p>
-              <Skeleton height={30} width={60} />
-              <Skeleton height={30} width={60} />
-            </SkeletonWrapper>
-          ))}
-        </>
+        <ReceivedConnectionsSkeleton />
       ) : (
         <>
           {receivedRequestsList.length > 0 ? (
             <>
-              {receivedRequestsList.map((user, index) => (
-                <UserItem key={index}>
-                  <ImageSmall
-                    src={user.thumbnailUrl || defaultProfileImage}
-                    alt={user.displayName || "default profile"}
-                    loading="lazy"
-                  />
-                  <p>{user.displayName}</p>
-                  <div>
-                    <ButtonM
-                      disabled={acceptLoadingId === user.uid}
-                      type="button"
-                      onClick={() => handleAcceptRequest(user.uid)}
-                    >
-                      {acceptLoadingId === user.uid ? (
-                        <DotLoader sizeSmall={true} />
-                      ) : (
-                        "Accept"
-                      )}
-                    </ButtonM>
-                    <ButtonM
-                      disabled={declineLoadingId === user.uid}
-                      $outline
-                      onClick={() => handleRemoveRequest(user.uid)}
-                    >
-                      {declineLoadingId === user.uid ? (
-                        <DotLoader changeColor={true} sizeSmall={true} />
-                      ) : (
-                        "Decline"
-                      )}
-                    </ButtonM>
-                  </div>
-                </UserItem>
-              ))}
+              {receivedRequestsList.map((user) => {
+                const { userId, userName, thumbnailURL } = user;
+
+                return (
+                  <UserItem key={userId}>
+                    <ImageSmall
+                      src={thumbnailURL || defaultProfileImage}
+                      alt={userName || "default profile"}
+                      loading="lazy"
+                    />
+                    <p>{userName}</p>
+                    <div>
+                      <ButtonM
+                        disabled={acceptLoadingId === userId}
+                        type="button"
+                        onClick={() => handleAcceptRequest(userId)}
+                      >
+                        {acceptLoadingId === userId ? (
+                          <DotLoader sizeSmall={true} />
+                        ) : (
+                          "Accept"
+                        )}
+                      </ButtonM>
+                      <ButtonM
+                        disabled={declineLoadingId === userId}
+                        $outline
+                        onClick={() => handleRemoveRequest(userId)}
+                      >
+                        {declineLoadingId === userId ? (
+                          <DotLoader changeColor={true} sizeSmall={true} />
+                        ) : (
+                          "Decline"
+                        )}
+                      </ButtonM>
+                    </div>
+                  </UserItem>
+                );
+              })}
             </>
           ) : (
             <NoRequestsWrapper>

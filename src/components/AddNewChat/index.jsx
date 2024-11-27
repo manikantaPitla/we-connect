@@ -8,12 +8,10 @@ import {
 import { UserAdd, CiSearch } from "../../assets/icons";
 import {
   Header,
-  LoadingWrapper,
   ResponseMsg,
   SearchContainer,
   SearchLogo,
   SearchUsersList,
-  SkeletonWrapper,
   UserListItem,
 } from "./style";
 import searchUserImage from "../../assets/svg/search-img.svg";
@@ -25,10 +23,9 @@ import {
   showSuccess,
 } from "../../services";
 import { useSelector } from "react-redux";
-import Skeleton from "react-loading-skeleton";
 
-import { DotLoader } from "../../utils";
-import defaultProfileImage from "../../assets/images/default-user.webp";
+import { defaultErrorImage, DotLoader, SearchUserLoader } from "../../utils";
+import { defaultProfileImage } from "../../utils";
 
 function AddNewChat({ closeModal }) {
   console.log("AddNewChat ");
@@ -55,14 +52,16 @@ function AddNewChat({ closeModal }) {
     setResponse("");
 
     try {
-      const data = await searchUser(searchValue, currentUser.uid);
+      const data = await searchUser(searchValue, currentUser?.userId);
+
+      console.log("searchList :", data);
       if (data.length === 0) {
-        setResponse(" No results found");
+        setResponse("No users found");
         return;
       }
-      console.log(data);
       setUsersList(data);
     } catch (error) {
+      console.error("Failed to search for users: ", error);
       showError(error.message);
     } finally {
       stopLoading();
@@ -73,11 +72,11 @@ function AddNewChat({ closeModal }) {
     sendRequestLoadingId(recieverUserId);
 
     try {
-      await sendConnectionRequest(currentUser.uid, recieverUserId);
+      await sendConnectionRequest(currentUser.userId, recieverUserId);
       showSuccess("Request sent successfully");
     } catch (error) {
       showError(error.message);
-      console.log("request sending error");
+      log.error("Failed to send request: ", error);
     } finally {
       sendRequestLoadingId(null);
     }
@@ -106,54 +105,56 @@ function AddNewChat({ closeModal }) {
       </SearchContainer>
 
       {loading ? (
-        <LoadingWrapper>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <SkeletonWrapper key={index}>
-              <Skeleton circle width={50} height={50} />
-              <div>
-                <Skeleton width={100} />
-                <Skeleton width={150} />
-              </div>
-            </SkeletonWrapper>
-          ))}
-        </LoadingWrapper>
+        <SearchUserLoader />
       ) : (
         <>
           {usersList.length > 0 ? (
             <SearchUsersList>
-              {usersList.map((eachUser) => (
-                <UserListItem key={eachUser.uid}>
-                  <ImageSmall
-                    src={eachUser.thumbnailUrl || defaultProfileImage}
-                    alt={eachUser.displayName}
-                    loading="lazy"
-                  />
-                  <div>
-                    <h1>{eachUser.displayName}</h1>
-                    <p>{eachUser.email}</p>
-                  </div>
-                  {eachUser.isConnectionRequestPending ? (
-                    <ButtonM>Pending</ButtonM>
-                  ) : (
-                    <>
-                      {eachUser.alreadyConnected ? (
-                        <ButtonM>Chat</ButtonM>
-                      ) : (
-                        <ButtonM
-                          onClick={() => handleUserClick(eachUser.uid)}
-                          disabled={requestLoadingId === eachUser.uid}
-                        >
-                          {requestLoadingId === eachUser.uid ? (
-                            <DotLoader sizeSmall={true} />
-                          ) : (
-                            "Request"
-                          )}
-                        </ButtonM>
-                      )}
-                    </>
-                  )}
-                </UserListItem>
-              ))}
+              {usersList.map((user) => {
+                const {
+                  userId,
+                  thumbnailURL,
+                  userName,
+                  email,
+                  isConnectionPending,
+                  alreadyConnected,
+                } = user;
+                return (
+                  <UserListItem key={userId}>
+                    <ImageSmall
+                      src={thumbnailURL || defaultProfileImage}
+                      alt={userName}
+                      loading="lazy"
+                      onError={(e) => (e.target.src = defaultErrorImage)}
+                    />
+                    <div>
+                      <h1>{userName}</h1>
+                      <p>{email}</p>
+                    </div>
+                    {isConnectionPending ? (
+                      <ButtonM type="button">Pending</ButtonM>
+                    ) : (
+                      <>
+                        {alreadyConnected ? (
+                          <ButtonM type="button">Chat</ButtonM>
+                        ) : (
+                          <ButtonM
+                            type="button"
+                            onClick={() => handleUserClick(userId)}
+                            disabled={requestLoadingId === userId}
+                          >
+                            {requestLoadingId === userId ? (
+                              <DotLoader sizeSmall={true} />
+                            ) : (
+                              "Request"
+                            )}
+                          </ButtonM>
+                        )}
+                      </>
+                    )}
+                  </UserListItem>
+                );
+              })}
             </SearchUsersList>
           ) : (
             <div

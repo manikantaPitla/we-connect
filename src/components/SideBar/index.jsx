@@ -2,10 +2,7 @@ import React, { memo, useState } from "react";
 import { SearchWrapper, SideBarWrapper, UserListWrapper } from "./style";
 import { CiSearch } from "../../assets/icons";
 import { ButtonXl, InputEl } from "../../styles/commonStyles";
-import { useSelector } from "react-redux";
-import Skeleton from "react-loading-skeleton";
 import { ChatList, ConnectionList, AddNewChat, Profile } from "..";
-
 import { ModalLarge } from "../../utils";
 
 function SideBar({ tab }) {

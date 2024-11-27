@@ -74,6 +74,7 @@ export const ProfileWrapper = styled.div`
       object-fit: cover;
       object-position: center;
       align-self: center;
+      background-color: #fff;
     }
 
     label {

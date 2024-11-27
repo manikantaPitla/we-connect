@@ -6,13 +6,14 @@ import {
   showError,
   showSuccess,
 } from "../../services";
-import { NoRequestsWrapper, SkeletonWrapper, UserItem } from "./style";
-import { ButtonM } from "../../styles/commonStyles";
+import { NoRequestsWrapper, UserItem } from "./style";
+import { ButtonM, ImageSmall } from "../../styles/commonStyles";
 import { useLoading } from "../../hooks";
-import Skeleton from "react-loading-skeleton";
-import { DotLoader } from "../../utils";
-
-import defaultProfileImage from "../../assets/images/default-user.webp";
+import {
+  defaultProfileImage,
+  DotLoader,
+  SentConnectionsSkeleton,
+} from "../../utils";
 
 function sentConnections() {
   const [sentRequestsList, setSentRequestsList] = useState([]);
@@ -20,29 +21,39 @@ function sentConnections() {
   const user = useSelector((state) => state.auth.user);
   const { loading, stopLoading, loadingId, setLoadingId } = useLoading(true);
 
-  const fetchSentRequests = async () => {
-    try {
-      const userList = await getUserConnectionRequests(user.uid);
-      setSentRequestsList(userList);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      stopLoading();
-    }
-  };
-
   useEffect(() => {
-    fetchSentRequests();
-  }, []);
+    let unsubscribe;
 
+    const fetchSentRequests = async () => {
+      try {
+        unsubscribe = await getUserConnectionRequests(
+          user.userId,
+          "sent",
+          setSentRequestsList
+        );
+      } catch (error) {
+        console.error("failed to get sent requests: ", error);
+      } finally {
+        stopLoading();
+      }
+    };
+
+    fetchSentRequests();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user.userId]);
   const handleRemoveRequest = async (receivedUserId) => {
     setLoadingId(receivedUserId);
     try {
-      await declineConnectionRequest(user.uid, receivedUserId, true);
+      await declineConnectionRequest(user.userId, receivedUserId, true);
 
       setSentRequestsList(
         sentRequestsList.filter(
-          (sentRequest) => sentRequest.uid !== receivedUserId
+          (sentRequest) => sentRequest.userId !== receivedUserId
         )
       );
       showSuccess("Sent request removed successfully");
@@ -56,45 +67,38 @@ function sentConnections() {
   return (
     <>
       {loading ? (
-        <>
-          {Array.from({ length: 4 }).map((_, index) => (
-            <SkeletonWrapper key={index}>
-              <Skeleton height={50} width={50} circle />
-              <p>
-                <Skeleton />
-              </p>
-              <Skeleton height={30} width={60} />
-            </SkeletonWrapper>
-          ))}
-        </>
+        <SentConnectionsSkeleton />
       ) : (
         <>
           {sentRequestsList.length > 0 ? (
             <>
-              {sentRequestsList.map((user, index) => (
-                <UserItem key={index}>
-                  <img
-                    src={user.thumbnailUrl || defaultProfileImage}
-                    alt={user.displayName || "default profile"}
-                    loading="lazy"
-                  />
-                  <p>{user.displayName}</p>
-                  <div>
-                    <ButtonM
-                      $outline
-                      type="button"
-                      onClick={() => handleRemoveRequest(user.uid)}
-                      disabled={loadingId === user.uid}
-                    >
-                      {loadingId === user.uid ? (
-                        <DotLoader changeColor={true} sizeSmall={true} />
-                      ) : (
-                        "Remove"
-                      )}
-                    </ButtonM>
-                  </div>
-                </UserItem>
-              ))}
+              {sentRequestsList.map((user) => {
+                const { userId, userName, thumbnailURL } = user;
+                return (
+                  <UserItem key={userId}>
+                    <ImageSmall
+                      src={thumbnailURL || defaultProfileImage}
+                      alt={userName || "default profile"}
+                      loading="lazy"
+                    />
+                    <p>{userName}</p>
+                    <div>
+                      <ButtonM
+                        $outline
+                        type="button"
+                        onClick={() => handleRemoveRequest(userId)}
+                        disabled={loadingId === userId}
+                      >
+                        {loadingId === userId ? (
+                          <DotLoader changeColor={true} sizeSmall={true} />
+                        ) : (
+                          "Remove"
+                        )}
+                      </ButtonM>
+                    </div>
+                  </UserItem>
+                );
+              })}
             </>
           ) : (
             <NoRequestsWrapper>

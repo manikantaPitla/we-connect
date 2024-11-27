@@ -7,7 +7,7 @@ import ChatHeader from "../ChatHeader";
 import ChatBody from "../ChatBody";
 import ChatInput from "../ChatInput";
 import { useCustomParams, useWidth } from "../../hooks";
-import { getUserData } from "../../services";
+import { getUserProfileData } from "../../services";
 import { CircleLoader } from "../../utils/loaders";
 
 function ChatBox() {
@@ -22,7 +22,8 @@ function ChatBox() {
   useEffect(() => {
     const fetchChatUser = async () => {
       try {
-        const fetchedUser = await getUserData(connectedUserId);
+        const fetchedUser = await getUserProfileData(connectedUserId);
+        console.log("dasds", fetchChatUser);
         setCurrentChatUser(fetchedUser);
       } catch (err) {
         setCurrentChatUser(null);

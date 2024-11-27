@@ -1,12 +1,13 @@
 import React from "react";
 import { ImageSmall } from "../../styles/commonStyles";
-import defaultProfileImage from "../../assets/images/default-user.webp";
 import { HiDotsVertical } from "../../assets/icons";
 import { HeaderWrapper } from "./style";
 import { ModalViewMedia } from "../../utils/modals";
+import { defaultProfileImage } from "../../utils";
 
 function ChatHeader({ chatUserData }) {
-  const { thumbnailUrl, photoURL, displayName } = chatUserData;
+  const { thumbnailURL, photoURL, userName } = chatUserData;
+  console.log(chatUserData);
   console.log("Chat Header");
   return (
     <HeaderWrapper>
@@ -14,15 +15,15 @@ function ChatHeader({ chatUserData }) {
         <ModalViewMedia
           trigger={
             <ImageSmall
-              src={thumbnailUrl || defaultProfileImage}
-              alt={displayName}
+              src={thumbnailURL || defaultProfileImage}
+              alt={userName}
             />
           }
         >
-          <img src={photoURL || defaultProfileImage} alt={displayName} />
+          <img src={photoURL || defaultProfileImage} alt={userName} />
         </ModalViewMedia>
         <div>
-          <h5>{displayName}</h5>
+          <h5>{userName}</h5>
         </div>
       </div>
       <button type="button">
@@ -32,4 +33,4 @@ function ChatHeader({ chatUserData }) {
   );
 }
 
-export default ChatHeader;
+export default React.memo(ChatHeader);

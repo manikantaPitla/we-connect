@@ -43,6 +43,6 @@ export const HeaderWrapper = styled.header`
 
   svg {
     font-size: 20px;
-    color: var(--text-primary);
+    color: var(--primary-text-color);
   }
 `;

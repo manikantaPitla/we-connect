@@ -25,9 +25,4 @@ export const NoRequestsWrapper = styled.div`
   align-items: center;
 `;
 
-export const SkeletonWrapper = styled(UserItem)`
-  div {
-    display: flex;
-    gap: 10px;
-  }
-`;
+

@@ -7,7 +7,6 @@ export const ChatBodyWrapper = styled(MainSharedContainer)`
   list-style: none;
   overflow-y: auto;
   gap: 10px;
-  /* overflow-x: scroll; */
   display: flex;
 
   @media screen and (max-width: 800px) {
@@ -26,12 +25,13 @@ export const ChatsWrapper = styled.ul`
   gap: 10px;
 
   .connection-message {
-    justify-content: center !important;
+    align-items: center !important;
     background-color: var(--secondary-background-color) !important;
 
     div {
       background-color: transparent !important;
       text-align: center;
+      border-radius: 0px;
     }
   }
 `;
@@ -42,6 +42,15 @@ export const ChatItem = styled.li`
   flex-direction: column;
   gap: 3px;
   justify-content: center;
+  color: var(--secondary-text-color);
+
+  .image-media {
+    border-radius: var(--primary-border-radius);
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    object-position: center;
+  }
 `;
 
 export const ChatMessageItem = styled.div`
@@ -52,6 +61,10 @@ export const ChatMessageItem = styled.div`
   padding: 10px;
   border-radius: var(--primary-border-radius);
   color: ${(props) => (props.$sender ? "#fff" : "var(--primary-text-color)")};
+  line-break: anywhere;
+  width: fit-content;
+  max-width: 75%;
+  transition: all 40s ease-in;
 
   p {
     font-size: 12px;

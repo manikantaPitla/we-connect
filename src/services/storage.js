@@ -72,18 +72,16 @@ export const updateUserProfile = async (dataToUpdate, userCallBack) => {
         const existingData = docSnap.data();
 
         const updatedUserInfo = {
-          ...existingData.userInfo,
+          ...existingData,
           ...dataToUpdate,
         };
 
-        await updateDoc(docRef, {
-          userInfo: updatedUserInfo,
-        });
+        await updateDoc(docRef, updatedUserInfo);
 
         const updatedDocSnap = await getDoc(docRef);
 
         if (updatedDocSnap.exists()) {
-          userCallBack(updatedDocSnap.data().userInfo);
+          userCallBack(updatedDocSnap.data());
         }
       }
     } catch (error) {

@@ -32,3 +32,4 @@ export const CircleLoader = () => (
 );
 
 export { default as PageLoader } from "./PageLoader/index";
+export * from "./SkeletonLoader/index";

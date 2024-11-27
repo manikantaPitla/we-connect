@@ -8,7 +8,6 @@ import {
 } from "./style";
 import { useSelector } from "react-redux";
 import { ButtonXl, InputEl } from "../../styles/commonStyles";
-import defaultProfileImage from "../../assets/images/default-user.webp";
 import { Edit, Warning2 } from "../../assets/icons";
 import { useLoading, useAuthActions } from "../../hooks";
 import {
@@ -17,18 +16,21 @@ import {
   updateUserProfile,
   uploadMedia,
   generateThumbnail,
-  getUserData,
+  getUserProfileData,
 } from "../../services";
-import { CircleLoader, DotLoader } from "../../utils";
+import {
+  CircleLoader,
+  DotLoader,
+  defaultProfileImage,
+  defaultErrorImage,
+} from "../../utils";
 
 function UpdateProfile() {
   console.log("UpdateProfile");
-  const user = useSelector((state) => state.auth.user);
+  const currentUser = useSelector((state) => state.auth.user);
 
   const [userProfile, setUserProfile] = useState({});
-
   const [fileToUpload, setFileToUpload] = useState(null);
-
   const [imageUploadingStatus, setImageUploadingStatus] = useState("");
 
   const { loading: initialLoad, stopLoading: stopInitialLoad } =
@@ -42,19 +44,20 @@ function UpdateProfile() {
 
   const { setUser } = useAuthActions();
 
-  const fetchUser = async () => {
+  const fetchUserProfileData = async () => {
     try {
-      const userData = await getUserData(user.uid);
+      const userData = await getUserProfileData(currentUser?.userId);
       setUserProfile(userData);
     } catch (error) {
+      console.error("Failed to load user profile: ", error);
     } finally {
       stopInitialLoad();
     }
   };
 
   useEffect(() => {
-    fetchUser();
-  }, [user]);
+    fetchUserProfileData();
+  }, [currentUser]);
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
@@ -72,22 +75,29 @@ function UpdateProfile() {
   };
 
   const uploadProfileImage = async (file) => {
-    return await uploadMedia(user.uid, "profiles", file, (progress) =>
-      setImageUploadingStatus(`${progress}%`)
+    return await uploadMedia(
+      currentUser?.userId,
+      "profiles",
+      file,
+      (progress) => setImageUploadingStatus(`${progress}%`)
     );
   };
 
-  const uploadThumbnailUrlImage = async (file) => {
+  const uploadThumbnailImage = async (file) => {
     const resizedThumbnailUrl = await generateThumbnail(file);
-    return await uploadMedia(user.uid, "thumbnails", resizedThumbnailUrl);
+    return await uploadMedia(
+      currentUser?.userId,
+      "thumbnails",
+      resizedThumbnailUrl
+    );
   };
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
 
-    const { displayName } = userProfile;
+    const { userName } = userProfile;
 
-    if (displayName === user.displayName && fileToUpload === null) {
+    if (userName === currentUser.userName && fileToUpload === null) {
       showError("Make changes to update profile");
       return;
     }
@@ -95,26 +105,26 @@ function UpdateProfile() {
     try {
       startUpdateLoading();
 
-      let profileUploadUrl;
-      let thumbnailUrlurl;
+      let profileUploadURL;
+      let thumbnailURL;
 
       if (fileToUpload !== null) {
-        profileUploadUrl = await uploadProfileImage(fileToUpload);
+        profileUploadURL = await uploadProfileImage(fileToUpload);
 
         const resizedProfileImage = await generateThumbnail(fileToUpload);
 
-        thumbnailUrlurl = await uploadThumbnailUrlImage(resizedProfileImage);
+        thumbnailURL = await uploadThumbnailImage(resizedProfileImage);
       }
 
       const dataToUpdate = {};
 
-      if (displayName !== user.displayName) {
-        dataToUpdate.displayName = displayName;
+      if (userName !== currentUser.userName) {
+        dataToUpdate.userName = userName;
       }
 
       if (fileToUpload !== null) {
-        dataToUpdate.photoURL = profileUploadUrl;
-        dataToUpdate.thumbnailUrl = thumbnailUrlurl;
+        dataToUpdate.photoURL = profileUploadURL;
+        dataToUpdate.thumbnailURL = thumbnailURL;
       }
 
       if (Object.keys(dataToUpdate).length > 0) {
@@ -124,7 +134,7 @@ function UpdateProfile() {
       showSuccess("Profile updated successfully.");
     } catch (error) {
       showError(error);
-      console.error("Error updating profile:", error);
+      console.error("Error updating profile: ", error);
     } finally {
       setImageUploadingStatus("");
       stopUpdateLoading();
@@ -139,20 +149,21 @@ function UpdateProfile() {
       ) : (
         <>
           <Title>
-            {userProfile.thumbnailUrl ? "PROFILE" : "UPDATE PROFILE"}
+            {userProfile.thumbnailURL ? "PROFILE" : "UPDATE PROFILE"}
           </Title>
-          {!userProfile.thumbnailUrl && (
+          {!userProfile.thumbnailURL && (
             <SuggestProfileUpdate>
               <Warning2 size={18} />
-              <p>Complete your profile with a profile pic</p>
+              <p>Upload your profile photo!</p>
             </SuggestProfileUpdate>
           )}
           <FormContainer onSubmit={handleProfileUpdate}>
             <ProfileWrapper>
               <div>
                 <img
-                  src={userProfile.thumbnailUrl || defaultProfileImage}
+                  src={userProfile.thumbnailURL || defaultProfileImage}
                   alt="user profile"
+                  onError={(e) => (e.target.src = defaultErrorImage)}
                 />
                 {imageUploadingStatus && (
                   <p>
@@ -177,18 +188,18 @@ function UpdateProfile() {
             <InputEl>
               <input
                 type="text"
-                value={userProfile.displayName}
+                value={userProfile.userName}
                 onChange={(e) =>
                   setUserProfile((prevState) => ({
                     ...prevState,
-                    displayName: e.target.value,
+                    userName: e.target.value,
                   }))
                 }
               />
             </InputEl>
             <label>Email</label>
             <InputEl>
-              <input type="text" value={userProfile.email} disabled />
+              <input type="text" value={userProfile.email} disabled readOnly />
             </InputEl>
             <ButtonXl type="submit" disabled={updateLoading}>
               {updateLoading ? <DotLoader /> : "Update"}

@@ -1,7 +1,6 @@
 import {
   doc,
   serverTimestamp,
-  setDoc,
   updateDoc,
   auth,
   db,
@@ -18,20 +17,61 @@ import {
 
 import { getUserData } from "./chat";
 import { signOut } from "firebase/auth";
+import { writeBatch } from "firebase/firestore";
 
-export const signUpWithEmail = async (name, email, password) => {
+export const signUpWithEmail = async (userName, email, password) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(
+    const userCredentials = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
 
-    await updateProfile(userCredential.user, {
-      displayName: name,
+    const user = userCredentials.user;
+
+    await updateProfile(user, {
+      displayName: userName,
     });
 
-    await handleUserIdentification(userCredential.user);
+    await initializeNewUser(user);
+  } catch (error) {
+    console.error("Sign-up error:", error);
+    throw error;
+  }
+};
+
+const initializeNewUser = async (user) => {
+  const batch = writeBatch(db);
+
+  const userDefaultData = {
+    userId: user.uid,
+    userName: user.displayName,
+    email: user.email,
+    photoURL: user.photoURL,
+    thumbnailURL: user.photoURL,
+    createdAt: serverTimestamp(),
+    online: false,
+    lastSeen: serverTimestamp(),
+  };
+
+  try {
+    const userDocRef = doc(db, "users", user.uid);
+    batch.set(userDocRef, userDefaultData, { merge: true });
+
+    const userChatsDocRef = doc(db, "userChats", user.uid);
+    batch.set(userChatsDocRef, {}, { merge: true });
+
+    const userConnectionsDocRef = doc(db, "connections", user.uid);
+    batch.set(
+      userConnectionsDocRef,
+      {
+        sent: [],
+        received: [],
+      },
+      { merge: true }
+    );
+
+    await batch.commit();
   } catch (error) {
     throw error;
   }
@@ -39,50 +79,25 @@ export const signUpWithEmail = async (name, email, password) => {
 
 export const signInWithEmail = async (email, password) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    return userCredential.user;
+    await signInWithEmailAndPassword(auth, email, password);
   } catch (error) {
+    console.error("Sign-in error:", error);
     throw error;
   }
 };
 
 export const signOutAuth = async () => {
-  await signOut(auth);
-  localStorage.removeItem("weConnect");
-};
-
-// Set default user data in Firestore
-const handleUserIdentification = async (user) => {
-  const userDefaultData = {
-    userInfo: {
-      uid: user.uid,
-      displayName: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-      thumbnailUrl: user.photoURL,
-      createdAt: serverTimestamp(),
-    },
-    connectionRequests: {
-      sent: [],
-      received: [],
-    },
-  };
-
   try {
-    await setDoc(doc(db, "users", user.uid), userDefaultData, { merge: true });
-    await setDoc(doc(db, "userChats", user.uid), {});
+    await signOut(auth);
+    localStorage.removeItem("weConnect");
   } catch (error) {
-    console.error("Error during user identification:", error);
-    throw error;
+    console.error("Sign-out error:", error);
   }
 };
 
-//checking user exist in app or else return error
+//below are not yet implemented
+
+//to be deprecated
 export const authUserProtection = async () => {
   return new Promise((resolve, reject) => {
     const unSubscribe = onAuthStateChanged(auth, async (user) => {

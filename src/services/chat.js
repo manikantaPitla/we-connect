@@ -8,15 +8,14 @@ import {
   increment,
   onSnapshot,
   query,
-  serverTimestamp,
   Timestamp,
-  updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { generateCombineId } from "./user";
+import { checkUserExist, extractUserInfo, generateCombineId } from "./user";
 import { uploadMedia } from "./storage";
+import { getUserConnections } from "./connection";
 
 export const getUserChatData = async (
   currentUserId,
@@ -54,8 +53,8 @@ export const searchUser = async (searchValue, currentUserId) => {
     const userQuery = query(
       collection(db, "users"),
       and(
-        where("userInfo.displayName", ">=", searchQueryLower),
-        where("userInfo.displayName", "<=", searchQueryLower + "\uf8ff")
+        where("userName", ">=", searchQueryLower),
+        where("userName", "<=", searchQueryLower + "\uf8ff")
       )
     );
 
@@ -64,73 +63,98 @@ export const searchUser = async (searchValue, currentUserId) => {
     const resultList = await Promise.all(
       userQuerySnapshot.docs.map(async (docSnapshot) => {
         const userData = docSnapshot.data();
-        const connectedUserId = userData.userInfo.uid;
+        const searchUserId = userData.userId;
 
-        const userChatData = await getUserChatData(
-          currentUserId,
-          connectedUserId,
-          true
-        );
+        const [connectionData, userChatData] = await Promise.all([
+          getUserConnections(searchUserId),
+          getUserChatData(currentUserId, searchUserId, true),
+        ]);
 
-        const isConnectionRequestPending =
-          userData.connectionRequests.received.includes(currentUserId) ||
-          userData.connectionRequests.sent.includes(currentUserId);
+        const isConnectionPending =
+          checkUserExist(connectionData.sent, searchUserId) ||
+          checkUserExist(connectionData.received, searchUserId);
 
         return {
-          ...userData.userInfo,
+          ...extractUserInfo(userData),
           alreadyConnected: userChatData.exists,
-          isConnectionRequestPending,
+          isConnectionPending,
         };
       })
     );
 
-    return resultList.filter((user) => user.uid !== currentUserId);
+    return resultList.filter((user) => user?.userId !== currentUserId);
   } catch (error) {
     throw new Error(`Error searching users: ${error.message}`);
   }
 };
 
-export const getUserChats = (currentUserId, setChatList) => {
+export const getUserChats = async (currentUserId, setChatList) => {
   try {
     const userChatsRef = doc(db, "userChats", currentUserId);
 
-    const unSubscribe = onSnapshot(userChatsRef, async (userChatsDoc) => {
-      if (userChatsDoc.exists()) {
-        const userChatsData = userChatsDoc.data();
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onSnapshot(userChatsRef, async (userChatsDoc) => {
+        try {
+          if (userChatsDoc.exists()) {
+            const userChatsData = userChatsDoc.data();
 
-        const chatList = await Promise.all(
-          Object.entries(userChatsData).map(async ([chatId, chatInfo]) => {
-            const { lastMessageTimeStamp, ...restData } = chatInfo;
+            const chatList = await Promise.all(
+              Object.entries(userChatsData).map(async ([chatId, chatInfo]) => {
+                const { lastMessageTimeStamp, connectedUserId, ...restData } =
+                  chatInfo;
 
-            const userData = await getUserData(chatInfo.connectedUserId);
-            const { uid, email, ...userDetails } = userData;
+                const userData = await getUserProfileData(connectedUserId);
+                const { userId, email, ...userDetails } = userData;
 
-            const formattedChatInfo = {
-              chatId,
-              ...restData,
-              ...userDetails,
-              createdAt: userDetails.createdAt?.toMillis() || null,
-              lastMessageTimeStamp: lastMessageTimeStamp?.toMillis() || null,
-            };
-            return formattedChatInfo;
-          })
-        );
-        console.log(chatList);
+                return {
+                  chatId,
+                  ...restData,
+                  ...userDetails,
+                  connectedUserId,
+                  createdAt: userDetails.createdAt?.toMillis() || null,
+                  lastMessageTimeStamp:
+                    lastMessageTimeStamp?.toMillis() || null,
+                };
+              })
+            );
 
-        setChatList(chatList);
-      } else {
-        console.log("No chats found for this user.");
-        setChatList([]);
-      }
+            setChatList((prev) => {
+              const isDifferent =
+                JSON.stringify(prev) !== JSON.stringify(chatList);
+              return isDifferent ? chatList : prev;
+            });
+
+            resolve(chatList);
+          } else {
+            reject("No chat data found.");
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+      return unsubscribe;
     });
-
-    return unSubscribe;
   } catch (error) {
-    console.error("Error fetching user chats:", error);
-    throw new Error(`Failed to retrieve chats for user ${currentUserId}`);
+    throw error;
   }
 };
 
+export const getUserProfileData = async (userId) => {
+  try {
+    const docRef = doc(db, "users", userId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      throw new Error("Couldn't find user profile");
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+//about to deprecate
 export const getUserData = async (
   id,
   connectionRequests = false,
@@ -175,8 +199,6 @@ export const sendMessage = async (
         (file.type.startsWith("video/") && "videos") ||
         (file.type.startsWith("audio/") && "audios");
 
-      console.log("path", mediaPath, mediaPath.slice(0, -1));
-
       mediaType = mediaPath.slice(0, -1);
       console.log("Media type", mediaType);
       mediaURL = await uploadMedia(senderId, mediaPath, file, (progress) =>
@@ -191,7 +213,7 @@ export const sendMessage = async (
     const timestamp = Timestamp.now();
 
     const newMessageObj = {
-      id: `${Date.now()}_${senderId}`,
+      messageId: `${Date.now()}_${senderId}`,
       text: message || null,
       senderId,
       messageType: "chat",
@@ -248,7 +270,6 @@ export const getUserMessagesData = async (chatId, setMessages) => {
             };
           });
 
-        console.log(messageList);
         setMessages({
           createdAt: messageData.createdAt.toMillis(),
           messages: messageList,

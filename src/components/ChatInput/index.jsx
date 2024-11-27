@@ -91,15 +91,12 @@ function ChatInput() {
 
       const { message, file } = chatData;
 
-      console.log("starting....");
       if (!message && !file) return;
       startLoading();
-      console.log("verified....");
 
-      console.log(chatData);
       try {
         await sendMessage(
-          currentUser.uid,
+          currentUser.userId,
           connectedUserId,
           chatData,
           setMediaUploadingStatus,

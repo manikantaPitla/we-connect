@@ -17,23 +17,24 @@ import {
 import { useAuthActions, useSwitchChat, useTheme } from "../../hooks";
 import { ModalSmall } from "../../utils";
 import { showError, signOutAuth } from "../../services";
+import { defaultProfileImage } from "../../utils";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import defaultProfileImage from "../../assets/images/default-user.webp";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ImageSmall } from "../../styles/commonStyles";
 
 function SideMenu({ tabActions }) {
   const { pageTheme, changeTheme } = useTheme();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user);
   const { removeUser } = useAuthActions();
   const { clearCurrentChat } = useSwitchChat();
+
+  const user = useSelector((state) => state.auth.user);
 
   const tabItems = [
     {
       tabName: "Profile",
-      profileUrl: user?.thumbnailUrl || defaultProfileImage,
+      profileURL: user?.thumbnailURL || defaultProfileImage,
       tabIcon: null,
       action: () => tabActions.onChangeCurrentTab("Profile"),
     },
@@ -61,7 +62,7 @@ function SideMenu({ tabActions }) {
       removeUser();
       navigate("/auth/signin");
     } catch (error) {
-      showError(error.message);
+      showError(error);
     }
   };
 
@@ -92,7 +93,7 @@ function SideMenu({ tabActions }) {
               {eachTab.tabIcon ? (
                 <eachTab.tabIcon />
               ) : (
-                <ImageSmall src={eachTab.profileUrl} alt={eachTab.tabName} />
+                <ImageSmall src={eachTab.profileURL} alt={eachTab.tabName} />
               )}
             </MenuIcons>
 

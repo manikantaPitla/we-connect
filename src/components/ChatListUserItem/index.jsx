@@ -5,22 +5,22 @@ import {
   getTime,
   resizeLastMessage,
 } from "../../services";
-import defaultProfileImage from "../../assets/images/default-user.webp";
 import { ImageSmall } from "../../styles/commonStyles";
 import { ChatItem } from "./style";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { defaultProfileImage } from "../../utils";
 
 function ChatListUserItem({ userData }) {
   const {
-    thumbnailUrl,
-    displayName,
+    thumbnailURL,
+    userName,
     lastMessage,
     lastMessageTimeStamp,
     connectedUserId,
     chatId,
   } = userData;
-  console.log("userData:", userData);
+
   const currentChatUser = useSelector((state) => state.chat.currentChatUser);
 
   const { setCurrentChat } = useSwitchChat();
@@ -42,9 +42,9 @@ function ChatListUserItem({ userData }) {
       }`}
       onClick={handleChatClick}
     >
-      <ImageSmall src={thumbnailUrl || defaultProfileImage} alt={displayName} />
+      <ImageSmall src={thumbnailURL || defaultProfileImage} alt={userName} />
       <div>
-        <h5>{displayName}</h5>
+        <h5>{userName}</h5>
         <p>{resizeLastMessage(lastMessage)}</p>
       </div>
       <p>{getTime(lastMessageTimeStamp)}</p>
@@ -52,4 +52,4 @@ function ChatListUserItem({ userData }) {
   );
 }
 
-export default ChatListUserItem;
+export default React.memo(ChatListUserItem);

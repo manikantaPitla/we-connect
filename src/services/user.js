@@ -1,18 +1,17 @@
 export const extractUserInfo = (user) => {
   return {
-    uid: user.uid,
+    userId: user.userId,
     email: user.email,
-    displayName: user.displayName,
-    photoURL: user.photoURL,
+    userName: user.userName,
+    thumbnailURL: user.thumbnailURL,
   };
 };
 export const extractChatUserInfo = (user) => {
   return {
     chatId: user.chatId,
     email: user.email,
-    displayName: user.displayName,
-    photoURL: user.photoURL,
-    thumbnailUrl: user.thumbnailUrl,
+    userName: user.userName,
+    thumbnailURL: user.thumbnailURL,
     connectedUserId: user.connectedUserId,
   };
 };
@@ -48,3 +47,6 @@ export const getDateTime = (milliSeconds) => {
     second: "2-digit",
   });
 };
+
+export const checkUserExist = (obj, id) =>
+  obj.some((user) => user.userId === id);

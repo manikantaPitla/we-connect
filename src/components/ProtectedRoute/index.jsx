@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoading, useAuthActions } from "../../hooks";
-import { onAuthStateChanged, auth, getUserData } from "../../services";
+import {
+  onAuthStateChanged,
+  auth,
+  getUserData,
+  getUserProfileData,
+} from "../../services";
 import { ErrorPage } from "../../pages";
 import { PageLoader } from "../../utils";
 
@@ -16,14 +21,14 @@ function ProtectedRoute({ children, chatLoading = false }) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
-          const userDocInfo = await getUserData(user.uid);
+          const userDocInfo = await getUserProfileData(user.uid);
           setUser(userDocInfo);
         } else {
           removeUser();
           navigate("/auth/signin");
         }
       } catch (error) {
-        console.error("Error loading...", error);
+        console.error("Error getting user: ", error);
         setError("An error occurred while loading. Please try again.");
       } finally {
         stopLoading();

@@ -5,23 +5,52 @@ import {
   arrayRemove,
   serverTimestamp,
 } from "./firebaseFunctions";
-import { getUserChatData, getUserData } from "./chat";
-import { generateCombineId } from "./user";
+import { getUserChatData } from "./chat";
+import { checkUserExist, extractUserInfo, generateCombineId } from "./user";
 import {
   collection,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   Timestamp,
   where,
   writeBatch,
 } from "firebase/firestore";
 
+export const getUserConnections = async (
+  requestedUserId,
+  defaultData = "all"
+) => {
+  const connectionDocRef = doc(db, "connections", requestedUserId);
+
+  try {
+    const connectionDocData = await getDoc(connectionDocRef);
+
+    if (!connectionDocData.exists()) {
+      return [];
+    }
+
+    const connectionData = connectionDocData.data();
+    switch (defaultData) {
+      case "sent":
+        return connectionData.sent;
+      case "received":
+        return connectionData.received;
+      default:
+        return connectionData;
+    }
+  } catch (error) {
+    console.error("Error getting connections: ", error);
+    throw error;
+  }
+};
+
 export const sendConnectionRequest = async (senderId, receiverId) => {
   try {
-    const senderData = await getUserData(senderId, true, true);
+    const senderConnectionData = await getUserConnections(senderId, "sent");
 
-    if (senderData.includes(receiverId)) {
+    if (checkUserExist(senderConnectionData)) {
       throw new Error("Connection request already sent.");
     }
 
@@ -30,7 +59,6 @@ export const sendConnectionRequest = async (senderId, receiverId) => {
       receiverId,
       true
     );
-    console.log(isUserAlreadyConnected);
 
     if (isUserAlreadyConnected.exists) {
       throw new Error("User already connected");
@@ -38,63 +66,100 @@ export const sendConnectionRequest = async (senderId, receiverId) => {
 
     const batch = writeBatch(db);
 
-    const senderDocRef = doc(db, "users", senderId);
-    const receiverDocRef = doc(db, "users", receiverId);
+    const senderDocRef = doc(db, "connections", senderId);
+    const receiverDocRef = doc(db, "connections", receiverId);
 
     batch.update(senderDocRef, {
-      "connectionRequests.sent": arrayUnion(receiverId),
+      sent: arrayUnion(receiverId),
     });
     batch.update(receiverDocRef, {
-      "connectionRequests.received": arrayUnion(senderId),
+      received: arrayUnion(senderId),
     });
 
     await batch.commit();
   } catch (error) {
-    console.error("Error sending connection request:", error);
+    console.error("connection request failed: ", error);
     throw error;
   }
 };
 
-export const getUserConnectionRequests = async (
-  userId,
-  isRequestUsers = true
+export const getUserConnectionRequests = (
+  requestUserId,
+  requestType = "all",
+  setConnectionsData
 ) => {
-  try {
-    const usersIdList = await getUserData(userId, true, isRequestUsers);
+  return new Promise((resolve, reject) => {
+    const connectionDocRef = doc(db, "connections", requestUserId);
 
-    if (usersIdList && usersIdList.length > 0) {
-      const usersQuery = query(
-        collection(db, "users"),
-        where("userInfo.uid", "in", usersIdList)
+    try {
+      const unsubscribe = onSnapshot(
+        connectionDocRef,
+        async (connectionDocData) => {
+          try {
+            if (connectionDocData.exists()) {
+              const connectionData = connectionDocData.data();
+
+              let requestData = [];
+              switch (requestType) {
+                case "sent":
+                  requestData = connectionData.sent;
+                  break;
+                case "received":
+                  requestData = connectionData.received;
+                  break;
+                default:
+                  requestData = connectionData;
+                  break;
+              }
+
+              if (requestData && requestData.length > 0) {
+                const usersQuery = query(
+                  collection(db, "users"),
+                  where("userId", "in", requestData)
+                );
+
+                const userDocData = await getDocs(usersQuery);
+                const requestUsersList = userDocData.docs.map((doc) =>
+                  extractUserInfo(doc.data())
+                );
+
+                setConnectionsData(requestUsersList);
+                resolve(unsubscribe);
+              } else {
+                setConnectionsData([]);
+                resolve(unsubscribe);
+              }
+            } else {
+              setConnectionsData([]);
+              resolve(unsubscribe);
+            }
+          } catch (error) {
+            reject(error);
+          }
+        },
+        (error) => {
+          reject(error);
+        }
       );
-
-      const querySnapshot = await getDocs(usersQuery);
-      const requestUsersList = querySnapshot.docs.map(
-        (doc) => doc.data().userInfo
-      );
-
-      return requestUsersList;
+    } catch (error) {
+      reject(error);
     }
-
-    return [];
-  } catch (error) {
-    throw error;
-  }
+  });
 };
 
 const modifyConnectionRequest = async (requestedUserId, recievedUserId) => {
-  const requestedUserDocRef = doc(db, "users", requestedUserId);
-  const receivedUserDocRef = doc(db, "users", recievedUserId);
+  const requestedUserDocRef = doc(db, "connections", requestedUserId);
+  const receivedUserDocRef = doc(db, "connections", recievedUserId);
 
   try {
     const batch = writeBatch(db);
 
     batch.update(requestedUserDocRef, {
-      "connectionRequests.sent": arrayRemove(recievedUserId),
+      sent: arrayRemove(recievedUserId),
     });
 
     batch.update(receivedUserDocRef, {
-      "connectionRequests.received": arrayRemove(requestedUserId),
+      received: arrayRemove(requestedUserId),
     });
 
     await batch.commit();
@@ -174,7 +239,7 @@ export const acceptConnectionRequest = async (
     await modifyConnectionRequest(requestedUserId, receivedUserId);
     await setUserToChats(receivedUserId, requestedUserId);
   } catch (error) {
-    console.log("SET USER TO CHAT ERROR: " + error.message);
+    console.log("Failed to build connection" + error.message);
     throw error;
   }
 };

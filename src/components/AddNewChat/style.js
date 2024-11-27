@@ -84,25 +84,3 @@ export const ResponseMsg = styled.div`
   font-size: 12px;
   color: var(--text-secondary);
 `;
-
-export const LoadingWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`;
-
-export const SkeletonWrapper = styled.div`
-  background-color: var(--secondary-color);
-  height: 70px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  /* box-shadow: var(--shadow); */
-  border-radius: var(--primary-border-radius);
-  color: var(--text-primary);
-
-  div {
-    flex-grow: 1;
-  }
-`;

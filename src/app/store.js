@@ -16,7 +16,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: ["auth/addUser", "chat/addCurrentChat"],
         ignoredPaths: [
-          "auth.user.lastLogin",
+          "auth.user.lastSeen",
           "auth.user.createdAt",
           "chat.currentChatUser.createdAt",
           "chat.currentChatUser.lastMessageTimeStamp",

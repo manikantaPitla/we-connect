@@ -23,7 +23,7 @@ function ChatBody() {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      if (currentUser?.uid && connectedUserId) {
+      if (currentUser?.userId && connectedUserId) {
         try {
           await getUserMessagesData(chatId, setMessages);
         } catch (error) {
@@ -33,7 +33,7 @@ function ChatBody() {
     };
 
     fetchMessages();
-  }, [currentUser?.uid, connectedUserId, setMessages]);
+  }, [currentUser?.userId, connectedUserId, setMessages]);
 
   const messagesList = useMemo(() => messageListData || {}, [messageListData]);
 
@@ -51,24 +51,30 @@ function ChatBody() {
       <ChatsWrapper ref={chatContainerScroll}>
         {messagesList?.messages?.length > 0 ? (
           messagesList.messages.map((message) => {
-            const { text, media, senderId, id, messageType, timestamp } =
+            const { text, media, senderId, messageId, messageType, timestamp } =
               message;
             return (
               <ChatItem
-                key={id}
+                key={messageId}
                 $connection={messageType === "connection"}
-                $sender={senderId === currentUser.uid}
+                $sender={senderId === currentUser.userId}
                 className={`${
                   messageType === "connection" && "connection-message"
                 }`}
               >
                 {messageType !== "connection" ? (
                   <>
-                    <ChatMessageItem $sender={senderId === currentUser.uid}>
+                    <ChatMessageItem $sender={senderId === currentUser.userId}>
                       <p>{text}</p>
                     </ChatMessageItem>
                     <ChatTime>{getTime(timestamp)}</ChatTime>
-                    {media && <img src={media} alt="Media content" />}
+                    {media && (
+                      <img
+                        className="image-media"
+                        src={media}
+                        alt="Media content"
+                      />
+                    )}
                   </>
                 ) : (
                   <ChatMessageItem>
