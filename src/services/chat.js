@@ -13,7 +13,13 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { checkUserExist, extractUserInfo, generateCombineId } from "./user";
+import {
+  checkUserExist,
+  extractUserInfo,
+  generateCombineId,
+  getDateTime,
+  getTime,
+} from "./user";
 import { uploadMedia } from "./storage";
 import { getUserConnections } from "./connection";
 
@@ -200,10 +206,15 @@ export const sendMessage = async (
         (file.type.startsWith("audio/") && "audios");
 
       mediaType = mediaPath.slice(0, -1);
-      console.log("Media type", mediaType);
-      mediaURL = await uploadMedia(senderId, mediaPath, file, (progress) =>
-        setMediaLoading(progress)
+
+      const firebaseMediaURL = await uploadMedia(
+        senderId,
+        mediaPath,
+        file,
+        (progress) => setMediaLoading(progress)
       );
+
+      mediaURL = { url: firebaseMediaURL, name: file.name };
     }
 
     const chatDocRef = doc(db, "chats", combineId);
@@ -216,7 +227,7 @@ export const sendMessage = async (
       messageId: `${Date.now()}_${senderId}`,
       text: message || null,
       senderId,
-      messageType: "chat",
+      messageType: mediaType || "text",
       media: mediaURL,
       mediaType,
       timestamp,
@@ -253,32 +264,26 @@ export const sendMessage = async (
   }
 };
 
-export const getUserMessagesData = async (chatId, setMessages) => {
+export const getUserMessagesData = (chatId, setMessages) => {
   const messagesDocRef = doc(db, "chats", chatId);
 
-  try {
-    const unSubscribe = onSnapshot(messagesDocRef, (messagesDocData) => {
-      if (messagesDocData.exists()) {
-        const messageData = messagesDocData.data();
+  const unSubscribe = onSnapshot(messagesDocRef, (messagesDocData) => {
+    if (messagesDocData.exists()) {
+      const messageData = messagesDocData.data();
 
-        const messageList = messagesDocData
-          .data()
-          .messages.map((eachMessage) => {
-            return {
-              ...eachMessage,
-              timestamp: eachMessage.timestamp.toMillis(),
-            };
-          });
+      const messageList = messagesDocData.data().messages.map((eachMessage) => {
+        return {
+          ...eachMessage,
+          timestamp: getTime(eachMessage.timestamp.toMillis()),
+        };
+      });
 
-        setMessages({
-          createdAt: messageData.createdAt.toMillis(),
-          messages: messageList,
-        });
-      }
-    });
+      setMessages({
+        createdAt: getDateTime(messageData.createdAt.toMillis()),
+        messages: messageList,
+      });
+    }
+  });
 
-    return unSubscribe;
-  } catch (error) {
-    throw error;
-  }
+  return unSubscribe;
 };

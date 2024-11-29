@@ -7,7 +7,6 @@ import { defaultProfileImage } from "../../utils";
 
 function ChatHeader({ chatUserData }) {
   const { thumbnailURL, photoURL, userName } = chatUserData;
-  console.log(chatUserData);
   console.log("Chat Header");
   return (
     <HeaderWrapper>

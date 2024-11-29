@@ -8,34 +8,36 @@ import {
 } from "./style";
 import { getUserMessagesData } from "../../services/chat";
 import { useSelector } from "react-redux";
-import { useChat, useCustomParams } from "../../hooks";
-import { getDateTime, getTime } from "../../services/user";
+import { useChat, useCustomParams, useLoading } from "../../hooks";
+import { CircleLoader } from "../../utils";
+import AudioFile from "../AudioFile";
 
 function ChatBody() {
   const currentUser = useSelector((state) => state.auth.user);
   const messageListData = useSelector((state) => state.messages.messageList);
 
   const chatContainerScroll = useRef(null);
-
   const { setMessages } = useChat();
-
+  const { loading, stopLoading } = useLoading(true);
   const { connectedUserId, chatId } = useCustomParams();
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      if (currentUser?.userId && connectedUserId) {
-        try {
-          await getUserMessagesData(chatId, setMessages);
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-        }
+    if (!chatId) return;
+
+    const unsubscribe = getUserMessagesData(chatId, setMessages);
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
       }
     };
+  }, [chatId, setMessages]);
 
-    fetchMessages();
-  }, [currentUser?.userId, connectedUserId, setMessages]);
-
-  const messagesList = useMemo(() => messageListData || {}, [messageListData]);
+  useEffect(() => {
+    if (messageListData.messages.length > 0) {
+      stopLoading();
+    }
+  }, [messageListData.messages.length, stopLoading]);
 
   useEffect(() => {
     if (chatContainerScroll.current) {
@@ -44,49 +46,82 @@ function ChatBody() {
         behavior: "smooth",
       });
     }
-  }, [messagesList]);
+  }, [messageListData.messages]);
+
+  const RenderImage = ({ media, text }) => {
+    return (
+      <>
+        <img className="image-media" src={media.url} alt="Media content" />
+        {text !== null && <p>{text}</p>}
+      </>
+    );
+  };
+  const RenderVideo = ({ media, text }) => {
+    return (
+      <>
+        <video controls className="video-media" src={media.url} />
+        {text && <p>{text}</p>}
+      </>
+    );
+  };
+  const RenderAudio = ({ media }) => {
+    return <AudioFile audioData={media} />;
+  };
+
+  const RenderText = ({ text, messageType }) => {
+    return (
+      <>
+        <p>{text}</p>
+        {messageType === "connection" && <p>{messageListData?.createdAt}</p>}
+      </>
+    );
+  };
+
+  const RenderMessagesByType = ({ messageData }) => {
+    const { messageType, media, text } = messageData;
+    switch (messageType) {
+      case "image":
+        return <RenderImage text={text} media={media} />;
+      case "audio":
+        return <RenderAudio text={text} media={media} />;
+      case "video":
+        return <RenderVideo media={media} />;
+      default:
+        return <RenderText text={text} messageType={messageType} />;
+    }
+  };
+
+  const renderedMessages = useMemo(
+    () =>
+      messageListData?.messages?.map((message) => {
+        const { senderId, messageId, messageType, timestamp } = message;
+
+        return (
+          <ChatItem
+            key={messageId}
+            $connection={messageType === "connection"}
+            $sender={senderId === currentUser.userId}
+            className={`${
+              messageType === "connection" && "connection-message"
+            }`}
+          >
+            <ChatMessageItem $sender={senderId === currentUser.userId}>
+              <RenderMessagesByType messageData={message} />
+            </ChatMessageItem>
+            {messageType !== "connection" && <ChatTime>{timestamp}</ChatTime>}
+          </ChatItem>
+        );
+      }),
+    [messageListData?.messages, currentUser?.userId]
+  );
 
   return (
     <ChatBodyWrapper>
       <ChatsWrapper ref={chatContainerScroll}>
-        {messagesList?.messages?.length > 0 ? (
-          messagesList.messages.map((message) => {
-            const { text, media, senderId, messageId, messageType, timestamp } =
-              message;
-            return (
-              <ChatItem
-                key={messageId}
-                $connection={messageType === "connection"}
-                $sender={senderId === currentUser.userId}
-                className={`${
-                  messageType === "connection" && "connection-message"
-                }`}
-              >
-                {messageType !== "connection" ? (
-                  <>
-                    <ChatMessageItem $sender={senderId === currentUser.userId}>
-                      <p>{text}</p>
-                    </ChatMessageItem>
-                    <ChatTime>{getTime(timestamp)}</ChatTime>
-                    {media && (
-                      <img
-                        className="image-media"
-                        src={media}
-                        alt="Media content"
-                      />
-                    )}
-                  </>
-                ) : (
-                  <ChatMessageItem>
-                    <p> {getDateTime(messagesList.createdAt)}</p>
-                    <p>{text}</p>
-                  </ChatMessageItem>
-                )}
-              </ChatItem>
-            );
-          })
+        {loading ? (
+          <CircleLoader changeColor={true} />
         ) : (
-          <p>No messages yet.</p>
+          <>{renderedMessages}</>
         )}
       </ChatsWrapper>
     </ChatBodyWrapper>

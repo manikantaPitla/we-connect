@@ -23,11 +23,12 @@ function ChatListUserItem({ userData }) {
 
   const currentChatUser = useSelector((state) => state.chat.currentChatUser);
 
-  const { setCurrentChat } = useSwitchChat();
+  const { clearCurrentChat, setCurrentChat } = useSwitchChat();
   const width = useWidth();
   const navigate = useNavigate();
 
   const handleChatClick = () => {
+    clearCurrentChat();
     if (width <= 800) {
       navigate(`chat?c_u_id=${connectedUserId}&c_id=${chatId}`);
     } else {

@@ -20,3 +20,5 @@ export {
 export { CiSearch } from "react-icons/ci";
 export { HiDotsVertical } from "react-icons/hi";
 export { FaGithub, FaLinkedin } from "react-icons/fa";
+export { FaPause } from "react-icons/fa6";
+export { IoPlay } from "react-icons/io5";

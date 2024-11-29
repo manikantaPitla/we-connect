@@ -209,7 +209,7 @@ const setUserToChats = async (acceptingUserId, requestedUserId) => {
     if (!chatDoc.exists()) {
       batch.set(chatDocRef, {
         messages: arrayUnion({
-          id: `${Date.now()}_${acceptingUserId}`,
+          messageId: `${Date.now()}_${acceptingUserId}`,
           messageType: "connection",
           text: "You are now connected",
           senderId: acceptingUserId,

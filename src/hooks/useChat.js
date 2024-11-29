@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import {
   setChatMessages,
   addChatMessage,
-  updateChatMessage,
+//   updateChatMessage,
 } from "../app/features/messageReducer";
 
 const useChat = () => {

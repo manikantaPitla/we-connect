@@ -32,6 +32,7 @@ export const ChatsWrapper = styled.ul`
       background-color: transparent !important;
       text-align: center;
       border-radius: 0px;
+      color: var(--secondary-text-color) !important;
     }
   }
 `;
