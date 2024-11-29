@@ -47,10 +47,16 @@ export const ChatItem = styled.li`
 
   .image-media {
     border-radius: var(--primary-border-radius);
-    width: 200px;
-    height: 200px;
+    width: 200px !important;
+    height: 200px !important;
     object-fit: cover;
     object-position: center;
+  }
+
+  .video-media {
+    width: 300px;
+    height: 250px;
+    background-color: red;
   }
 `;
 

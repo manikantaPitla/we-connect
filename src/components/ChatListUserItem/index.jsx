@@ -28,8 +28,8 @@ function ChatListUserItem({ userData }) {
   const navigate = useNavigate();
 
   const handleChatClick = () => {
-    clearCurrentChat();
     if (width <= 800) {
+      clearCurrentChat();
       navigate(`chat?c_u_id=${connectedUserId}&c_id=${chatId}`);
     } else {
       setCurrentChat(extractChatUserInfo(userData));

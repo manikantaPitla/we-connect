@@ -91,6 +91,8 @@ export const ModalViewMediaWrapper = styled(Popup)`
         object-fit: contain;
         width: 100%;
         height: 100%;
+        width: 500px;
+        height: 600px;
         border-radius: var(--primary-border-radius);
 
         @media screen and (max-width: 768px) {

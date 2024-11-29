@@ -23,11 +23,12 @@ export const useSwitchChat = () => {
     setSearchParams(params);
   };
   const setCurrentChat = (currentChat) => {
+    if (currentChatUser?.chatId === currentChat?.chatId) return;
     handleSearchParams(false, currentChat.chatId, currentChat.connectedUserId);
     dispatch(addCurrentChat(currentChat));
   };
   const clearCurrentChat = () => {
-    if (!currentChatUser) return;
+    if (currentChatUser === null) return;
     handleSearchParams();
     dispatch(removeCurrentChat());
   };

@@ -20,7 +20,7 @@ import {
   getDateTime,
   getTime,
 } from "./user";
-import { uploadMedia } from "./storage";
+import { generateThumbnail, uploadMedia } from "./storage";
 import { getUserConnections } from "./connection";
 
 export const getUserChatData = async (
@@ -198,12 +198,25 @@ export const sendMessage = async (
   try {
     let mediaURL = null;
     let mediaType = null;
+    let mediaThumbnail = null;
 
     if (file) {
       const mediaPath =
         (file.type.startsWith("image/") && "images") ||
         (file.type.startsWith("video/") && "videos") ||
         (file.type.startsWith("audio/") && "audios");
+
+      if (file.type.startsWith("images/") || mediaPath === "images") {
+        const thumbnailFile = await generateThumbnail(file);
+
+        const firebaseThumbnailURL = await uploadMedia(
+          senderId,
+          "images/chat/thumbnails",
+          thumbnailFile
+        );
+
+        mediaThumbnail = { name: file.name, url: firebaseThumbnailURL };
+      }
 
       mediaType = mediaPath.slice(0, -1);
 
@@ -229,6 +242,7 @@ export const sendMessage = async (
       senderId,
       messageType: mediaType || "text",
       media: mediaURL,
+      mediaThumbnail: mediaThumbnail,
       mediaType,
       timestamp,
       isDeleted: false,

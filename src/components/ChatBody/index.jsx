@@ -9,8 +9,11 @@ import {
 import { getUserMessagesData } from "../../services/chat";
 import { useSelector } from "react-redux";
 import { useChat, useCustomParams, useLoading } from "../../hooks";
-import { CircleLoader } from "../../utils";
-import AudioFile from "../AudioFile";
+import { CircleLoader, ModalViewMedia } from "../../utils";
+import AudioPlayer from "../AudioPlayer";
+import VideoPlayer from "../VideoPlayer";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 function ChatBody() {
   const currentUser = useSelector((state) => state.auth.user);
@@ -19,7 +22,7 @@ function ChatBody() {
   const chatContainerScroll = useRef(null);
   const { setMessages } = useChat();
   const { loading, stopLoading } = useLoading(true);
-  const { connectedUserId, chatId } = useCustomParams();
+  const { chatId } = useCustomParams();
 
   useEffect(() => {
     if (!chatId) return;
@@ -48,10 +51,33 @@ function ChatBody() {
     }
   }, [messageListData.messages]);
 
-  const RenderImage = ({ media, text }) => {
+  const RenderImage = ({ media, text, mediaThumbnail }) => {
     return (
       <>
-        <img className="image-media" src={media.url} alt="Media content" />
+        <ModalViewMedia
+          trigger={
+            <LazyLoadImage
+              //   loading="lazy"
+              effect="blur"
+              className="image-media"
+              src={mediaThumbnail.url}
+              alt={mediaThumbnail.name}
+            />
+          }
+        >
+          <LazyLoadImage
+            effect="blur"
+            wrapperProps={{
+              // If you need to, you can tweak the effect transition using the wrapper style.
+              style: { transitionDelay: "1s" },
+            }}
+            // loading="lazy"
+
+            src={media.url}
+            alt={media.name}
+          />
+        </ModalViewMedia>
+
         {text !== null && <p>{text}</p>}
       </>
     );
@@ -59,13 +85,13 @@ function ChatBody() {
   const RenderVideo = ({ media, text }) => {
     return (
       <>
-        <video controls className="video-media" src={media.url} />
+        <VideoPlayer videoData={media.url} />
         {text && <p>{text}</p>}
       </>
     );
   };
   const RenderAudio = ({ media }) => {
-    return <AudioFile audioData={media} />;
+    return <AudioPlayer audioData={media} />;
   };
 
   const RenderText = ({ text, messageType }) => {
@@ -78,10 +104,16 @@ function ChatBody() {
   };
 
   const RenderMessagesByType = ({ messageData }) => {
-    const { messageType, media, text } = messageData;
+    const { messageType, media, text, mediaThumbnail } = messageData;
     switch (messageType) {
       case "image":
-        return <RenderImage text={text} media={media} />;
+        return (
+          <RenderImage
+            text={text}
+            media={media}
+            mediaThumbnail={mediaThumbnail}
+          />
+        );
       case "audio":
         return <RenderAudio text={text} media={media} />;
       case "video":
@@ -95,7 +127,6 @@ function ChatBody() {
     () =>
       messageListData?.messages?.map((message) => {
         const { senderId, messageId, messageType, timestamp } = message;
-
         return (
           <ChatItem
             key={messageId}
