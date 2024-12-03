@@ -46,3 +46,26 @@ export const HeaderWrapper = styled.header`
     color: var(--primary-text-color);
   }
 `;
+
+export const MenuWrapper = styled.ul`
+  /* height: 40px; */
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  color: var(--primary-text-color);
+  list-style: none;
+  font-size: var(--fs-14);
+
+  li {
+    color: inherit;
+    border-radius: var(--primary-border-radius);
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--secondary-background-color);
+    }
+  }
+`;

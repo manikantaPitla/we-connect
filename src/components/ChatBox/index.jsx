@@ -6,10 +6,9 @@ import { FaGithub, FaLinkedin } from "../../assets/icons";
 import ChatHeader from "../ChatHeader";
 import ChatBody from "../ChatBody";
 import ChatInput from "../ChatInput";
-import { useCustomParams, useSwitchChat, useWidth } from "../../hooks";
+import { useCustomParams, useWidth } from "../../hooks";
 import { getUserProfileData } from "../../services";
 import { CircleLoader } from "../../utils/loaders";
-import { useNavigate } from "react-router-dom";
 
 function ChatBox() {
   console.log("ChatBox");
@@ -17,15 +16,13 @@ function ChatBox() {
   const chatUser = useSelector((state) => state.chat.currentChatUser);
 
   const width = useWidth();
-  const { connectedUserId } = useCustomParams();
+  const { connectedUserId, chatId } = useCustomParams();
   const [currentChatUser, setCurrentChatUser] = useState(null);
-  const { clearCurrentChat } = useSwitchChat();
 
   useEffect(() => {
     const fetchChatUser = async () => {
       try {
         const fetchedUser = await getUserProfileData(connectedUserId);
-        console.log("dasds", fetchChatUser);
         setCurrentChatUser(fetchedUser);
       } catch (err) {
         setCurrentChatUser(null);
@@ -38,19 +35,13 @@ function ChatBox() {
     } else {
       setCurrentChatUser(chatUser);
     }
-
-    return () => {
-      if (chatUser) {
-        clearCurrentChat();
-      }
-    };
   }, [width, connectedUserId, chatUser]);
 
   return (
     <ChatBoxWrapper>
       {currentChatUser ? (
         <>
-          <ChatHeader chatUserData={currentChatUser} />
+          <ChatHeader chatUserData={currentChatUser} chatId={chatId} />
           <ChatBody />
           <ChatInput />
         </>

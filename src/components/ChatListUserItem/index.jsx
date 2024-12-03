@@ -23,13 +23,12 @@ function ChatListUserItem({ userData }) {
 
   const currentChatUser = useSelector((state) => state.chat.currentChatUser);
 
-  const { clearCurrentChat, setCurrentChat } = useSwitchChat();
+  const { setCurrentChat } = useSwitchChat();
   const width = useWidth();
   const navigate = useNavigate();
 
   const handleChatClick = () => {
     if (width <= 800) {
-      clearCurrentChat();
       navigate(`chat?c_u_id=${connectedUserId}&c_id=${chatId}`);
     } else {
       setCurrentChat(extractChatUserInfo(userData));
@@ -53,4 +52,4 @@ function ChatListUserItem({ userData }) {
   );
 }
 
-export default React.memo(ChatListUserItem);
+export default ChatListUserItem;

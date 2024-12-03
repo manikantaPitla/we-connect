@@ -3,7 +3,8 @@ import { useCallback } from "react";
 import {
   setChatMessages,
   addChatMessage,
-//   updateChatMessage,
+  updateChatMessage,
+  removeChatMessages,
 } from "../app/features/messageReducer";
 
 const useChat = () => {
@@ -15,8 +16,10 @@ const useChat = () => {
   );
 
   const addNewMessage = (message) => dispatch(addChatMessage(message));
+  const clearMessages = () => dispatch(removeChatMessages());
+  const updateMessage = (message) => dispatch(updateChatMessage(message));
 
-  return { setMessages, addNewMessage };
+  return { setMessages, addNewMessage, clearMessages, updateMessage };
 };
 
 export default useChat;

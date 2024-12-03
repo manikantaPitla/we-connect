@@ -14,11 +14,12 @@ export const AuthContainer = styled.div`
 
 export const ImageWrapper = styled.div`
   flex: 1;
+
   img {
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
-    object-position: 80%;
+    object-fit: cover !important;
+    height: 100% !important;
+    width: 100% !important;
+    object-position: 80% !important;
   }
 
   @media screen and (max-width: 800px) {
@@ -27,7 +28,7 @@ export const ImageWrapper = styled.div`
 
   @media screen and (max-width: 900px) {
     img {
-      object-position: 75%;
+      object-position: 75% !important;
     }
   }
 `;

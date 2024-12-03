@@ -8,7 +8,6 @@ import {
   ChatItem,
   ChatListContainer,
   ChatSkeleton,
-  ChatSubmitButton,
   ComponentWrapper,
   DevContact,
   MainLoaderWrapper,
@@ -39,12 +38,13 @@ function PageLoader({ chatLoader }) {
           </ChatHeaderSkeleton>
           <ChatBodySkeleton></ChatBodySkeleton>
           <ChatInputSkeleton>
-            <ChatSubmitButton>
+            <div className="input-skeleton"></div>
+            <div className="button-skeleton">
               <Skeleton />
-            </ChatSubmitButton>
-            <ChatSubmitButton>
+            </div>
+            <div className="button-skeleton">
               <Skeleton />
-            </ChatSubmitButton>
+            </div>
           </ChatInputSkeleton>
         </ChatSkeleton>
       ) : (

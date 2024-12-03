@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, memo } from "react";
 import {
   ChatInputWrapper,
   ChatInputElement,
@@ -14,41 +14,107 @@ import {
   Video,
   Music,
   Play,
-  //   MusicPlay,
 } from "../../assets/icons";
 import { ModalMenu, ModalViewMedia } from "../../utils/modals";
 import { useSelector } from "react-redux";
 import { sendMessage } from "../../services";
 import { useChat, useCustomParams, useLoading } from "../../hooks";
 
+const RenderMediaOptions = memo(({ handleFileChange, closeModalMenu }) => {
+  const mediaOptionsList = [
+    { mediaName: "image", mediaIcon: <Image /> },
+    { mediaName: "video", mediaIcon: <Video /> },
+    { mediaName: "audio", mediaIcon: <Music /> },
+  ];
+
+  return (
+    <MediaOptionsWrapper>
+      {mediaOptionsList.map(({ mediaName, mediaIcon }) => (
+        <div key={mediaName}>
+          <input
+            type="file"
+            id={mediaName}
+            name={mediaName}
+            accept={`${mediaName}/*`}
+            onChange={(e) => {
+              handleFileChange(e);
+              closeModalMenu();
+            }}
+          />
+          <label htmlFor={mediaName}>{mediaIcon}</label>
+        </div>
+      ))}
+    </MediaOptionsWrapper>
+  );
+});
+
+const RenderMediaPreview = memo(({ file, filePreview, clearMedia }) => {
+  if (!file || !filePreview) return null;
+
+  const mediaPreviewContent = (() => {
+    if (file.type.startsWith("image/")) {
+      return <img src={filePreview} className="preview-image" alt="preview" />;
+    }
+    if (file.type.startsWith("video/")) {
+      return <Play />;
+    }
+    if (file.type.startsWith("audio/")) {
+      return <Music />;
+    }
+    return null;
+  })();
+
+  const mediaContent = (() => {
+    if (file.type.startsWith("image/")) {
+      return <img src={filePreview} alt="preview" />;
+    }
+    if (file.type.startsWith("video/")) {
+      return (
+        <video className="preview-video" controls>
+          <source src={filePreview} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      );
+    }
+    if (file.type.startsWith("audio/")) {
+      return (
+        <audio controls>
+          <source src={filePreview} type="audio/ogg" />
+          Your browser does not support the audio element.
+        </audio>
+      );
+    }
+    return null;
+  })();
+
+  return (
+    <ModalViewMedia
+      action={clearMedia}
+      trigger={<PreviewFile type="button">{mediaPreviewContent}</PreviewFile>}
+    >
+      {mediaContent}
+    </ModalViewMedia>
+  );
+});
+
 function ChatInput() {
-  console.log("ChatInput");
-
-  const initialChatData = {
-    message: "",
-    file: null,
-    filePreview: null,
-  };
-
+  console.log("Chat Input");
+  const initialChatData = { message: "", file: null, filePreview: null };
   const [chatData, setChatData] = useState(initialChatData);
   const [mediaUploadingStatus, setMediaUploadingStatus] = useState("");
 
   const currentChatUser = useSelector((state) => state.chat.currentChatUser);
   const currentUser = useSelector((state) => state.auth.user);
 
-  const { addNewMessage } = useChat();
-  const messageInputRef = useRef(null);
-
-  const modalMenuRef = useRef(null);
-  const closeModalMenu = () => modalMenuRef.current.close();
-
-  const { loading, stopLoading, startLoading } = useLoading(false);
-
+  const { addNewMessage, updateMessage } = useChat();
   const { connectedUserId } = useCustomParams();
+  const { loading, startLoading, stopLoading } = useLoading(false);
+
+  const messageInputRef = useRef(null);
+  const modalMenuRef = useRef(null);
 
   useEffect(() => {
     setChatData(initialChatData);
-
     return () => setChatData(initialChatData);
   }, [currentChatUser]);
 
@@ -56,33 +122,22 @@ function ChatInput() {
     setChatData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }, []);
 
-  const handleFileChange = useCallback(
-    (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+  const handleFileChange = useCallback((e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-      const filePreview = URL.createObjectURL(file);
+    const filePreview = URL.createObjectURL(file);
+    setChatData((prev) => {
+      if (prev.filePreview) {
+        URL.revokeObjectURL(prev.filePreview);
+      }
+      return { ...prev, file, filePreview };
+    });
+  }, []);
 
-      setChatData((prev) => {
-        if (prev.filePreview) {
-          URL.revokeObjectURL(prev.filePreview);
-        }
-        return {
-          ...prev,
-          file,
-          filePreview,
-        };
-      });
-
-      closeModalMenu();
-    },
-
-    [chatData.filePreview]
-  );
-
-  const clearMedia = () => {
+  const clearMedia = useCallback(() => {
     setChatData((prev) => ({ ...prev, file: null, filePreview: null }));
-  };
+  }, []);
 
   const handleSendMessage = useCallback(
     async (e) => {
@@ -90,150 +145,66 @@ function ChatInput() {
       messageInputRef.current.focus();
 
       const { message, file } = chatData;
-
       if (!message && !file) return;
-      startLoading();
 
+      startLoading();
       try {
         await sendMessage(
           currentUser.userId,
           connectedUserId,
           chatData,
           setMediaUploadingStatus,
-          addNewMessage
+          addNewMessage,
+          updateMessage
         );
-      } catch (error) {
-        console.log(error);
-      } finally {
         setChatData(initialChatData);
         setMediaUploadingStatus("");
+      } catch (error) {
+        console.error(error);
+      } finally {
         stopLoading();
       }
     },
-    [chatData]
+    [
+      chatData,
+      addNewMessage,
+      currentUser.userId,
+      connectedUserId,
+      startLoading,
+      stopLoading,
+    ]
   );
 
-  const RenderMediaOptions = () => {
-    const mediaOptionsList = [
-      {
-        mediaName: "image",
-        mediaIcon: <Image />,
-      },
-      {
-        mediaName: "video",
-        mediaIcon: <Video />,
-      },
-      {
-        mediaName: "audio",
-        mediaIcon: <Music />,
-      },
-    ];
-
-    return (
-      <MediaOptionsWrapper>
-        {mediaOptionsList.map((option, index) => {
-          const { mediaName, mediaIcon } = option;
-          return (
-            <div key={index}>
-              <input
-                type="file"
-                id={mediaName}
-                name={mediaName}
-                accept={`${mediaName}/*`}
-                onChange={handleFileChange}
-              />
-              <label htmlFor={mediaName}>{mediaIcon}</label>
-            </div>
-          );
-        })}
-      </MediaOptionsWrapper>
-    );
-  };
-
-  const RenderMediaPreview = () => {
-    const { file, filePreview } = chatData;
-
-    if (!file || !filePreview) return null;
-
-    if (file.type.startsWith("image/")) {
-      return (
-        <ModalViewMedia
-          action={clearMedia}
-          trigger={
-            <PreviewFile type="button">
-              <img
-                src={filePreview}
-                className="preview-image"
-                alt="preview image"
-              />
-            </PreviewFile>
-          }
-        >
-          <img src={filePreview} />
-        </ModalViewMedia>
-      );
-    }
-
-    if (file.type.startsWith("video/")) {
-      return (
-        <ModalViewMedia
-          action={clearMedia}
-          trigger={
-            <PreviewFile type="button">
-              <Play />
-            </PreviewFile>
-          }
-        >
-          <video className="preview-video" autoPlay={false} controls>
-            <source src={filePreview} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </ModalViewMedia>
-      );
-    }
-
-    if (file.type.startsWith("audio/")) {
-      return (
-        <ModalViewMedia
-          action={clearMedia}
-          trigger={
-            <PreviewFile type="button">
-              <Music />
-            </PreviewFile>
-          }
-        >
-          <audio controls>
-            <source src={filePreview} type="audio/ogg" />
-            Your browser does not support the audio element.
-          </audio>
-        </ModalViewMedia>
-      );
-    }
-  };
+  const closeModalMenu = useCallback(() => modalMenuRef.current.close(), []);
 
   return (
     <ChatInputWrapper onSubmit={handleSendMessage}>
       <ChatInputElement
         ref={messageInputRef}
-        type="input"
         name="message"
         placeholder="Type your message here..."
         value={chatData.message}
         onChange={handleInputChange}
       />
-      {mediaUploadingStatus}
-      <RenderMediaPreview />
+      {mediaUploadingStatus && <div>{mediaUploadingStatus}</div>}
+      <RenderMediaPreview
+        file={chatData.file}
+        filePreview={chatData.filePreview}
+        clearMedia={clearMedia}
+      />
       <ModalMenu
         ref={modalMenuRef}
         position="top right"
-        offsetY={20}
         trigger={
           <ButtonElement type="button">
             <AttachSquare />
           </ButtonElement>
         }
       >
-        <RenderMediaOptions />
+        <RenderMediaOptions
+          handleFileChange={handleFileChange}
+          closeModalMenu={closeModalMenu}
+        />
       </ModalMenu>
       <ChatSubmitButton type="submit" disabled={loading}>
         <Send />
@@ -242,4 +213,4 @@ function ChatInput() {
   );
 }
 
-export default ChatInput;
+export default memo(ChatInput);

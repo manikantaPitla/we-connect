@@ -16,6 +16,7 @@ export {
   Play,
   Music,
   MusicPlay,
+  Send2,
 } from "iconsax-react";
 export { CiSearch } from "react-icons/ci";
 export { HiDotsVertical } from "react-icons/hi";

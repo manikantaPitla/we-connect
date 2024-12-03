@@ -3,6 +3,7 @@ import authReducer from "./features/authReducer";
 import themeReducer from "./features/themeReducer";
 import chatReducer from "./features/chatReducer";
 import messageReducer from "./features/messageReducer";
+import requestsReducer from "./features/requestsReducer";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     theme: themeReducer,
     chat: chatReducer,
     messages: messageReducer,
+    requests: requestsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

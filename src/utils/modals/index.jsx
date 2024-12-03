@@ -44,7 +44,7 @@ export function ModalLarge(props) {
 }
 
 export const ModalMenu = forwardRef((props, ref) => {
-  return <SmallModalMenu ref={ref} {...props}></SmallModalMenu>;
+  return <SmallModalMenu offsetY={20} ref={ref} {...props}></SmallModalMenu>;
 });
 
 export function ModalViewMedia(props) {

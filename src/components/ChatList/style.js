@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const ChatListContainer = styled.ul`
-  flex: 1;
+  flex-grow: 1;
   list-style: none;
   padding: 10px 0;
   display: flex;
@@ -53,4 +53,13 @@ export const ChatItem = styled.li`
     font-weight: 500;
     color: var(--secondary-text-color);
   }
+`;
+
+export const NoChatsDisplay = styled.li`
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size:var(--fs-14);
 `;

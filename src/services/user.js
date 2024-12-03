@@ -9,7 +9,6 @@ export const extractUserInfo = (user) => {
 export const extractChatUserInfo = (user) => {
   return {
     chatId: user.chatId,
-    email: user.email,
     userName: user.userName,
     thumbnailURL: user.thumbnailURL,
     connectedUserId: user.connectedUserId,
@@ -50,3 +49,20 @@ export const getDateTime = (milliSeconds) => {
 
 export const checkUserExist = (obj, id) =>
   obj.some((user) => user.userId === id);
+
+export const getMediaFileSrc = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const fileSrc = reader.result;
+      resolve(fileSrc);
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
+};

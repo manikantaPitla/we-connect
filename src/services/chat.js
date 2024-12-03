@@ -1,5 +1,6 @@
 import {
   and,
+  arrayRemove,
   arrayUnion,
   collection,
   doc,
@@ -8,7 +9,9 @@ import {
   increment,
   onSnapshot,
   query,
+  serverTimestamp,
   Timestamp,
+  updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
@@ -18,6 +21,7 @@ import {
   extractUserInfo,
   generateCombineId,
   getDateTime,
+  getMediaFileSrc,
   getTime,
 } from "./user";
 import { generateThumbnail, uploadMedia } from "./storage";
@@ -185,72 +189,117 @@ export const getUserData = async (
   }
 };
 
+const validateMedia = async (
+  senderId,
+  file,
+  newMessageStatusObj,
+  setMediaLoading,
+  addNewMessage
+) => {
+  if (!file) {
+    const emptyData = { mediaThumbnail: null, mediaType: null, mediaURL: null };
+
+    addNewMessage({ ...newMessageStatusObj, ...emptyData });
+    return emptyData;
+  }
+
+  try {
+    const mediaPath =
+      (file.type.startsWith("image/") && "images") ||
+      (file.type.startsWith("video/") && "videos") ||
+      (file.type.startsWith("audio/") && "audios");
+
+    const mediaType = mediaPath.slice(0, -1);
+
+    const dummyMediaURL = await getMediaFileSrc(file);
+    const dummyMessageObj = {
+      ...newMessageStatusObj,
+      mediaType,
+      mediaThumbnail: { name: file.name, url: dummyMediaURL },
+      media: { name: file.name, url: dummyMediaURL },
+      messageType: mediaType || "text",
+    };
+    addNewMessage(dummyMessageObj);
+
+    let mediaThumbnail = null;
+
+    if (file.type.startsWith("images/") || mediaPath === "images") {
+      const thumbnailFile = (await generateThumbnail(file)) || null;
+
+      const firebaseThumbnailURL = await uploadMedia(
+        senderId,
+        "images/chat/thumbnails",
+        thumbnailFile
+      );
+
+      mediaThumbnail = { name: file.name, url: firebaseThumbnailURL };
+    }
+
+    const firebaseMediaURL = await uploadMedia(
+      senderId,
+      mediaPath,
+      file,
+      (progress) => setMediaLoading(progress)
+    );
+
+    return {
+      mediaThumbnail,
+      mediaType,
+      mediaURL: { url: firebaseMediaURL, name: file.name },
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const sendMessage = async (
   senderId,
   receiverId,
   chatData,
   setMediaLoading,
-  addNewMessage
+  addNewMessage,
+  updateMessage
 ) => {
   const { message, file } = chatData;
-
   const combineId = generateCombineId(senderId, receiverId);
+  const timestamp = Timestamp.now();
+
   try {
-    let mediaURL = null;
-    let mediaType = null;
-    let mediaThumbnail = null;
-
-    if (file) {
-      const mediaPath =
-        (file.type.startsWith("image/") && "images") ||
-        (file.type.startsWith("video/") && "videos") ||
-        (file.type.startsWith("audio/") && "audios");
-
-      if (file.type.startsWith("images/") || mediaPath === "images") {
-        const thumbnailFile = await generateThumbnail(file);
-
-        const firebaseThumbnailURL = await uploadMedia(
-          senderId,
-          "images/chat/thumbnails",
-          thumbnailFile
-        );
-
-        mediaThumbnail = { name: file.name, url: firebaseThumbnailURL };
-      }
-
-      mediaType = mediaPath.slice(0, -1);
-
-      const firebaseMediaURL = await uploadMedia(
-        senderId,
-        mediaPath,
-        file,
-        (progress) => setMediaLoading(progress)
-      );
-
-      mediaURL = { url: firebaseMediaURL, name: file.name };
-    }
-
-    const chatDocRef = doc(db, "chats", combineId);
-    const senderChatRef = doc(db, "userChats", senderId);
-    const receiverChatRef = doc(db, "userChats", receiverId);
-
-    const timestamp = Timestamp.now();
-
-    const newMessageObj = {
+    const messageObj = {
       messageId: `${Date.now()}_${senderId}`,
       text: message || null,
       senderId,
-      messageType: mediaType || "text",
-      media: mediaURL,
-      mediaThumbnail: mediaThumbnail,
-      mediaType,
       timestamp,
       isDeleted: false,
       isEdited: false,
       reactions: {},
     };
 
-    addNewMessage({ ...newMessageObj, timestamp: timestamp.toMillis() });
+    const newMessageStatusObj = {
+      ...messageObj,
+      status: "sending",
+      timestamp: getTime(timestamp.toMillis()),
+    };
+
+    const { mediaThumbnail, mediaType, mediaURL } = await validateMedia(
+      senderId,
+      file,
+      newMessageStatusObj,
+      setMediaLoading,
+      addNewMessage
+    );
+
+    const chatDocRef = doc(db, "chats", combineId);
+    const senderChatRef = doc(db, "userChats", senderId);
+    const receiverChatRef = doc(db, "userChats", receiverId);
+
+    const newMessageObj = {
+      ...messageObj,
+      mediaType,
+      messageType: mediaType || "text",
+      media: mediaURL,
+      mediaThumbnail: mediaThumbnail,
+    };
 
     const batch = writeBatch(db);
 
@@ -271,7 +320,8 @@ export const sendMessage = async (
     });
 
     await batch.commit();
-    console.log("Message sent successfully");
+
+    updateMessage({ messageId: newMessageObj.messageId, status: "sent" });
   } catch (error) {
     console.error("Error sending message:", error);
     throw error;
@@ -293,11 +343,50 @@ export const getUserMessagesData = (chatId, setMessages) => {
       });
 
       setMessages({
-        createdAt: getDateTime(messageData.createdAt.toMillis()),
+        chatInfo: {
+          ...messageData.chatInfo,
+          createdAt: getDateTime(messageData.chatInfo.createdAt.toMillis()),
+        },
         messages: messageList,
       });
     }
   });
 
   return unSubscribe;
+};
+
+export const clearChat = async (chatId, chatUserId, deletingUserId) => {
+  if (!chatId) return;
+  try {
+    const chatDocRef = doc(db, "chats", chatId);
+    const deletingUserDocRef = doc(db, "userChats", deletingUserId);
+    const currentChatUserDocRef = doc(db, "userChats", chatUserId);
+
+    console.log({ chatId, chatDocRef });
+    const chatDocData = await getDoc(chatDocRef);
+    if (chatDocData.exists()) {
+      if (chatDocData.data().messages.length === 0) {
+      }
+    }
+
+    const batch = writeBatch(db);
+
+    batch.update(deletingUserDocRef, {
+      [`${chatId}.lastMessage`]: "Chat Cleared",
+      [`${chatId}.lastMessageTimeStamp`]: Timestamp.now(),
+    });
+
+    batch.update(currentChatUserDocRef, {
+      [`${chatId}.lastMessage`]: "Chat Cleared",
+      [`${chatId}.lastMessageTimeStamp`]: Timestamp.now(),
+    });
+
+    await batch.commit();
+
+    await updateDoc(chatDocRef, {
+      messages: [],
+    });
+  } catch (error) {
+    throw error;
+  }
 };

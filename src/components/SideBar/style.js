@@ -44,4 +44,6 @@ export const SearchWrapper = styled.div`
 
 export const UserListWrapper = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
 `;

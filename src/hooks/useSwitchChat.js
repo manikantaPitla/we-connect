@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { addCurrentChat, removeCurrentChat } from "../app/features/chatReducer";
 import { useSearchParams } from "react-router-dom";
+import useChat from "./useChat";
 
 export const useSwitchChat = () => {
   const dispatch = useDispatch();
@@ -8,6 +9,7 @@ export const useSwitchChat = () => {
   const currentChatUser = useSelector((state) => state.chat.currentChatUser);
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const { clearMessages } = useChat();
 
   const handleSearchParams = (deleteParams = true, chatId, connectedUserId) => {
     const params = new URLSearchParams(searchParams);
@@ -23,7 +25,11 @@ export const useSwitchChat = () => {
     setSearchParams(params);
   };
   const setCurrentChat = (currentChat) => {
-    if (currentChatUser?.chatId === currentChat?.chatId) return;
+    if (currentChatUser?.chatId === currentChat?.chatId) {
+      return;
+    }
+    clearCurrentChat();
+
     handleSearchParams(false, currentChat.chatId, currentChat.connectedUserId);
     dispatch(addCurrentChat(currentChat));
   };
@@ -31,6 +37,7 @@ export const useSwitchChat = () => {
     if (currentChatUser === null) return;
     handleSearchParams();
     dispatch(removeCurrentChat());
+    dispatch(clearMessages());
   };
 
   return { setCurrentChat, clearCurrentChat };

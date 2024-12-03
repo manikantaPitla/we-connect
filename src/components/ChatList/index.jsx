@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { ChatItem, ChatListContainer } from "./style";
+import { ChatItem, ChatListContainer, NoChatsDisplay } from "./style";
 import Skeleton from "react-loading-skeleton";
 import { getUserChats } from "../../services";
 import { useLoading } from "../../hooks";
@@ -63,11 +63,15 @@ function ChatList({ searchVal }) {
         <RenderLoading />
       ) : (
         <>
-          {filteredChatList?.length > 0
-            ? filteredChatList.map((userData) => (
-                <ChatListUserItem key={userData.chatId} userData={userData} />
-              ))
-            : "No chats"}
+          {filteredChatList?.length > 0 ? (
+            filteredChatList.map((userData) => (
+              <ChatListUserItem key={userData.chatId} userData={userData} />
+            ))
+          ) : (
+            <NoChatsDisplay>
+              <p>No chats</p>
+            </NoChatsDisplay>
+          )}
         </>
       )}
     </ChatListContainer>

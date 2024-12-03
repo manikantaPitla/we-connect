@@ -14,17 +14,24 @@ const messageReducer = createSlice({
     addChatMessage: (state, action) => {
       state.messageList.messages.push(action.payload);
     },
+    removeChatMessages: (state) => {
+      state.messageList = { createdAt: null, messages: [] };
+    },
     updateChatMessage: (state, action) => {
-      const index = state.messageList.findIndex(
-        (msg) => msg.id === action.payload.id
+      const index = state.messageList.messages.findIndex(
+        (msg) => msg.messageId === action.payload.messageId
       );
       if (index !== -1) {
-        state.messageList[index] = action.payload;
+        state.messageList.messages[index].status = action.payload.status;
       }
     },
   },
 });
 
-export const { setChatMessages, addChatMessage, updateChatMessage } =
-  messageReducer.actions;
+export const {
+  setChatMessages,
+  addChatMessage,
+  updateChatMessage,
+  removeChatMessages,
+} = messageReducer.actions;
 export default messageReducer.reducer;
