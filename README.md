@@ -77,7 +77,7 @@ VITE_MEASUREMENT_ID = "YOUR MEASUREMENT ID"
 5 **Run the development server:**
 
 ```bash
-npm start
+npm run dev
 ```
 
 5 Open your browser and visit
@@ -159,6 +159,30 @@ http://localhost:5173.
 
 This project is licensed under the MIT License.
 
-**_Project Link:_** https://github.com/manikantaPitla/we-connect
+**Project Link:** https://github.com/manikantaPitla/we-connect
 
-**_Live Link:_** https://weconnectdev.netlify.app
+**Deployment Link:** https://weconnectdev.netlify.app
+
+## Author/Developer
+
+```js
+
+{
+    name: 'Manikanta Pitla',
+    contact : {
+        email : 'pitlamanikanta81@gmail.com',
+        linkedin : 'https://linkedin.com/in/manikantapitla',
+        github: 'https://github.com/manikantaPitla/',
+        portfolio : 'https://manikantapitla.netlify.app'
+    }
+}
+```
+
+<div >
+  <a href="https://linkedin.com/in/manikantapitla/" target="_blank">
+    <img src="https://img.shields.io/static/v1?message=LinkedIn&logo=linkedin&label=&color=0077B5&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="linkedin logo"  />
+  </a>
+  <a href="mailto:pitlamanikanta81@gmail.com" target="_blank">
+    <img src="https://img.shields.io/static/v1?message=Gmail&logo=gmail&label=&color=D14836&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="gmail logo"  />
+  </a>
+</div>
