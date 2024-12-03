@@ -80,7 +80,7 @@ VITE_MEASUREMENT_ID = "YOUR MEASUREMENT ID"
 npm run dev
 ```
 
-5 Open your browser and visit
+6 Open your browser and visit
 http://localhost:5173.
 
 ## Application Design
