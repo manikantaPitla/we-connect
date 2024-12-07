@@ -3,6 +3,7 @@ import { useSwitchChat, useWidth } from "../../hooks";
 import {
   extractChatUserInfo,
   getTime,
+  handleErrImage,
   resizeLastMessage,
 } from "../../services";
 import { ImageSmall } from "../../styles/commonStyles";
@@ -42,7 +43,11 @@ function ChatListUserItem({ userData }) {
       }`}
       onClick={handleChatClick}
     >
-      <ImageSmall src={thumbnailURL || defaultProfileImage} alt={userName} />
+      <ImageSmall
+        src={thumbnailURL || defaultProfileImage}
+        alt={userName}
+        onError={handleErrImage}
+      />
       <div>
         <h5>{userName}</h5>
         <p>{resizeLastMessage(lastMessage)}</p>

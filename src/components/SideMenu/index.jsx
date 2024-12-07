@@ -16,7 +16,7 @@ import {
 } from "../../assets/icons";
 import { useAuthActions, useSwitchChat, useTheme } from "../../hooks";
 import { ModalSmall } from "../../utils";
-import { showError, signOutAuth } from "../../services";
+import { handleErrImage, showError, signOutAuth } from "../../services";
 import { defaultProfileImage } from "../../utils";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -93,7 +93,11 @@ function SideMenu({ tabActions }) {
               {eachTab.tabIcon ? (
                 <eachTab.tabIcon />
               ) : (
-                <ImageSmall src={eachTab.profileURL} alt={eachTab.tabName} />
+                <ImageSmall
+                  src={eachTab.profileURL}
+                  alt={eachTab.tabName}
+                  onError={handleErrImage}
+                />
               )}
             </MenuIcons>
 

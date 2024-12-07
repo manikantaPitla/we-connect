@@ -1,3 +1,5 @@
+import errImage from "../assets/images/no-image.png";
+
 export const extractUserInfo = (user) => {
   return {
     userId: user.userId,
@@ -14,11 +16,9 @@ export const extractChatUserInfo = (user) => {
     connectedUserId: user.connectedUserId,
   };
 };
-
 export const generateCombineId = (senderId, receiverId) => {
   return [senderId, receiverId].sort().join("_");
 };
-
 export const getTime = (timestamp) => {
   return new Date(timestamp).toLocaleString("en-US", {
     hour: "numeric",
@@ -26,14 +26,12 @@ export const getTime = (timestamp) => {
     hour12: true,
   });
 };
-
 export const resizeLastMessage = (message) => {
   if (message.length > 20) {
     return message.substring(0, 20) + " ...";
   }
   return message;
 };
-
 export const getDateTime = (milliSeconds) => {
   const date = new Date(milliSeconds);
 
@@ -46,10 +44,8 @@ export const getDateTime = (milliSeconds) => {
     second: "2-digit",
   });
 };
-
 export const checkUserExist = (obj, id) =>
   obj.some((user) => user.userId === id);
-
 export const getMediaFileSrc = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -65,4 +61,9 @@ export const getMediaFileSrc = (file) => {
 
     reader.readAsDataURL(file);
   });
+};
+
+export const handleErrImage = (e) => {
+  e.target.src = errImage;
+  e.target.alt = "Image not found";
 };

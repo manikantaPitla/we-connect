@@ -40,49 +40,6 @@ friends and family.
   registration.
 - **Storage:** For media uploads and efficient retrieval.
 
-## How to Run Locally
-
-1. **Clone the repository:**
-
-```bash
-git clone https://github.com/manikantaPitla/we-connect.git
-cd we-connect
-```
-
-2 **Install dependencies:**
-
-```bash
-npm install
-```
-
-3 **Set up Firebase:**
-
-- Create a Firebase project at [Firebase Console](https://console.firebase.google.com/).
-- Enable Firestore,Authentication, and Storage.
-- Update `firebaseConfig` in the `src/config/firebase.js` file with your Firebase credentials.
-
-4 **SetUp Environment Variables:**
-
-```bash
-VITE_API_KEY = "YOUR API KEY"
-VITE_AUTH_DOMAIN = "YOUR AUTH DOMAIN"
-VITE_PROJECT_ID = "YOUR PROJECT ID"
-VITE_STORAGE_BUCKET = "YOUR STORAGE BUCKET"
-VITE_MESSAGE_SENDER_ID = "YOUR MESSAGE SENDER ID"
-VITE_APP_ID = " YOUR APP ID"
-VITE_MEASUREMENT_ID = "YOUR MEASUREMENT ID"
-
-```
-
-5 **Run the development server:**
-
-```bash
-npm run dev
-```
-
-6 Open your browser and visit
-http://localhost:5173.
-
 ## Application Design
 
 - **Sign Up Page**
@@ -155,10 +112,6 @@ http://localhost:5173.
 
     </details>
 
-## License
-
-This project is licensed under the MIT License.
-
 **Project Link:** https://github.com/manikantaPitla/we-connect
 
 **Deployment Link:** https://weconnectdev.netlify.app
@@ -186,3 +139,46 @@ This project is licensed under the MIT License.
     <img src="https://img.shields.io/static/v1?message=Gmail&logo=gmail&label=&color=D14836&logoColor=white&labelColor=&style=for-the-badge" height="25" alt="gmail logo"  />
   </a>
 </div>
+
+## How to Run Locally
+
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/manikantaPitla/we-connect.git
+cd we-connect
+```
+
+2 **Install dependencies:**
+
+```bash
+npm install
+```
+
+3 **Set up Firebase:**
+
+- Create a Firebase project at [Firebase Console](https://console.firebase.google.com/).
+- Enable Firestore,Authentication, and Storage.
+- Update `firebaseConfig` in the `src/config/firebase.js` file with your Firebase credentials.
+
+4 **SetUp Environment Variables:**
+
+```bash
+VITE_API_KEY = "YOUR API KEY"
+VITE_AUTH_DOMAIN = "YOUR AUTH DOMAIN"
+VITE_PROJECT_ID = "YOUR PROJECT ID"
+VITE_STORAGE_BUCKET = "YOUR STORAGE BUCKET"
+VITE_MESSAGE_SENDER_ID = "YOUR MESSAGE SENDER ID"
+VITE_APP_ID = " YOUR APP ID"
+VITE_MEASUREMENT_ID = "YOUR MEASUREMENT ID"
+
+```
+
+5 **Run the development server:**
+
+```bash
+npm run dev
+```
+
+6 Open your browser and visit
+http://localhost:5173.
