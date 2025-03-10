@@ -157,6 +157,7 @@ function ChatInput() {
           addNewMessage,
           updateMessage
         );
+        
         setChatData(initialChatData);
         setMediaUploadingStatus("");
       } catch (error) {

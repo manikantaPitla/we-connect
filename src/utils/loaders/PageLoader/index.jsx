@@ -11,6 +11,7 @@ import {
   ComponentWrapper,
   DevContact,
   MainLoaderWrapper,
+  PageLoaderWrapper,
   SearchWrapper,
   SideBarSkeleton,
   SideMenuSkeleton,
@@ -19,6 +20,9 @@ import {
 } from "./style";
 import Skeleton from "react-loading-skeleton";
 import { useWidth } from "../../../hooks";
+
+import { squircle } from "ldrs";
+squircle.register();
 
 function PageLoader({ chatLoader }) {
   const width = useWidth();
@@ -108,5 +112,18 @@ function PageLoader({ chatLoader }) {
     </>
   );
 }
+
+export const MainPageLoader = () => (
+  <PageLoaderWrapper>
+    <l-squircle
+      size="37"
+      stroke="5"
+      stroke-length="0.15"
+      bg-opacity="0.1"
+      speed="0.9"
+      color="var(--primary-color)"
+    ></l-squircle>
+  </PageLoaderWrapper>
+);
 
 export default PageLoader;

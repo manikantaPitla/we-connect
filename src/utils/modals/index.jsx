@@ -7,9 +7,28 @@ import {
   ModalSmallCustomStyles,
   SmallModalMenu,
   ModalViewMediaWrapper,
+  ModalSmallCustomPopupStyles,
 } from "./style";
 import "reactjs-popup/dist/index.css";
 import { ButtonL, ButtonXl } from "../../styles/commonStyles";
+
+export const PasswordEmailSentSuccessModal = ({ open, onClose, mailId }) => (
+  <ModalSmallCustomPopupStyles modal open={open} onClose={onClose}>
+    <div>
+      <p>
+        Password reset link sent to your email <span>{mailId}</span>
+      </p>
+      <p className="mail-note">
+        If an account is associated with this email, you will receive a password
+        reset link. Please check your inbox (and spam folder) for further
+        instructions.
+      </p>
+      <ButtonL $outline onClick={onClose}>
+        OK
+      </ButtonL>
+    </div>
+  </ModalSmallCustomPopupStyles>
+);
 
 export function ModalSmall(props) {
   const { children, content, action } = props;

@@ -69,7 +69,7 @@ function MessageItem({ message, userId }) {
       className={messageType === "connection" ? "connection-message" : ""}
     >
       <ChatItemFlex>
-        <ChatMessageItem $sender={isSender}>
+        <ChatMessageItem $sender={isSender} >
           <RenderMessagesByType messageData={message} />
         </ChatMessageItem>
         {message?.status === "sending" && (

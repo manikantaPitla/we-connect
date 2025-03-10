@@ -14,6 +14,37 @@ export const ModalSmallCustomStyles = styled(Popup)`
   }
 `;
 
+export const ModalSmallCustomPopupStyles = styled(ModalSmallCustomStyles)`
+  &-content {
+    width: 380px;
+    height: 200px;
+    display: flex;
+
+    div {
+      flex: 1;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+
+      span {
+        line-break: loose;
+      }
+
+      p {
+        font-size: 16px;
+      }
+
+      .mail-note {
+        font-size: 11px;
+      }
+    }
+  }
+`;
+
 export const ModalBody = styled.div`
   height: 100%;
   display: flex;

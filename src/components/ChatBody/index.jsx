@@ -37,7 +37,7 @@ function ChatBody() {
   }, [messageListData.messages]);
 
   const renderedMessages = useMemo(() => {
-    return (
+    return (    
       <>
         {messageListData?.chatInfo && (
           <div className="connection-message">

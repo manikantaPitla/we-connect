@@ -15,8 +15,6 @@ import { SkeletonTheme } from "react-loading-skeleton";
 import { useWidth } from "./hooks";
 function App() {
   const pageTheme = useSelector((state) => state.theme);
-  console.log("App Component");
-
   const width = useWidth();
 
   return (

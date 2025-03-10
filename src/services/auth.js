@@ -16,7 +16,11 @@ import {
 } from "./firebaseFunctions";
 
 import { getUserData } from "./chat";
-import { signOut } from "firebase/auth";
+import {
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signOut,
+} from "firebase/auth";
 import { writeBatch } from "firebase/firestore";
 
 export const signUpWithEmail = async (userName, email, password) => {
@@ -93,6 +97,23 @@ export const signOutAuth = async () => {
   } catch (error) {
     console.error("Sign-out error:", error);
   }
+};
+
+export const verifyEmail = () => {
+  sendEmailVerification(auth).then(() => {
+    console.log("Email verification sent");
+  });
+};
+export const sendResetPasswordLink = async (email) => {
+  sendPasswordResetEmail(auth, email)
+    .then(() => {
+      console.log("Password reset email sent");
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log({ errorCode, errorMessage, error });
+    });
 };
 
 //below are not yet implemented

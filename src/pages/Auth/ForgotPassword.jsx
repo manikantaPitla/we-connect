@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ButtonXl,
@@ -7,11 +7,31 @@ import {
   OptionsWrapper,
   FormContainer,
 } from "../../styles/commonStyles";
-import { DotLoader } from "../../utils";
+import { DotLoader, PasswordEmailSentSuccessModal } from "../../utils";
+import { sendResetPasswordLink, showError } from "../../services";
 
 function ForgotPassword() {
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState("");
+  const [isModalOpen, setModalOpen] = useState(false);
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!email) {
+      showError("Email is required!");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError("Enter a valid email address");
+      return;
+    }
+
+    try {
+      await sendResetPasswordLink(email);
+      setModalOpen(true);
+      setEmail("");
+    } catch (error) {
+      showError("Failed to send reset link. Try again!");
+    }
   };
 
   return (
@@ -25,9 +45,17 @@ function ForgotPassword() {
           placeholder="Enter your email address"
           autoComplete="true"
           name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </InputEl>
-      <ButtonXl type="submit">Send Code</ButtonXl>
+      <ButtonXl type="submit">Send Link</ButtonXl>
+      <PasswordEmailSentSuccessModal
+        open={isModalOpen}
+        mailId={email}
+        onOpen={() => setModalOpen(true)}
+        onClose={() => setModalOpen(false)}
+      />
       <OptionsWrapper>
         <p>
           Go Back? <Link to="/auth/signin">Sign In</Link>
